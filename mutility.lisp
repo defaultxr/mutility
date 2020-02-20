@@ -4,18 +4,22 @@
 
 ;;; macros
 
-;; FIX:
-;; (defmacro fn (&body body)
-;;   ""
-;;   (labels ((parse (list)
-;;              (mapcar (lambda (i)
-;;                        (typecase i
-;;                          (list (parse i))
-;;                          (atom (if (string= "_" i)
-;;                                    'arg
-;;                                    i))))
-;;                      list)))
-;;     (parse body)))
+(defmacro fn (&body body)
+  "Syntax sugar for making `lambda's. BODY is the function body. Underscores in the body can be used to represent the argument to the function."
+  (let ((args (list)))
+    (labels ((parse (list)
+               (mapcar (lambda (i)
+                         (typecase i
+                           (list (parse i))
+                           (symbol (if (string= "_" i)
+                                       (progn
+                                         (pushnew i args)
+                                         i)
+                                       i))
+                           (t i)))
+                       list)))
+      (let ((body (parse body)))
+        `(lambda (,@args) ,@body)))))
 
 ;; (defmacro accumulating.nreverse (&body body)
 ;;   "Run BODY with the local function ACCUMULATE appending its values to a list, which is then returned.

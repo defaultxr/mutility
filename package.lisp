@@ -4,7 +4,7 @@
   (:use #:cl
         #:alexandria)
   (:export
-   ;; :fn ;; FIX
+   :fn
    ;; :accumulating ;; conflicts with iterate
    :define-obsolete-function-alias
 
