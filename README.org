@@ -1,0 +1,7 @@
+#+TITLE: mutility
+
+A collection of various utility functions and macros I use in my libraries.
+
+This is mostly for deduplication of code so I don't have to keep several copies of these functions across different projects.
+
+All exported symbols are documented via their docstrings, which are of course accessible via Lisp's standard ~documentation~ and ~describe~ functions.
