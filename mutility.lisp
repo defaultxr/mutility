@@ -126,13 +126,6 @@ See also: `my-intern'"
 
 ;;; math stuff
 
-(defun sign (num)
-  "Returns the 'sign' of a number. (1 if positive, 0 if 0, -1 if negative.)"
-  (declare (type number num))
-  (cond ((= num 0) 0)
-        ((> num 0) 1)
-        ((< num 0) -1)))
-
 ;; use `alexandria:clamp' instead.
 ;; (defun clip (num &optional (bottom -1) (top 1))
 ;;   "Clips numbers within a range."

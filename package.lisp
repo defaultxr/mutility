@@ -16,7 +16,6 @@
    :my-intern
    :un-intern
 
-   :sign
    :wrap
 
    :length-upto
