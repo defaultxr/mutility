@@ -112,6 +112,14 @@ See also: `cl-ppcre:regex-replace-all'"
        when pos do (write-string replacement out)
        while pos)))
 
+(defun string-boolean (string &optional default)
+  "Return T or NIL depending on if STRING is a true or false value, or DEFAULT if it is not known."
+  (cond
+    ((null string) default)
+    ((member string (list "t" "1" "true" "y" "yes" "enable" "enabled" "on") :test #'string-equal) t)
+    ((member string (list "nil" "0" "f" "false" "n" "no" "disable" "disabled" "off") :test #'string-equal) nil)
+    (t default)))
+
 ;;; package stuff
 
 (defun my-intern (string &optional package)

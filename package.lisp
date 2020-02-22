@@ -12,6 +12,7 @@
    :output
    :split
    :replace-all
+   :string-boolean
 
    :my-intern
    :un-intern
