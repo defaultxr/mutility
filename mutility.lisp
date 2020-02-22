@@ -96,21 +96,22 @@ See also: `split-sequence:split-sequence'"
     (split-up (string-left-trim char-bag string) max-num char-bag)))
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
-(defun replace-all (string part replacement &key (test #'char=)) ;; stolen from http://cl-cookbook.sourceforge.net/strings.html
+;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
+(defun replace-all (string part replacement &key (test #'char=))
   "Returns a new string in which all the occurences of the part is replaced with replacement.
 
 See also: `cl-ppcre:regex-replace-all'"
   (with-output-to-string (out)
-    (loop with part-length = (length part)
-       for old-pos = 0 then (+ pos part-length)
-       for pos = (search part string
-                         :start2 old-pos
-                         :test test)
-       do (write-string string out
-                        :start old-pos
-                        :end (or pos (length string)))
-       when pos do (write-string replacement out)
-       while pos)))
+    (loop :with part-length := (length part)
+       :for old-pos := 0 :then (+ pos part-length)
+       :for pos := (search part string
+                           :start2 old-pos
+                           :test test)
+       :do (write-string string out
+                         :start old-pos
+                         :end (or pos (length string)))
+       :when pos :do (write-string replacement out)
+       :while pos)))
 
 (defun string-boolean (string &optional default)
   "Return T or NIL depending on if STRING is a true or false value, or DEFAULT if it is not known."
