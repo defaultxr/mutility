@@ -5,6 +5,7 @@
         #:alexandria)
   (:export
    :fn
+   :dolist*
    ;; :accumulating ;; conflicts with iterate
    :define-obsolete-function-alias
 

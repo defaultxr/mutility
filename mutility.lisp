@@ -21,6 +21,13 @@
       (let ((body (parse body)))
         `(lambda (,@args) ,@body)))))
 
+(defmacro dolist* ((item index list &optional result) &body body)
+  "Like the standard `dolist' but includes INDEX as another variable representing the current index into LIST."
+  `(let ((,index 0))
+     (dolist (,item ,list ,result)
+       ,@body
+       (incf ,index 1))))
+
 ;; (defmacro accumulating.nreverse (&body body)
 ;;   "Run BODY with the local function ACCUMULATE appending its values to a list, which is then returned.
 
