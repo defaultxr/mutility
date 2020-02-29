@@ -23,7 +23,7 @@
    :length-upto
    :nth-wrap
    :elt-wrap
-   :has-any
+   :find-any
    :mapcar-with-index
    :flatten-1
    :subseq*

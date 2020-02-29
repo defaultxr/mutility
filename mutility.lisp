@@ -198,11 +198,11 @@ See also: `nth-wrap'"
            (type sequence sequence))
   (elt sequence (mod n (length sequence))))
 
-(defun has-any (items list &key test)
+(defun find-any (items list &key test)
   "Returns the first item from ITEMS that is found in LIST, or nil if none."
   (dolist (item items)
     (when (position item list :test test)
-      (return-from has-any item))))
+      (return-from find-any item))))
 
 (defun mapcar-with-index (function list &rest more-lists)
   "Like `mapcar', but provides the index of the current element as an additional final element to FUNCTION."
