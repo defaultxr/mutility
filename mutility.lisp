@@ -169,6 +169,33 @@ See also: `cl:mod', `alexandria:clamp', `within'"
            (type number top))
   (+ (mod (- number bottom) (- (1+ top) bottom)) bottom))
 
+(defun round-by (number &optional (by 1))
+  "Round NUMBER to the nearest multiple of BY.
+
+Examples:
+
+;; (round-by 1 2) ;; => 0
+;; (round-by 1.1 0.5) ;; => 1.0
+;; (round-by 6 10) ;; => 10
+
+See also: `cl:round', `round-by-direction'"
+  (* (round (/ number by)) by))
+
+(defun round-by-direction (number &optional (by 1))
+  "Round NUMBER to the nearest multiple of BY. With positive BY, round up; with negative, round down.
+
+Examples:
+
+;; (round-by-direction 0.5 -1) ;; => 0
+;; (round-by-direction 0.5 1) ;; => 1
+
+See also: `round-by', `cl:round'"
+  (if (= 0 (mod number by))
+      number
+      (let* ((positive (plusp by))
+             (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
+        (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff)))))
+
 ;;; list/sequence stuff
 
 (defun length-upto (list &optional (max 10))

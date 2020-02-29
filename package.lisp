@@ -19,6 +19,8 @@
    :un-intern
 
    :wrap
+   :round-by
+   :round-by-direction
 
    :length-upto
    :nth-wrap
