@@ -155,7 +155,15 @@ See also: `my-intern'"
 ;;   (min top (max bottom num)))
 
 (defun wrap (number &optional (bottom 0) (top 1))
-  "Wraps the input number to be within the top and bottom bounds, inclusive."
+  "Wraps a number between BOTTOM and TOP, similar to `cl:mod'.
+
+Examples:
+
+;; (wrap 2 0 1) ;; => 0
+;; (wrap 5 0 10) ;; => 5
+;; (wrap 15 0 10) ;; => 4
+
+See also: `cl:mod', `alexandria:clamp', `within'"
   (declare (type number number)
            (type number bottom)
            (type number top))
