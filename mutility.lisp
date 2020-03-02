@@ -85,7 +85,7 @@ See also: `concat'"
   (finish-output)
   (car (last items)))
 
-(defun split (string &key max-num (char-bag (list #\space #\tab #\newline)))
+(defun split (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
   "Returns a list of substrings of 'string' divided by spaces, optionally splitting only to a list of a maximum size.
 
 See also: `split-sequence:split-sequence'"
@@ -94,13 +94,17 @@ See also: `split-sequence:split-sequence'"
   (labels ((is-divider (char) (position char char-bag))
            (split-up (string num char-bag)
              (when (and string
-                        (not (equal string "")))
+                        (or include-empty
+                            (not (equal string ""))))
                (if (or (eq num 1)
                        (not (position-if #'is-divider string)))
                    (cons (string-right-trim char-bag string) nil)
                    (cons (subseq string 0 (position-if #'is-divider string))
                          (split-up (string-left-trim char-bag (subseq string (position-if #'is-divider string))) (when num (1- num)) char-bag))))))
-    (split-up (string-left-trim char-bag string) max-num char-bag)))
+    (split-up (if include-empty
+                  string
+                  (string-left-trim char-bag string))
+              max-num char-bag)))
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
