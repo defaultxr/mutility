@@ -31,6 +31,7 @@
    :subseq*
    ;; :repeat ;; conflicts with iterate
 
+   :random-coin
    :random-range
    :exponential-random-range
    :random-gauss

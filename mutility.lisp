@@ -278,6 +278,10 @@ See also: `nth-wrap'"
 
 ;;; random stuff
 
+(defun random-coin (&optional (probability 0.5))
+  "Randomly return true with a probability of PROBABILITY/1."
+  (<= (random 1.0) probability))
+
 (defun random-range (low &optional high)
   "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW).
 
