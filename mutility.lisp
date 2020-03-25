@@ -184,7 +184,7 @@ See also: `cl:mod', `alexandria:clamp', `within'"
   (declare (type number number)
            (type number bottom)
            (type number top))
-  (+ (mod (- number bottom) (- (1+ top) bottom)) bottom))
+  (+ (mod (- number bottom) (- top bottom)) bottom))
 
 (defun round-by (number &optional (by 1))
   "Round NUMBER to the nearest multiple of BY.
