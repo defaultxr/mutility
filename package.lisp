@@ -9,6 +9,8 @@
    ;; :accumulating ;; conflicts with iterate
    :define-obsolete-function-alias
 
+   :keys
+
    :concat
    :output
    :split

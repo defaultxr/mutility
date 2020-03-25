@@ -63,6 +63,24 @@ See also: `uiop:while-collecting'."
        (warn "Function ~s is obsolete; please use ~s instead." ',old-function-name ',new-function-name)
        whole)))
 
+;;; sugar stuff
+
+(defgeneric keys (object)
+  (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))
+
+(defmethod keys ((object null))
+  nil)
+
+(defmethod keys ((object cons))
+  (labels ((accum (list)
+             (cons (car list)
+                   (when (cddr list)
+                     (accum (cddr list))))))
+    (accum object)))
+
+(defmethod keys ((object hash-table))
+  (hash-table-keys object))
+
 ;;; string stuff
 
 (defun concat (&rest objects)
@@ -70,11 +88,6 @@ See also: `uiop:while-collecting'."
 
 See also: `uiop:strcat'"
   (format nil "~{~A~}" (remove-if #'null objects)))
-
-;;; see instead: `alexandria:symbolicate'
-;; (defun concats (&rest symbols)
-;;   "Concatenates symbols. The package of the first symbol will be used as the package of the resulting symbol."
-;;   (intern (apply 'concatenate 'string (mapcar 'symbol-name symbols)) (symbol-package (car symbols))))
 
 (defun output (&rest items)
   "Concatenates and prints ITEMS, returning the last one.
