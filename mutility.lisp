@@ -98,10 +98,10 @@ See also: `concat'"
   (finish-output)
   (car (last items)))
 
-(defun split (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
+(defun split-string (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
   "Returns a list of substrings of 'string' divided by spaces, optionally splitting only to a list of a maximum size.
 
-See also: `split-sequence:split-sequence'"
+See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
   (declare (type string string)
            (type cons char-bag))
   (labels ((is-divider (char) (position char char-bag))

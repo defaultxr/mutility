@@ -13,7 +13,7 @@
 
    :concat
    :output
-   :split
+   :split-string
    :replace-all
    :string-boolean
 

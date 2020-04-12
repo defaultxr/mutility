@@ -68,13 +68,13 @@
   ;; FIX
   )
 
-(test split
-  "Test split"
+(test split-string
+  "Test split-string"
   (is (equal (list "" "")
-             (split "d" :char-bag (list #\d) :include-empty t)))
-  (is (null (split "d" :char-bag (list #\d))))
+             (split-string "d" :char-bag (list #\d) :include-empty t)))
+  (is (null (split-string "d" :char-bag (list #\d))))
   (is (equal (list "this" "that" "the" "other" "thing")
-             (split "this that
+             (split-string "this that
 the other thing"))))
 
 (test replace-all
