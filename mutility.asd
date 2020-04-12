@@ -8,7 +8,9 @@
   :depends-on (#:alexandria)
   :serial t
   :components ((:file "package")
-               (:file "mutility"))
+               (:file "mutility")
+               ;; swank-extensions.lisp is conditionally loaded at the end of mutility.lisp
+               )
   :in-order-to ((test-op (test-op "mutility/tests"))))
 
 (asdf:defsystem #:mutility/tests

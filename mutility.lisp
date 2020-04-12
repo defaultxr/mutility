@@ -372,3 +372,8 @@ See also: `random-range', `exponential-random-range'"
   (uiop:launch-program (list #+linux "xdg-open"
                              #+darwin "open"
                              url)))
+
+;; conditionally load swank-extensions if swank is available
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (featurep :swank)
+    (load (asdf:system-relative-pathname :mutility "swank-extensions.lisp"))))
