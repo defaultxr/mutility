@@ -33,6 +33,7 @@
    :flatten-1
    :subseq*
    ;; :repeat ;; conflicts with iterate
+   :split-sequence
 
    :random-coin
    :random-range

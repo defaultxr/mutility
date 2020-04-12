@@ -298,6 +298,12 @@ See also: `nth-wrap'"
                    item)
                (repeat item (- num 1))))))
 
+(defun split-sequence (sequence delimiter)
+  "Split SEQUENCE by DELIMITER."
+  (if-let ((pos (position delimiter sequence)))
+    (cons (subseq sequence 0 pos) (split-sequence (subseq sequence (1+ pos)) delimiter))
+    (cons sequence nil)))
+
 ;;; random stuff
 
 (defun random-coin (&optional (probability 0.5))

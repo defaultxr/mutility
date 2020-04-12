@@ -171,6 +171,12 @@ the other thing"))))
   ;; FIX
   )
 
+(test split-sequence
+  "Test the `split-sequence' function"
+  (is (equal (list (list 1 2) (list 2) (list 3))
+             (split-sequence (list 1 2 :- 2 :- 3) :-))
+      "split-sequence returns incorrect results"))
+
 (test random-coin
   "Test the `random-coin' function"
   (is (every (lambda (x) (eql t x))
