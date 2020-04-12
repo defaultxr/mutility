@@ -12,6 +12,13 @@
 
 (in-suite mutility-tests)
 
+(test undocumented-symbols
+  "Check for any undocumented exported symbols"
+  (let ((undocumented (undocumented-symbols :mutility)))
+    (is-false undocumented
+              "some exported symbols do not have docstrings: ~s"
+              undocumented)))
+
 (test fn
   "Test the `fn' macro"
   ;; FIX

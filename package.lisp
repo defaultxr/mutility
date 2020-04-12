@@ -19,6 +19,7 @@
 
    :my-intern
    :un-intern
+   :undocumented-symbols
 
    :wrap
    :round-by
