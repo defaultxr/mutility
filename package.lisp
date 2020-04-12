@@ -41,4 +41,5 @@
    :save-hash-table
    :restore-hash-table
 
-   :current-seconds))
+   :current-seconds
+   :browse-url))

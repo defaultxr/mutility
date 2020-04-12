@@ -366,3 +366,9 @@ See also: `random-range', `exponential-random-range'"
 (defun current-seconds ()
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
+
+(defun browse-url (url)
+  "Open URL in a browser."
+  (uiop:launch-program (list #+linux "xdg-open"
+                             #+darwin "open"
+                             url)))
