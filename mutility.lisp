@@ -349,10 +349,14 @@ See also: `random-range', `gauss'"
   "Generate a random number from a normal (Gaussian) distribution.
 
 See also: `random-range', `exponential-random-range'"
-  (+ (* (sqrt (* -2 (log (random 1.0))))
-        (sin (random (* 2 pi)))
-        standard-deviation)
-     mean))
+  (let* ((first-random (random 1.0))
+         (sqrt-result (if (equal first-random 0.0)
+                          (sqrt most-positive-single-float)
+                          (sqrt (* -2 (log first-random))))))
+    (+ (* sqrt-result
+          (sin (random (* 2 pi)))
+          standard-deviation)
+       mean)))
 
 ;;; hash stuff
 
