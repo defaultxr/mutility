@@ -102,22 +102,22 @@ See also: `concat'"
   "Returns a list of substrings of 'string' divided by spaces, optionally splitting only to a list of a maximum size.
 
 See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
-  (declare (type string string)
-           (type cons char-bag))
-  (labels ((is-divider (char) (position char char-bag))
-           (split-up (string num char-bag)
-             (when (and string
-                        (or include-empty
-                            (not (equal string ""))))
-               (if (or (eq num 1)
-                       (not (position-if #'is-divider string)))
-                   (cons (string-right-trim char-bag string) nil)
-                   (cons (subseq string 0 (position-if #'is-divider string))
-                         (split-up (string-left-trim char-bag (subseq string (position-if #'is-divider string))) (when num (1- num)) char-bag))))))
-    (split-up (if include-empty
-                  string
-                  (string-left-trim char-bag string))
-              max-num char-bag)))
+  (declare (type string string))
+  (let ((char-bag (ensure-list char-bag)))
+    (labels ((is-divider (char) (position char char-bag))
+             (split-up (string num char-bag)
+               (when (and string
+                          (or include-empty
+                              (not (equal string ""))))
+                 (if (or (eql num 1)
+                         (not (position-if #'is-divider string)))
+                     (cons string nil)
+                     (cons (subseq string 0 (position-if #'is-divider string))
+                           (split-up (string-left-trim char-bag (subseq string (position-if #'is-divider string))) (when num (1- num)) char-bag))))))
+      (split-up (if include-empty
+                    string
+                    (string-left-trim char-bag string))
+                max-num char-bag))))
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html

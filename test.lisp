@@ -2,6 +2,7 @@
 
 (defpackage #:mutility/tests
   (:use #:cl
+        #:alexandria
         #:mutility
         #:fiveam))
 
@@ -71,11 +72,20 @@
 (test split-string
   "Test split-string"
   (is (equal (list "" "")
-             (split-string "d" :char-bag (list #\d) :include-empty t)))
-  (is (null (split-string "d" :char-bag (list #\d))))
+             (split-string "d" :char-bag (list #\d) :include-empty t))
+      "split-string is incorrect for strings consisting only of the divider and include-empty true")
+  (is (null (split-string "d" :char-bag (list #\d) :include-empty nil))
+      "split-string is incorrect for strings consisting only of the divider and include-empty false")
   (is (equal (list "this" "that" "the" "other" "thing")
              (split-string "this that
-the other thing"))))
+the other thing" :char-bag (list #\space #\newline)))
+      "split-string char-bag argument does not work properly")
+  (is (equal (list "foo" "bar=baz")
+             (split-string "foo=bar=baz" :max-num 2 :char-bag #\=))
+      "split-string max-num argument does not work properly")
+  (is (equal (list "foo" "bar" "baz===qux=")
+             (split-string "foo=bar==baz===qux=" :max-num 3 :char-bag #\= :include-empty nil))
+      "split-string gives incorrect results when max-num and char-bag are provided and the string ends in a divider"))
 
 (test replace-all
   ;; FIX
