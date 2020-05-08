@@ -45,4 +45,5 @@
    :restore-hash-table
 
    :current-seconds
-   :open-url))
+   :open-url
+   :generate-temporary-file-name))

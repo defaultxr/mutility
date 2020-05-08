@@ -5,7 +5,8 @@
   :author "modula t. <defaultxr at gmail>"
   :license "MIT"
   :version "0.5"
-  :depends-on (#:alexandria)
+  :depends-on (#:alexandria
+               #:local-time)
   :serial t
   :components ((:file "package")
                (:file "mutility")

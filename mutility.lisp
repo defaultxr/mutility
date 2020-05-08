@@ -542,6 +542,46 @@ See also: `random-range', `exponential-random-range'"
                              #+windows "start"
                              url)))
 
+(defun generate-temporary-file-name (&key name (directory "/tmp") extension attempt)
+  "Generate a string representing a full path to a new temporary file. The file name defaults to a timestamp. Will automatically create DIRECTORY if it doesn't exist. Will also attempt to generate a new name if a file with that name already exists. ATTEMPT is the attempt number if the filename already exists.
+
+Example:
+
+;; (generate-temporary-file-name :name \"foo\" :directory \"/tmp/lisp/\" :extension \"wav\")
+;; => \"/tmp/lisp/foo.wav\"
+
+;; (generate-temporary-file-name :directory \"/tmp/lisp/\" :extension :flac)
+;; => \"/tmp/lisp/2020-04-20-06-09-00.flac\""
+  (uiop:ensure-pathname directory :ensure-directories-exist t)
+  (let* ((name (or name
+                   (local-time:format-timestring nil (local-time:now) ;; FIX: make the local-time dependency optional?
+                                                 :format (list
+                                                          (list :year 4) #\-
+                                                          (list :month 2) #\-
+                                                          (list :day 2) #\-
+                                                          (list :hour 2) #\-
+                                                          (list :min 2) #\-
+                                                          (list :sec 2)))))
+         (directory (etypecase directory
+                      (string (list :absolute
+                                    (string-left-trim
+                                     (list (uiop:directory-separator-for-host))
+                                     directory)))
+                      (pathname directory)
+                      (list directory)))
+         (type (typecase extension
+                 (symbol
+                  (string-downcase (string extension)))
+                 (string extension)))
+         (res (namestring
+               (make-pathname :directory directory
+                              :name (concat name (when attempt
+                                                   (concat "-" attempt)))
+                              :type type))))
+    (if (uiop:file-exists-p res)
+        (generate-temporary-file-name :name name :directory directory :extension type :attempt (if attempt (1+ attempt) 1))
+        res)))
+
 ;; conditionally load swank-extensions if swank is available
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (featurep :swank)
