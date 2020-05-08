@@ -20,6 +20,27 @@
               "some exported symbols do not have docstrings: ~s"
               undocumented)))
 
+(test a
+  "Test the `a' macro"
+  (is (equal (mutility::repeat-by-! '(1))
+             '(1)))
+  (is (equal (mutility::repeat-by-! '(1!3))
+             '(1 1 1)))
+  (is (equal (mutility::repeat-by-! '(1!3!2))
+             '((1 1 1) (1 1 1))))
+  (is (equal (mutility::repeat-by-! '(1!3 !2))
+             '((1 1 1) (1 1 1))))
+  (is (equal (mutility::repeat-by-! '((* 2 3)!2))
+             '((* 2 3) (* 2 3))))
+  (is (equal (mutility::repeat-by-! '(1!(* 2 2)))
+             '(1 1 1 1)))
+  (is (equal (mutility::repeat-by-! '((* 2 1)!(* 2 2)))
+             '((* 2 1) (* 2 1) (* 2 1) (* 2 1))))
+  (is (equal (mutility::repeat-by-! '(1 (pn 1)))
+             '(1 (pn 1))))
+  (is (equal (mutility::repeat-by-! '(1 (pn 1) 3!2 2!3))
+             '(1 (pn 1) 3 3 2 2 2))))
+
 (test fn
   "Test the `fn' macro"
   ;; FIX

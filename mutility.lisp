@@ -4,6 +4,155 @@
 
 ;;; macros
 
+(defun split-by-! (string)
+  "Split STRING up by exclamation points."
+  (remove-if #'emptyp (split-sequence string #\!)))
+
+(defun repeat-by (object repeats &optional add-list)
+  "Returns a list of object repeated REPEATS times. If REPEATS is a list of multiple numbers, recursively repeat the generated lists.
+
+When ADD-LIST is true, prepend 'list to each generated list.
+
+Example:
+
+;; (repeat-by 3 3)
+;; => (3 3 3)
+;;
+;; (repeat-by 3 '(3 2))
+;; => ((3 3 3) (3 3 3))
+
+See also: `repeat-by-!', `a'"
+  (let* ((repeats (ensure-list repeats))
+         (list (append (when add-list
+                         (list 'list))
+                       (make-list (car repeats) :initial-element object))))
+    (if (cdr repeats)
+        (repeat-by list (cdr repeats) add-list)
+        list)))
+
+(defun prepend-list-to-sublists (list)
+  "Prepend the symbol 'list to LIST and all of its sublists."
+  (if (listp list)
+      (cons 'list (mapcar (lambda (x)
+                            (if (listp x)
+                                (prepend-list-to-sublists x)
+                                x))
+                          list))
+      list))
+
+(defun repeat-by-! (list &optional add-list)
+  "Given LIST, repeat items marked with ! by the number after the !.
+
+When ADD-LIST is true, prepend 'list to each generated list. This is useful if you're using this function in a macro, such as the `a' macro, which this function does all the heavy lifting for.
+
+Examples:
+
+;; (repeat-by-! '(1!2))
+;; => (1 1)
+;;
+;; (repeat-by-! '(1!2!3))
+;; => ((1 1) (1 1) (1 1))
+;;
+;; (repeat-by-! '(1 (* 2 3)!2))
+;; => (1 (* 2 3) (* 2 3))
+
+See also: `repeat-by', `a'"
+  (flet ((get-repeats (item)
+           (etypecase item
+             (symbol
+              (mapcar 'eval (mapcar 'read-from-string (split-by-! (write-to-string item)))))
+             (integer
+              (list item))
+             (list
+              (list (eval item))))))
+    (let ((i 0)
+          (input-length (length list)))
+      (append
+       (when add-list
+         (list 'list))
+       (loop :until (>= i input-length)
+             :for c = (elt list i)
+             :for r = (list)
+             :for nxt = nil ;; nxt means next value should be added to repeats even if it doesn't have !
+             :append (progn
+                       (when (symbolp c)
+                         (when-let* ((sname (write-to-string c))
+                                     (excl-pos (position #\! sname)))
+                           (if (= 0 excl-pos)
+                               (error "Failed to parse arguments for this invocation of `repeat-by-!': (a ~s ~s)" list add-list)
+                               (let ((split (split-by-! sname)))
+                                 (setf c (read-from-string (car split)))
+                                 (setf r (mapcar 'eval (mapcar 'read-from-string (cdr split))))
+                                 (when (char= #\! (elt sname (1- (length sname))))
+                                   (setf nxt t))))))
+                       (incf i)
+                       (let ((continue t))
+                         (loop :while (and continue (< i input-length))
+                               :for chk = (elt list i)
+                               :do (progn
+                                     (if nxt
+                                         (progn
+                                           (setf r (append r (get-repeats chk))
+                                                 nxt nil)
+                                           (when (and (symbolp chk)
+                                                      (let ((sname (write-to-string chk)))
+                                                        (char= #\! (elt sname (1- (length sname))))))
+                                             (setf nxt t)))
+                                         (if (symbolp chk)
+                                             (let* ((sname (write-to-string chk))
+                                                    (excl-pos (position #\! sname)))
+                                               (if (and excl-pos (= 0 excl-pos))
+                                                   (progn
+                                                     (setf r (append r (mapcar 'eval (mapcar 'read-from-string (split-by-! sname)))))
+                                                     (when (char= #\! (elt sname (1- (length sname))))
+                                                       (setf nxt t)))
+                                                   (setf continue nil)))
+                                             (setf continue nil)))
+                                     (when continue
+                                       (incf i)))))
+                       (let ((res (repeat-by c (or r 1) add-list)))
+                         (if add-list
+                             (cdr res)
+                             res))))))))
+
+(defun expand-ranges (list)
+  "Expand ranges denoted by a..b in list.
+
+Example:
+
+;; (expand-ranges '(0..5 -2..2))
+;; => (0 1 2 3 4 5 -2 -1 0 1 2)"
+  (loop :for i :in list
+        :append (typecase i
+                  (symbol
+                   (let* ((sname (symbol-name i))
+                          (pos (search ".." sname)))
+                     (if pos
+                         (let ((first (parse-integer (subseq sname 0 pos)))
+                               (last (parse-integer (subseq sname (+ 2 pos)))))
+                           (loop :for n :from first :to last :collect n))
+                         (list i))))
+                  (t (list i)))))
+
+(defmacro a (&rest args)
+  "Quickly and conveniently generate lists. Use ! to denote repetition of the previous element, or .. to denote a range.
+
+Inspired by similar functionality in SuperCollider.
+
+Examples:
+
+;; (a 3!3)
+;; => (3 3 3)
+;;
+;; (a -5 (random 3)!5 9 10)
+;; => (-5 0 2 2 1 2 9 10)
+;;
+;; (a 2..9)
+;; => (2 3 4 5 6 7 8 9)
+
+See also: `repeat-by-!', `expand-ranges'"
+  (expand-ranges (repeat-by-! args t)))
+
 (defmacro fn (&body body)
   "Syntax sugar for making `lambda's. BODY is the function body. Underscores in the body can be used to represent the argument to the function."
   (let ((args (list)))

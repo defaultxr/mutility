@@ -4,6 +4,7 @@
   (:use #:cl
         #:alexandria)
   (:export
+   :a
    :fn
    :dolist*
    ;; :accumulating ;; conflicts with iterate
