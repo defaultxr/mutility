@@ -535,10 +535,11 @@ See also: `random-range', `exponential-random-range'"
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
 
-(defun browse-url (url)
-  "Open URL in a browser."
+(defun open-url (url)
+  "Open a URL via the OS's default application."
   (uiop:launch-program (list #+linux "xdg-open"
                              #+darwin "open"
+                             #+windows "start"
                              url)))
 
 ;; conditionally load swank-extensions if swank is available

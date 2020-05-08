@@ -45,4 +45,4 @@
    :restore-hash-table
 
    :current-seconds
-   :browse-url))
+   :open-url))
