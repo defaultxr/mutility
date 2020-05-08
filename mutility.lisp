@@ -212,7 +212,7 @@ See also: `uiop:while-collecting'."
        (warn "Function ~s is obsolete; please use ~s instead." ',old-function-name ',new-function-name)
        whole)))
 
-;;; sugar stuff
+;;; syntax sugar
 
 (defgeneric keys (object)
   (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))
@@ -230,7 +230,7 @@ See also: `uiop:while-collecting'."
 (defmethod keys ((object hash-table))
   (hash-table-keys object))
 
-;;; string stuff
+;;; strings
 
 (defun concat (&rest objects)
   "Concatenates all OBJECTS together into a string (other than nils, which are skipped).
@@ -276,15 +276,15 @@ See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
 See also: `cl-ppcre:regex-replace-all'"
   (with-output-to-string (out)
     (loop :with part-length := (length part)
-       :for old-pos := 0 :then (+ pos part-length)
-       :for pos := (search part string
-                           :start2 old-pos
-                           :test test)
-       :do (write-string string out
-                         :start old-pos
-                         :end (or pos (length string)))
-       :when pos :do (write-string replacement out)
-       :while pos)))
+          :for old-pos := 0 :then (+ pos part-length)
+          :for pos := (search part string
+                              :start2 old-pos
+                              :test test)
+          :do (write-string string out
+                            :start old-pos
+                            :end (or pos (length string)))
+          :when pos :do (write-string replacement out)
+            :while pos)))
 
 (defun string-boolean (string &optional default)
   "Return T or NIL depending on if STRING is a true or false value, or DEFAULT if it is not known."
@@ -294,7 +294,7 @@ See also: `cl-ppcre:regex-replace-all'"
     ((member string (list "nil" "0" "f" "false" "n" "no" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
-;;; package stuff
+;;; packages
 
 (defun my-intern (string &optional package)
   "Converts STRING into a symbol, uppercasing it in the process.
@@ -319,7 +319,7 @@ See also: `my-intern'"
                            (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type))
         (push sym symbols)))))
 
-;;; math stuff
+;;; math
 
 ;; use `alexandria:clamp' instead.
 ;; (defun clip (num &optional (bottom -1) (top 1))
@@ -371,14 +371,14 @@ See also: `round-by', `cl:round'"
              (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
         (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff)))))
 
-;;; list/sequence stuff
+;;; lists and sequences
 
 (defun length-upto (list &optional (max 10))
   "Get the length of LIST, not counting above MAX."
   (let ((res 0))
     (loop :for i :in list
-       :repeat max
-       :do (incf res))
+          :repeat max
+          :do (incf res))
     res))
 
 (defun nth-wrap (n list)
@@ -391,12 +391,12 @@ See also: `elt-wrap'"
            (type cons list))
   (let ((next list))
     (loop :for i :from 0 :upto n
-       :if (= i n)
-       :return (car next)
-       :else
-       :do (if (cdr next)
-               (setf next (cdr next))
-               (setf next list)))))
+          :if (= i n)
+            :return (car next)
+          :else
+            :do (if (cdr next)
+                    (setf next (cdr next))
+                    (setf next list)))))
 
 (defun elt-wrap (sequence n)
   "Get the Nth item in SEQUENCE, wrapping the index if necessary.
@@ -453,7 +453,7 @@ See also: `nth-wrap'"
     (cons (subseq sequence 0 pos) (split-sequence (subseq sequence (1+ pos)) delimiter))
     (cons sequence nil)))
 
-;;; random stuff
+;;; randomness
 
 (defun random-coin (&optional (probability 0.5))
   "Randomly return true with a probability of PROBABILITY/1."
@@ -507,7 +507,7 @@ See also: `random-range', `exponential-random-range'"
           standard-deviation)
        mean)))
 
-;;; hash stuff
+;;; hash tables
 
 ;; save a hash table (from https://www.youtube.com/watch?v=njfyWgqZmkI )
 (defun save-hash-table (ht filename &key overwrite)
@@ -529,7 +529,7 @@ See also: `random-range', `exponential-random-range'"
           (setf (gethash key ht) value))))
     ht))
 
-;;; unsorted stuff
+;;; unsorted
 
 (defun current-seconds ()
   "Get the number of seconds that Lisp has been running for."

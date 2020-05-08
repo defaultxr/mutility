@@ -2,6 +2,23 @@
 
 A collection of various utility functions and macros I use in my libraries.
 
-This is mostly for deduplication of code so I don't have to keep several copies of these functions across different projects.
+This is mostly for deduplication of code so I don't have to keep several copies of these functions across different projects. I don't really recommend depending on this library in your own since I may rename, rearrange, or remove things without warning.
 
 All exported symbols are documented via their docstrings, which are of course accessible via Lisp's standard ~documentation~ and ~describe~ functions.
+
+To run the mutility tests:
+
+#+BEGIN_SRC lisp
+(asdf:test-system :mutility)
+#+END_SRC
+
+* Future
+Ideas, and things that need to be done.
+
+- Come up with a better name for the ~a~ macro.
+- Remove/rename ~accumulate~ to prevent clashes with generic-cl's ~accumulate~ function.
+- Write functions to parse docstrings (i.e. to extract example code from them so they can be treated as tests).
+- Write more tests for the functions.
+- Test docstring examples with the docstring-parsing function once it's written.
+- Write a test to check for symbol clashes against various other libraries: ~alexandria~, ~serapeum~, ~cl-patterns~, ~thundersnow~, etc.
+- Maybe split out stuff into subsystems? i.e. ~sugar~, ~files~, etc.
