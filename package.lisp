@@ -12,6 +12,8 @@
 
    :keys
 
+   :friendly-symbol
+
    :concat
    :output
    :split-string

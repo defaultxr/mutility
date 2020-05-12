@@ -230,6 +230,23 @@ See also: `uiop:while-collecting'."
 (defmethod keys ((object hash-table))
   (hash-table-keys object))
 
+;;; symbols
+
+(defun friendly-symbol (input &optional (package :keyword))
+  "Return INPUT as a symbol, with all non-letter, non-number, and non-hypen characters removed."
+  (intern
+   (string-upcase
+    (remove-if-not
+     (lambda (letter)
+       (or (digit-char-p letter)
+           (alpha-char-p letter)
+           (char= #\- letter)))
+     (substitute #\- #\_
+                 (substitute #\- #\space (etypecase input
+                                           (string input)
+                                           (symbol (symbol-name input)))))))
+   package))
+
 ;;; strings
 
 (defun concat (&rest objects)
