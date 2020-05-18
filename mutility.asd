@@ -7,6 +7,7 @@
   :version "0.5"
   :depends-on (#:alexandria
                #:local-time)
+  :pathname "src/"
   :serial t
   :components ((:file "package")
                (:file "mutility")
@@ -21,6 +22,8 @@
   :license "MIT"
   :depends-on (#:mutility
                #:fiveam)
+  :pathname "t/"
+  :serial t
   :components ((:file "test"))
   :perform (test-op (op c)
                     (uiop:symbol-call :fiveam :run!

@@ -602,4 +602,4 @@ Example:
 ;; conditionally load swank-extensions if swank is available
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (featurep :swank)
-    (load (asdf:system-relative-pathname :mutility "swank-extensions.lisp"))))
+    (load (asdf:system-relative-pathname :mutility "src/extensions/swank-extensions.lisp"))))
