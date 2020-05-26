@@ -13,6 +13,12 @@
 
 (in-suite mutility-tests)
 
+(test system-attributes
+  "Check that the system has all the standard attributes"
+  (let ((missing (system-missing-attributes :mutility)))
+    (is-false missing
+              "mutility's asdf system definition is missing attributes: ~s" missing)))
+
 (test undocumented-symbols
   "Check for any undocumented exported symbols"
   (let ((undocumented (undocumented-symbols :mutility)))
@@ -21,7 +27,7 @@
               undocumented)))
 
 (test a
-  "Test the `a' macro"
+  "Test the `a' macro and its helper functions"
   (is (equal (mutility::repeat-by-! '(1))
              '(1)))
   (is (equal (mutility::repeat-by-! '(1!3))
@@ -39,7 +45,16 @@
   (is (equal (mutility::repeat-by-! '(1 (pn 1)))
              '(1 (pn 1))))
   (is (equal (mutility::repeat-by-! '(1 (pn 1) 3!2 2!3))
-             '(1 (pn 1) 3 3 2 2 2))))
+             '(1 (pn 1) 3 3 2 2 2)))
+  (is (equal (a 0..5)
+             (list 0 1 2 3 4 5))
+      "a gives incorrect results for generated ranges")
+  (is (equal (a 1 2!3 1)
+             (list 1 2 2 2 1))
+      "a gives incorrect results for repeated atoms")
+  (is (equal (a 1 (list 2 3 4)!2 9)
+             (list 1 (list 2 3 4) (list 2 3 4) 9))
+      "a gives incorrect results for repeated lists"))
 
 (test fn
   "Test the `fn' macro"
