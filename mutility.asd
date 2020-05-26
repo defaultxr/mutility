@@ -1,10 +1,15 @@
 ;;;; mutility.asd
 
 (asdf:defsystem #:mutility
-  :description "modula's utilities."
-  :author "modula t. <defaultxr at gmail>"
+  :name "mutility"
+  :description "modula's utilities"
+  :author "modula t."
   :license "MIT"
   :version "0.5"
+  :homepage "https://github.com/defaultxr/mutility"
+  :bug-tracker "https://github.com/defaultxr/mutility/issues"
+  :mailto "defaultxr at gmail dot com"
+  :source-control (:git "git@github.com:defaultxr/mutility.git")
   :depends-on (#:alexandria
                #:local-time)
   :pathname "src/"
