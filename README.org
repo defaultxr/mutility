@@ -6,6 +6,12 @@ This is mostly for deduplication of code so I don't have to keep several copies 
 
 All exported symbols are documented via their docstrings, which are of course accessible via Lisp's standard ~documentation~ and ~describe~ functions.
 
+* Sub-systems
+
+- ~mutility/test-helpers~ includes a few functions that are mostly useful for test suites.
+
+* Tests
+
 To run the mutility tests:
 
 #+BEGIN_SRC lisp

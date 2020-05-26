@@ -15,12 +15,23 @@
                )
   :in-order-to ((test-op (test-op "mutility/tests"))))
 
+(asdf:defsystem #:mutility/test-helpers
+  :description "modula's utilities with \"test helper\" functions"
+  :author "modula t."
+  :license "MIT"
+  :version "0.5"
+  :depends-on (#:mutility)
+  :pathname "src/"
+  :serial t
+  :components ((:file "test-helpers")))
+
 (asdf:defsystem #:mutility/tests
-  :name "mutility/tests"
-  :author "modula t. <defaultxr@gmail.com>"
-  :description "FiveAM-based test suite for mutility."
+  :name "mutility tests"
+  :author "modula t."
+  :description "FiveAM-based test suite for mutility"
   :license "MIT"
   :depends-on (#:mutility
+               #:mutility/test-helpers
                #:fiveam)
   :pathname "t/"
   :serial t

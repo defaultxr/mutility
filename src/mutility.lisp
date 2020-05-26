@@ -327,15 +327,6 @@ See also: `un-intern'"
 See also: `my-intern'"
   (string-downcase (write-to-string symbol)))
 
-(defun undocumented-symbols (package)
-  "Get a list of all the undocumented external symbols in PACKAGE."
-  (let (symbols)
-    (do-external-symbols (sym package symbols)
-      (unless (position-if (lambda (type)
-                             (documentation sym type))
-                           (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type))
-        (push sym symbols)))))
-
 ;;; math
 
 ;; use `alexandria:clamp' instead.
