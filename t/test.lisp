@@ -223,6 +223,33 @@ the other thing" :char-bag (list #\space #\newline)))
              (split-sequence (list 1 2 :- 2 :- 3) :-))
       "split-sequence returns incorrect results"))
 
+(test insert-if
+  "Test the `insert-if' function"
+  (is (equal (list -2 -1 0 1 2)
+             (insert-if #'plusp (list -2 -1 1 2) 0))
+      "insert-if doesn't insert to the correct location")
+  (is (equal (list 0)
+             (insert-if #'plusp nil 0))
+      "insert-if doesn't work if the input list is empty"))
+
+(test insert-sorted
+  "Test the `insert-sorted' function"
+  (is (equal (list 1 2 3 4)
+             (insert-sorted (list 1 3 4) 2))
+      "insert-sorted doesn't insert in the middle of the list")
+  (is (equal (list 1 2 3 4)
+             (insert-sorted (list 1 2 3) 4))
+      "insert-sorted doesn't insert to the end of the list")
+  (is (equal (list 1 2 3 4)
+             (insert-sorted (list 2 3 4) 1))
+      "insert-sorted doesn't insert to the beginning of the list")
+  (is (equal (list 1 2 2.5 3 4)
+             (insert-sorted (list 1 2 3 4) 2.5))
+      "insert-sorted doesn't insert floats correctly")
+  (is (equal (list 0)
+             (insert-sorted nil 0))
+      "insert-sorted doesn't work if the input list is empty"))
+
 (test random-coin
   "Test the `random-coin' function"
   (is (every (lambda (x) (eql t x))

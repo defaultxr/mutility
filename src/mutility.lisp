@@ -461,6 +461,39 @@ See also: `nth-wrap'"
     (cons (subseq sequence 0 pos) (split-sequence (subseq sequence (1+ pos)) delimiter))
     (cons sequence nil)))
 
+(defun insert-if (function list item)
+  "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
+
+Example:
+
+;; (insert-if #'plusp (list -2 -1 1 2) 0)
+;; ;; => (-2 -1 0 1 2)
+
+See also: `insert-sorted'"
+  (if list
+      (progn
+        (loop :for i :on list
+              :if (funcall function (car i))
+                :do (setf (cdr i) (cons (car i) (cdr i))
+                          (car i) item)
+                    (loop-finish)
+              :when (null (cdr i))
+                :do (setf (cdr i) (cons item nil))
+                    (loop-finish))
+        list)
+      (list item)))
+
+(defun insert-sorted (list number)
+  "Destructively insert NUMBER into LIST in order.
+
+Example:
+
+;; (insert-sorted (list 1 2 3 4) 2.5)
+;; ;; => (1 2 2.5 3 4)
+
+See also: `insert-if'"
+  (insert-if (fn (>= _ number)) list number))
+
 ;;; randomness
 
 (defun random-coin (&optional (probability 0.5))

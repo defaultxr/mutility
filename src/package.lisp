@@ -36,6 +36,8 @@
    :subseq*
    ;; :repeat ;; conflicts with iterate
    :split-sequence
+   :insert-if
+   :insert-sorted
 
    :random-coin
    :random-range
