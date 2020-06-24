@@ -171,7 +171,9 @@ See also: `repeat-by-!', `expand-ranges'"
         `(lambda (,@args) ,@body)))))
 
 (defmacro dolist* ((item index list &optional result) &body body)
-  "Like the standard `dolist' but includes INDEX as another variable representing the current index into LIST."
+  "Like the standard `dolist' but includes INDEX as another variable representing the current index into LIST.
+
+See also: `mapcar-with-index'"
   `(let ((,index 0))
      (dolist (,item ,list ,result)
        ,@body
@@ -259,14 +261,14 @@ See also: `uiop:while-collecting'."
   "Concatenates all OBJECTS together into a string (other than nils, which are skipped).
 
 See also: `uiop:strcat'"
-  (format nil "~{~A~}" (remove-if #'null objects)))
+  (format nil "~{~A~}" (remove nil objects)))
 
 (defun output (&rest items)
   "Concatenates and prints ITEMS, returning the last one.
 
 See also: `concat'"
   (fresh-line)
-  (format t "~{~A~}~%" (remove-if #'null items))
+  (format t "~{~A~}~%" (remove nil items))
   (finish-output)
   (car (last items)))
 
