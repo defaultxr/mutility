@@ -97,6 +97,12 @@
           (mapcar (lambda (x) (member x k)) (list :foo :bar :baz :qux))))
       "keys doesn't work correctly for hashes"))
 
+(test friendly-symbol
+  "Test the `friendly-symbol' function"
+  (is (eql :foo
+           (friendly-symbol "foo"))
+      "friendly-symbol doesn't convert strings to keywords correctly"))
+
 (test concat
   ;; FIX
   )
