@@ -25,6 +25,7 @@
    :un-intern
 
    :wrap
+   :floor-by
    :round-by
    :round-by-direction
 

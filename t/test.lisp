@@ -164,6 +164,13 @@ the other thing" :char-bag (list #\space #\newline)))
          (wrap 4 -1 4))
       "wrap doesn't wrap numbers within the given range correctly (when the bottom is non-zero)"))
 
+(test floor-by
+  "Test the `floor-by' function"
+  (is (= 1.5
+         (floor-by 1.6 0.5)))
+  (is (= 0
+         (floor-by 1.6 2))))
+
 (test round-by
   "Test the `round-by' function"
   (is (= 3.5

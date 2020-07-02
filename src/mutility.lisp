@@ -375,6 +375,12 @@ See also: `cl:mod', `alexandria:clamp', `within'"
            (type number top))
   (+ (mod (- number bottom) (- top bottom)) bottom))
 
+(defun floor-by (number &optional (by 1))
+  "Round NUMBER down to the previous multiple of BY.
+
+See also: `cl:floor', `round-by'"
+  (/ (floor number by) (/ 1 by)))
+
 (defun round-by (number &optional (by 1))
   "Round NUMBER to the nearest multiple of BY.
 
@@ -384,7 +390,7 @@ Examples:
 ;; (round-by 1.1 0.5) ;; => 1.0
 ;; (round-by 6 10) ;; => 10
 
-See also: `cl:round', `round-by-direction'"
+See also: `cl:round', `round-by-direction' `floor-by'"
   (* (round (/ number by)) by))
 
 (defun round-by-direction (number &optional (by 1))
