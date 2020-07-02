@@ -137,6 +137,10 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test friendly-ratio-string
+  ;; FIX
+  )
+
 (test my-intern
   ;; FIX
   )

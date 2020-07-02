@@ -319,6 +319,21 @@ See also: `cl-ppcre:regex-replace-all'"
     ((member string (list "nil" "0" "f" "false" "n" "no" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
+(defun friendly-ratio-string (ratio &optional (separator " ")) ;; FIX: negative numbers are weird
+  "Generate a more human-friendly ratio string."
+  (etypecase ratio
+    (ratio
+     (if (> (abs ratio) 1)
+         (let* ((flr (floor ratio))
+                (rem (- ratio flr)))
+           (concat flr (unless (zerop rem)
+                         (concat separator rem))))
+         (let ((denom (denominator ratio)))
+           (concat (numerator ratio) (unless (= 1 denom)
+                                       (concat "/" denom))))))
+    (number
+     (write-to-string ratio))))
+
 ;;; packages
 
 (defun my-intern (string &optional package)

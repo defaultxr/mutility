@@ -19,6 +19,7 @@
    :split-string
    :replace-all
    :string-boolean
+   :friendly-ratio-string
 
    :my-intern
    :un-intern
