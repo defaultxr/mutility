@@ -133,9 +133,10 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
-(test string-boolean
-  ;; FIX
-  )
+(test parse-boolean
+  "Test the `parse-boolean' function"
+  (is-false (position t (mapcar #'parse-boolean (list "n" "N" "off" "0" "d" "f"))))
+  (is-false (position nil (mapcar #'parse-boolean (list "y" "Y" "on" "1" "e" "t")))))
 
 (test friendly-ratio-string
   "Test the `friendly-ratio-string' function"

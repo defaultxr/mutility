@@ -18,7 +18,7 @@
    :output
    :split-string
    :replace-all
-   :string-boolean
+   :parse-boolean
    :friendly-ratio-string
    :friendly-duration-string
 
