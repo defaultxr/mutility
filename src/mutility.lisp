@@ -170,6 +170,16 @@ See also: `repeat-by-!', `expand-ranges'"
       (let ((body (parse body)))
         `(lambda (,@args) ,@body)))))
 
+(defmacro multiple-value-elt (value-form index)
+  "Evaluates VALUE-FORM and returns the value at INDEX.
+
+Example:
+
+;; (multiple-value-elt (truncate 9/4) 1) ;=> 1/4
+
+See also: `cl:multiple-value-list', `cl:multiple-value-bind'"
+  `(elt (multiple-value-list ,value-form) ,index))
+
 (defmacro dolist* ((item index list &optional result) &body body)
   "Like the standard `dolist' but includes INDEX as another variable representing the current index into LIST.
 

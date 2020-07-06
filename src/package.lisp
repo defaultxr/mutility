@@ -6,6 +6,8 @@
   (:export
    :a
    :fn
+   :multiple-value-elt
+
    :dolist*
    ;; :accumulating ;; conflicts with iterate
    :define-obsolete-function-alias

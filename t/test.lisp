@@ -61,6 +61,10 @@
   ;; FIX
   )
 
+(test multiple-value-elt
+  "Test the `multiple-value-elt' macro"
+  (is (equal 1/4 (multiple-value-elt (truncate 9/4) 1))))
+
 (test dolist*
   ;; FIX
   )
