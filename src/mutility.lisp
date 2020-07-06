@@ -245,7 +245,13 @@ See also: `uiop:while-collecting'."
 ;;; symbols
 
 (defun friendly-symbol (input &optional (package :keyword))
-  "Return INPUT as a symbol, with all non-letter, non-number, and non-hypen characters removed."
+  "Return INPUT as a symbol, with all non-letter, non-number, and non-hyphen characters removed.
+
+Example:
+
+;; (friendly-symbol \"foo's bar, baz, and qux\") ;=> :FOOS-BAR-BAZ-AND-QUX
+
+See also: `parse-boolean', `friendly-ratio-string', `friendly-duration-string'"
   (intern
    (let ((str (string-upcase
                (remove-if-not

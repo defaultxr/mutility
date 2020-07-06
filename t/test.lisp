@@ -105,7 +105,9 @@
   "Test the `friendly-symbol' function"
   (is (eql :foo
            (friendly-symbol "foo"))
-      "friendly-symbol doesn't convert strings to keywords correctly"))
+      "friendly-symbol doesn't convert strings to keywords correctly")
+  (is (eql :foos-bar-baz-and-qux
+           (friendly-symbol "foo's bar, baz, and qux"))))
 
 (test concat
   ;; FIX
