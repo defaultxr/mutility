@@ -334,6 +334,33 @@ See also: `cl-ppcre:regex-replace-all'"
     (number
      (write-to-string ratio))))
 
+(defun friendly-duration-string (seconds)
+  "Format a number of seconds as a more human-readable string.
+
+Example:
+
+;; (friendly-duration-string 300) ;=> \"5:00\"
+;; (friendly-duration-string 3600) ;=> \"1:00:00\"
+
+See also: `friendly-ratio-string'"
+  (let* ((min (truncate (/ seconds 60)))
+         (hour (truncate (/ min 60)))
+         (hourp (plusp hour))
+         (min (mod min 60))
+         (mins (write-to-string min))
+         (sec (mod seconds 60))
+         (secs (write-to-string sec)))
+    (concat (when hourp
+              (concat hour ":"))
+            (if (and hourp (length= 1 mins))
+                (concat "0" mins)
+                mins)
+            ":"
+            (if (and (or hourp (plusp min))
+                     (length= 1 secs))
+                (concat "0" secs)
+                secs))))
+
 ;;; packages
 
 (defun my-intern (string &optional package)

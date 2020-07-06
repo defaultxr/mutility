@@ -20,6 +20,7 @@
    :replace-all
    :string-boolean
    :friendly-ratio-string
+   :friendly-duration-string
 
    :my-intern
    :un-intern

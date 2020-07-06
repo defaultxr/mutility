@@ -141,6 +141,11 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test friendly-duration-string
+  "Test the `friendly-duration-string' function"
+  (is (string-equal "5:00" (friendly-duration-string 300)))
+  (is (string-equal "1:00:00" (friendly-duration-string 3600))))
+
 (test my-intern
   ;; FIX
   )
