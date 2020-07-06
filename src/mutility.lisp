@@ -320,7 +320,14 @@ See also: `cl-ppcre:regex-replace-all'"
     (t default)))
 
 (defun friendly-ratio-string (ratio &optional (separator " ")) ;; FIX: negative numbers are weird
-  "Generate a more human-friendly ratio string."
+  "Format a ratio as a more human-readable string.
+
+Example:
+
+;; (friendly-ratio-string 5/4) ;=> \"1 1/4\"
+;; (friendly-ratio-string 9/7) ;=> \"1 2/7\"
+
+See also: `friendly-duration-string'"
   (etypecase ratio
     (ratio
      (if (> (abs ratio) 1)
