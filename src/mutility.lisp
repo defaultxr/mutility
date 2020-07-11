@@ -209,7 +209,7 @@ See also: `uiop:while-collecting'."
         (end-sym (gensym "END")))
     `(let* ((,res-sym (list nil))
             (,end-sym ,res-sym))
-       (flet ((accumulate (value)
+       (flet ((,(ensure-symbol 'accumulate) (value)
                 (setf (cdr ,end-sym) (cons value nil)
                       ,end-sym (cdr ,end-sym))))
          ,@body
