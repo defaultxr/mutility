@@ -36,6 +36,7 @@
    :nth-wrap
    :elt-wrap
    :find-any
+   :most
    :mapcar-with-index
    :flatten-1
    :subseq*

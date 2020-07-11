@@ -501,6 +501,24 @@ See also: `nth-wrap'"
     (when (position item list :test test)
       (return-from find-any item))))
 
+(defun most (function list &key (key #'identity)) ;; from https://stackoverflow.com/questions/30273802/how-would-i-get-the-min-max-of-a-list-using-a-key
+  "Get the most FUNCTION item in LIST by comparing the KEY of each item with FUNCTION. Unlike `reduce', this function returns the whole item from LIST, even when KEY is provided.
+
+Example:
+
+;; get the item in the list with the smallest car:
+;; (most '< '((2 :bar) (3 :baz) (1 :foo)) :key 'car) ;=> (1 :FOO)
+
+See also: `cl:reduce', `cl:find-if'"
+  (when list
+    (let* ((m0 (first list))
+           (m1 (funcall key m0)))
+      (mapc (lambda (e0 &aux (e1 (funcall key e0)))
+              (when (funcall function e1 m1)
+                (psetf m0 e0 m1 e1)))
+            list)
+      m0)))
+
 (defun mapcar-with-index (function list &rest more-lists)
   "Like `mapcar', but provides the index of the current element as an additional final element to FUNCTION."
   (let ((index -1))

@@ -230,6 +230,12 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test most
+  "Test the `most' function"
+  (is (equal (list 1 2 3)
+             (most #'> (list (list 1) (list 1 2 3) (list 1 2)) :key #'length))
+      "most returns incorrect results"))
+
 (test mapcar-with-index
   ;; FIX
   )
