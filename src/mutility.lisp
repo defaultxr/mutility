@@ -558,6 +558,12 @@ See also: `cl:reduce', `cl:find-if'"
     (cons (subseq sequence 0 pos) (split-sequence (subseq sequence (1+ pos)) delimiter))
     (cons sequence nil)))
 
+(defun left-trim (bag list &key (test #'eql))
+  "Trim anything from BAG from the start of LIST.
+
+See also: `cl:string-left-trim'"
+  (member-if-not (lambda (x) (position x (ensure-list bag) :test test)) list))
+
 (defun insert-if (function list item)
   "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
 

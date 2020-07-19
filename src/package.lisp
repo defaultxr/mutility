@@ -42,6 +42,7 @@
    :subseq*
    ;; :repeat ;; conflicts with iterate
    :split-sequence
+   :left-trim
    :insert-if
    :insert-sorted
 

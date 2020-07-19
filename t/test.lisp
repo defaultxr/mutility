@@ -260,6 +260,12 @@ the other thing" :char-bag (list #\space #\newline)))
              (split-sequence (list 1 2 :- 2 :- 3) :-))
       "split-sequence returns incorrect results"))
 
+(test left-trim
+  "Test the `left-trim' function"
+  (is (equal (list 3 4 5)
+             (left-trim (list 0 1 2) (list 2 1 0 3 4 5)))
+      "left-trim returns incorrect results"))
+
 (test insert-if
   "Test the `insert-if' function"
   (is (equal (list -2 -1 0 1 2)
