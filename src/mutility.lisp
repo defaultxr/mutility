@@ -663,25 +663,36 @@ See also: `random-range', `exponential-random-range'"
 
 ;;; hash tables
 
-;; save a hash table (from https://www.youtube.com/watch?v=njfyWgqZmkI )
-(defun save-hash-table (ht filename &key overwrite)
-  "Save a hash table to a file. See `restore-hash-table' to load the saved table."
-  (let (list)
-    (flet ((save-slot (key value)
-             (push (cons key value) list)))
-      (maphash #'save-slot ht))
-    (with-open-file (f filename :direction :output :if-exists (if overwrite overwrite :error))
-      (prin1 list f))))
+(defun save-hash-table (hash filename &key (if-exists :error))
+  "Save a hash table to a file. See `restore-hash-table' to load the saved table.
+
+Example:
+
+;; (save-hash-table *my-hash* \"/home/user/blah.hash\" :if-exists :rename)
+
+See also: `restore-hash-table'"
+  (with-open-file (stream filename :direction :output :if-exists if-exists)
+    (princ "(" stream)
+    (maphash (lambda (key value)
+               (print (cons key value) stream))
+             hash)
+    (fresh-line stream)
+    (princ ")" stream)))
 
 (defun restore-hash-table (filename &rest make-hash-table-args)
-  "Restore a hash table from a file saved with the `save-hash-table' function."
-  (let ((ht (apply #'make-hash-table make-hash-table-args)))
-    (with-open-file (f filename)
-      (dolist (cell (read f))
-        (let ((key (car cell))
-              (value (cdr cell)))
-          (setf (gethash key ht) value))))
-    ht))
+  "Restore a hash table from a file saved with the `save-hash-table' function.
+
+Example:
+
+;; (restore-hash-table \"/home/user/blah.hash\")
+;; ;=> #<HASH-TABLE ...>
+
+See also: `save-hash-table'"
+  (let ((hash (apply #'make-hash-table make-hash-table-args)))
+    (with-open-file (stream filename)
+      (dolist (cell (read stream))
+        (setf (gethash (car cell) hash) (cdr cell))))
+    hash))
 
 ;;; unsorted
 
