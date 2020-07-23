@@ -2,7 +2,7 @@
 
 (in-package #:mutility)
 
-;;; macros
+;;; macros & sugar
 
 (defun split-by-! (string)
   "Split STRING up by exclamation points."
@@ -224,7 +224,6 @@ See also: `uiop:while-collecting'."
        (warn "Function ~s is obsolete; please use ~s instead." ',old-function-name ',new-function-name)
        whole)))
 
-;;; syntax sugar
 
 (defgeneric keys (object)
   (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))
@@ -402,14 +401,6 @@ See also: `my-intern'"
 
 ;;; math
 
-;; use `alexandria:clamp' instead.
-;; (defun clip (num &optional (bottom -1) (top 1))
-;;   "Clips numbers within a range."
-;;   (declare (type number num)
-;;            (type number bottom)
-;;            (type number top))
-;;   (min top (max bottom num)))
-
 (defun wrap (number &optional (bottom 0) (top 1))
   "Wraps a number between BOTTOM and TOP, similar to `cl:mod'.
 
@@ -467,7 +458,13 @@ See also: `round-by', `cl:round'"
 ;;; lists and sequences
 
 (defun length-upto (list &optional (max 10))
-  "Get the length of LIST, not counting above MAX."
+  "Get the length of LIST, not counting above MAX.
+
+Example:
+
+;; (length-upto (make-list 200) 20) ;=> 20
+
+See also: `alexandria:length='"
   (let ((res 0))
     (loop :for i :in list
           :repeat max
@@ -534,7 +531,14 @@ See also: `cl:reduce', `cl:find-if'"
            (append (list list) more-lists))))
 
 (defun flatten-1 (list)
-  "Like `alexandria:flatten', but only flattens one layer."
+  "Like `alexandria:flatten', but only flattens one layer.
+
+Example:
+
+;; (flatten-1 '(1 (2 (3 4) 5) 6))
+;; ;=> (1 2 (3 4) 5 6)
+
+See also: `alexandria:flatten'"
   (apply #'append (mapcar #'ensure-list list)))
 
 (defun subseq* (sequence start &optional end)
