@@ -428,8 +428,14 @@ See also: `cl:mod', `alexandria:clamp', `within'"
 (defun floor-by (number &optional (by 1))
   "Round NUMBER down to the previous multiple of BY.
 
-See also: `cl:floor', `round-by'"
+See also: `cl:floor', `ceiling-by', `round-by'"
   (/ (floor number by) (/ 1 by)))
+
+(defun ceiling-by (number &optional (by 1))
+  "Round NUMBER up to the next multiple of BY.
+
+See also: `cl:ceiling', `floor-by', `round-by'"
+  (/ (ceiling number by) (/ 1 by)))
 
 (defun round-by (number &optional (by 1))
   "Round NUMBER to the nearest multiple of BY.
@@ -440,7 +446,7 @@ Examples:
 ;; (round-by 1.1 0.5) ;; => 1.0
 ;; (round-by 6 10) ;; => 10
 
-See also: `cl:round', `round-by-direction' `floor-by'"
+See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
 
 (defun round-by-direction (number &optional (by 1))

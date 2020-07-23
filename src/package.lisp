@@ -29,6 +29,7 @@
 
    :wrap
    :floor-by
+   :ceiling-by
    :round-by
    :round-by-direction
 

@@ -185,6 +185,13 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (= 0
          (floor-by 1.6 2))))
 
+(test ceiling-by
+  "Test the `ceiling-by' function"
+  (is (= 0.4
+         (ceiling-by 0.22 0.2)))
+  (is (= 50
+         (ceiling-by 27 25))))
+
 (test round-by
   "Test the `round-by' function"
   (is (= 3.5
