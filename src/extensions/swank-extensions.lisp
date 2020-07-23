@@ -1,11 +1,19 @@
 (in-package #:mutility)
 
-(defun swank-ed-in-emacs (file)
-  "Edit a file in Emacs via Swank and return true so SBCL doesn't give an error."
-  (swank:ed-in-emacs file)
+(defun emacs-find-file (file)
+  "Open a file in Emacs."
+  (let ((file (typecase file
+                (string file)
+                (pathname (namestring file)))))
+    (uiop:launch-program `("emacsclient" ,file))))
+
+(defun emacs-ed (file)
+  "Call `emacs-find-file' to open FILE in Emacs, and then return true so SBCL doesn't give an error."
+  (emacs-find-file file)
   t)
 
 ;; swank doesn't seem to put ed-in-emacs in sbcl's ed-functions
 ;; FIX: make this work for other implementations
 #+sbcl
-(unless sb-ext:*ed-functions* (push #'swank-ed-in-emacs sb-ext:*ed-functions*))
+(unless sb-ext:*ed-functions*
+  (push #'emacs-ed sb-ext:*ed-functions*))
