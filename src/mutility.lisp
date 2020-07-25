@@ -440,6 +440,7 @@ Examples:
 See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
 
+;; FIX: remove this.
 (defun round-by-direction (number &optional (by 1))
   "Round NUMBER to the nearest multiple of BY. With positive BY, round up; with negative, round down.
 
@@ -449,6 +450,7 @@ Examples:
 ;; (round-by-direction 0.5 1) ;; => 1
 
 See also: `round-by', `cl:round'"
+  (warn "round-by-direction is deprecated; use either floor-by, ceiling-by, or round-by instead.")
   (if (= 0 (mod number by))
       number
       (let* ((positive (plusp by))
