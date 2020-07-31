@@ -481,14 +481,7 @@ Much like `nth', this function can only be used on lists. Use `elt-wrap' to inde
 See also: `elt-wrap'"
   (declare (type number n)
            (type cons list))
-  (let ((next list))
-    (loop :for i :from 0 :upto n
-          :if (= i n)
-            :return (car next)
-          :else
-            :do (if (cdr next)
-                    (setf next (cdr next))
-                    (setf next list)))))
+  (nth (mod n (list-length list)) list))
 
 (defun elt-wrap (sequence n)
   "Get the Nth item in SEQUENCE, wrapping the index if necessary.
