@@ -65,6 +65,11 @@
   "Test the `multiple-value-elt' macro"
   (is (equal 1/4 (multiple-value-elt (truncate 9/4) 1))))
 
+(test with-access
+  "Test the `with-access' macro"
+  ;; FIX
+  )
+
 (test dolist*
   ;; FIX
   )
