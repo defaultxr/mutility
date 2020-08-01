@@ -8,8 +8,6 @@
    :fn
    :multiple-value-elt
 
-   :dolist*
-   ;; :accumulating ;; conflicts with iterate
    :define-obsolete-function-alias
 
    :keys
@@ -38,7 +36,6 @@
    :elt-wrap
    :find-any
    :most
-   :mapcar-with-index
    :flatten-1
    :subseq*
    ;; :repeat ;; conflicts with iterate

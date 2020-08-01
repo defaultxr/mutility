@@ -10,6 +10,7 @@ All exported symbols are documented via their docstrings, which are of course ac
 
 * Sub-systems
 
+- ~mutility/loopy~ is a small collection of various looping constructs like ~dolist*~, ~while~, ~do-while~, etc.
 - ~mutility/test-helpers~ includes a few functions that are mostly useful for test suites.
 
 * Tests

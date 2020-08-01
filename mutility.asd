@@ -20,6 +20,16 @@
                )
   :in-order-to ((test-op (test-op "mutility/tests"))))
 
+(asdf:defsystem #:mutility/loopy
+  :description "modula's utilities: various looping constructs"
+  :author "modula t."
+  :license "MIT"
+  :version "0.5"
+  :depends-on (#:mutility)
+  :pathname "src/"
+  :serial t
+  :components ((:file "loopy")))
+
 (asdf:defsystem #:mutility/test-helpers
   :description "modula's utilities with \"test helper\" functions"
   :author "modula t."
@@ -36,6 +46,7 @@
   :description "FiveAM-based test suite for mutility"
   :license "MIT"
   :depends-on (#:mutility
+               #:mutility/loopy
                #:mutility/test-helpers
                #:fiveam)
   :pathname "t/"

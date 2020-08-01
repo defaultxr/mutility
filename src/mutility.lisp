@@ -180,40 +180,6 @@ Example:
 See also: `cl:multiple-value-list', `cl:multiple-value-bind'"
   `(elt (multiple-value-list ,value-form) ,index))
 
-(defmacro dolist* ((item index list &optional result) &body body)
-  "Like the standard `dolist' but includes INDEX as another variable representing the current index into LIST.
-
-See also: `mapcar-with-index'"
-  `(let ((,index 0))
-     (dolist (,item ,list ,result)
-       ,@body
-       (incf ,index 1))))
-
-;; (defmacro accumulating.nreverse (&body body)
-;;   "Run BODY with the local function ACCUMULATE appending its values to a list, which is then returned.
-
-;; See also: `accumulating', `uiop:while-collecting'."
-;;   (let ((res-sym (gensym "RES"))
-;;         (end-sym (gensym "END")))
-;;     `(let* ((,res-sym (list)))
-;;        (flet ((accumulate (value)
-;;                 (push value ,res-sym)))
-;;          ,@body
-;;          (nreverse ,res-sym)))))
-
-(defmacro accumulating (&body body)
-  "Run BODY with the local function ACCUMULATE appending its values to a list, which is then returned. This macro avoids having to reverse the list at the end like with the traditional `push'/`nreverse' idiom.
-
-See also: `uiop:while-collecting'."
-  (let ((res-sym (gensym "RES"))
-        (end-sym (gensym "END")))
-    `(let* ((,res-sym (list nil))
-            (,end-sym ,res-sym))
-       (flet ((,(ensure-symbol 'accumulate) (value)
-                (setf (cdr ,end-sym) (cons value nil)
-                      ,end-sym (cdr ,end-sym))))
-         ,@body
-         (cdr ,res-sym)))))
 
 (defmacro define-obsolete-function-alias (old-function-name new-function-name) ;; from https://groups.google.com/forum/#!msg/comp.lang.lisp/uoHap8ZQKs8/simXrFNr_EYJ
   "Define an alias for an obsolete function. The alias will warn about the obsolete function when it is used."
@@ -516,14 +482,6 @@ See also: `cl:reduce', `cl:find-if'"
                 (psetf m0 e0 m1 e1)))
             list)
       m0)))
-
-(defun mapcar-with-index (function list &rest more-lists)
-  "Like `mapcar', but provides the index of the current element as an additional final element to FUNCTION."
-  (let ((index -1))
-    (apply #'mapcar (lambda (&rest args)
-                      (incf index)
-                      (apply function (append args (list index))))
-           (append (list list) more-lists))))
 
 (defun flatten-1 (list)
   "Like `alexandria:flatten', but only flattens one layer.
