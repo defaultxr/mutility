@@ -212,24 +212,6 @@ the other thing" :char-bag (list #\space #\newline)))
          (round-by 3.25 0.25))
       "round-by gives incorrect results when its input is a multiple of the divisor"))
 
-(test round-by-direction
-  "Test the `round-by-direction' function"
-  (is-true (= 2.04
-              (round-by-direction 2.03 0.02))
-           "round-by-direction gives incorrect results for positive numbers")
-  (is-true (= -2.02
-              (round-by-direction -2.03 0.02))
-           "round-by-direction gives incorrect results for negative numbers")
-  (is-true (= 8
-              (round-by-direction 5 4))
-           "round-by-direction gives incorrect results for arguments 5, 4")
-  (is-true (= 3.5
-              (round-by-direction 3.9 -0.5))
-           "round-by-drection gives incorrect results when rounding down")
-  (is-true (= (+ 2 1/10)
-              (round-by-direction (+ 2 19/100) -1/10))
-           "round-by-direction gives incorrect results for rounding down ratios"))
-
 (test length-upto
   ;; FIX
   )
