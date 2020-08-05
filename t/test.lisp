@@ -26,6 +26,12 @@
               "some exported symbols do not have docstrings: ~s"
               undocumented)))
 
+(test docstrings-broken-links
+  "Check for any broken links in docstrings of exported symbols"
+  (let ((symbols (docstrings-with-broken-links :mutility)))
+    (is-false symbols
+              "some exported symbols have docstrings that contain broken links: ~s" symbols)))
+
 (test a
   "Test the `a' macro and its helper functions"
   (is (equal (mutility::repeat-by-! '(1))

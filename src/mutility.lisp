@@ -411,7 +411,7 @@ Examples:
 ;; (wrap 5 0 10) ;; => 5
 ;; (wrap 15 0 10) ;; => 4
 
-See also: `cl:mod', `alexandria:clamp', `within'"
+See also: `cl:mod', `alexandria:clamp'"
   (declare (type number number)
            (type number bottom)
            (type number top))
@@ -604,7 +604,7 @@ See also: `insert-if'"
 (defun random-range (low &optional high)
   "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW).
 
-See also: `exponential-random-range', `gauss'"
+See also: `exponential-random-range', `random-gauss'"
   (if high
       (let ((rval (- high low)))
         (+ low
@@ -630,7 +630,7 @@ See also: `exponential-random-range', `gauss'"
 (defun exponential-random-range (low high) ;; adapted from supercollider/include/plugin_interface/SC_RGen.h
   "Generate a random number between LOW and HIGH, with exponential distribution.
 
-See also: `random-range', `gauss'"
+See also: `random-range', `random-gauss'"
   (* low
      (exp (* (log (/ high
                      low))
