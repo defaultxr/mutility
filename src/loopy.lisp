@@ -9,7 +9,7 @@ Example:
 ;;  (lambda (item index)
 ;;    (format nil \"Item ~s is ~s!\" index item))
 ;;  (list 'this 'that 'the-other-thing))
-;; ;=> ("Item 0 is THIS!" "Item 1 is THAT!" "Item 2 is THE-OTHER-THING!")
+;; ;=> (\"Item 0 is THIS!\" \"Item 1 is THAT!\" \"Item 2 is THE-OTHER-THING!\")
 
 See also: `cl:mapcar', `dolist*'"
   (let ((index -1))
