@@ -181,15 +181,40 @@ See also: `cl:multiple-value-list', `cl:multiple-value-bind'"
   `(elt (multiple-value-list ,value-form) ,index))
 
 (defmacro with-access (slots instance &body body)
-  "Like `with-accessors' but any slots provided as atoms (instead of lists) are assumed to refer to both the variable name and the accessor.
+  "Like `with-accessors' but any slots provided as atoms (instead of lists) are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
 
 Example:
 
-;; (with-access (foo) blah (print foo))
+If FOO is a function and BAR is not:
+
+;; (with-access (foo bar) blah
+;;   (format t \"~s ~s~%\" foo bar))
+
 ...is the same as:
-;; (with-accessors ((foo foo)) blah (print foo))"
-  `(with-accessors (,@(mapcar (fn (if (listp _) _ (list _ _))) slots)) ,instance
-     ,@body))
+
+;; (with-accessors ((foo foo)) blah
+;;   (with-slots (bar) blah
+;;     (format t \"~s ~s~%\" foo bar)))
+
+See also: `cl:with-accessors', `cl:with-slots'"
+  (multiple-value-bind (accessors slots)
+      (uiop:while-collecting (a s)
+        (dolist (slot slots)
+          (cond
+            ((listp slot)
+             (a slot))
+            ((fboundp slot)
+             (a (list slot slot)))
+            (t
+             (s slot)))))
+    (let ((slots-form (if slots
+                          `((with-slots (,@slots) ,instance
+                              ,@body))
+                          body)))
+      (if accessors
+          `(with-accessors (,@accessors) ,instance
+             ,@slots-form)
+          (car slots-form)))))
 
 (defmacro define-obsolete-function-alias (old-function-name new-function-name) ;; from https://groups.google.com/forum/#!msg/comp.lang.lisp/uoHap8ZQKs8/simXrFNr_EYJ
   "Define an alias for an obsolete function. The alias will warn about the obsolete function when it is used."
