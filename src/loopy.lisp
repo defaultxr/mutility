@@ -103,7 +103,19 @@ See also: `accumulating', `uiop:while-collecting'."
          (nreverse ,res-sym)))))
 
 (defmacro accumulating (&body body)
-  "Run BODY with the local function ACCUMULATE appending its values to a list, which is then returned. This macro avoids having to reverse the list at the end like with the traditional `push'/`nreverse' idiom.
+  "Run BODY with a local functions ACCUMULATE, which appends its input to a list, and RESET-ACCUMULATION, which clears the accumulated list. The accumulated list is returned by the accumulating block when it exits.
+
+This macro avoids having to reverse the list at the end like with the traditional `push'/`nreverse' idiom.
+
+Example:
+
+;; (accumulating
+;;   (accumulate 4)
+;;   (reset-accumulation)
+;;   (accumulate 5)
+;;   (dotimes (n 3)
+;;     (accumulate 6)))
+;; ;=> (5 6 6 6)
 
 See also: `uiop:while-collecting'."
   (let ((res-sym (gensym "RES"))
@@ -112,7 +124,10 @@ See also: `uiop:while-collecting'."
             (,end-sym ,res-sym))
        (flet ((,(ensure-symbol 'accumulate) (value)
                 (setf (cdr ,end-sym) (cons value nil)
-                      ,end-sym (cdr ,end-sym))))
+                      ,end-sym (cdr ,end-sym)))
+              (,(ensure-symbol 'reset-accumulation) ()
+                (setf ,res-sym (list nil)
+                      ,end-sym ,res-sym)))
          ,@body
          (cdr ,res-sym)))))
 

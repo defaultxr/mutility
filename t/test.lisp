@@ -83,14 +83,22 @@
 (test accumulating
   "Test the `accumulating' macro"
   (is (equal (list 1 2 3)
-             (mutility::accumulating
-               (mutility::accumulate 1)
-               (mutility::accumulate 2)
-               (mutility::accumulate 3))))
+             (accumulating
+               (accumulate 1)
+               (accumulate 2)
+               (accumulate 3))))
   (is (equal (list 0 2 4 6 8)
-             (mutility::accumulating
+             (accumulating
                (dotimes (n 5)
-                 (mutility::accumulate (* 2 n)))))))
+                 (accumulate (* 2 n))))))
+  (is (equal (list 5 6 6 6)
+             (accumulating
+               (accumulate 4)
+               (reset-accumulation)
+               (accumulate 5)
+               (dotimes (n 3)
+                 (accumulate 6))))
+      "accumulating's reset-accumulation function doesn't reset the accumulated list"))
 
 (test define-obsolete-function-alias
   ;; FIX
