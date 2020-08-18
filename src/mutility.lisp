@@ -181,7 +181,7 @@ See also: `cl:multiple-value-list', `cl:multiple-value-bind'"
   `(elt (multiple-value-list ,value-form) ,index))
 
 (defmacro with-access (slots instance &body body)
-  "Like `with-accessors' but any slots provided as atoms (instead of lists) are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
+  "Like `with-accessors' and `with-slots' combined; any slots provided as symbols are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
 
 Example:
 
@@ -276,7 +276,7 @@ See also: `parse-boolean', `friendly-ratio-string', `friendly-duration-string'"
 (defun concat (&rest objects)
   "Concatenates all OBJECTS together into a string (other than nils, which are skipped).
 
-See also: `uiop:strcat'"
+See also: `cl:concatenate', `uiop:strcat'"
   (format nil "~{~A~}" (remove nil objects)))
 
 (defun output (&rest items)
@@ -289,21 +289,30 @@ See also: `concat'"
   (car (last items)))
 
 (defun split-string (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
-  "Returns a list of substrings of 'string' divided by spaces, optionally splitting only to a list of a maximum size.
+  "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
+
+Example:
+
+;; (split-string \"this that the other thing\")
+;; ;=> (\"this\" \"that\" \"the\" \"other\" \"thing\")
+
+;; (split-string \"  foo  bar baz  qux  \" :max-num 2)
+;; ;=> (\"foo\" \"bar baz  qux  \")
 
 See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
   (declare (type string string))
   (let ((char-bag (ensure-list char-bag)))
-    (labels ((is-divider (char) (position char char-bag))
+    (labels ((divider-p (char)
+               (position char char-bag))
              (split-up (string num char-bag)
                (when (and string
                           (or include-empty
-                              (not (equal string ""))))
+                              (not (emptyp string))))
                  (if (or (eql num 1)
-                         (not (position-if #'is-divider string)))
+                         (not (position-if #'divider-p string)))
                      (cons string nil)
-                     (cons (subseq string 0 (position-if #'is-divider string))
-                           (split-up (string-left-trim char-bag (subseq string (position-if #'is-divider string))) (when num (1- num)) char-bag))))))
+                     (cons (subseq string 0 (position-if #'divider-p string))
+                           (split-up (string-left-trim char-bag (subseq string (position-if #'divider-p string))) (when num (1- num)) char-bag))))))
       (split-up (if include-empty
                     string
                     (string-left-trim char-bag string))
@@ -312,7 +321,7 @@ See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
 (defun replace-all (string part replacement &key (test #'char=))
-  "Returns a new string in which all the occurences of the part is replaced with replacement.
+  "Get a new string in which all the occurences of the part is replaced with replacement.
 
 See also: `cl-ppcre:regex-replace-all'"
   (with-output-to-string (out)
@@ -357,8 +366,9 @@ See also: `friendly-duration-string'"
     (number
      (write-to-string ratio))))
 
+;; FIX: make this calculate days, weeks, etc as well?
 (defun friendly-duration-string (seconds)
-  "Format a number of seconds as a more human-readable string.
+  "Format a number of seconds as a more human-readable string. For now, hours are the biggest unit considered.
 
 Example:
 
