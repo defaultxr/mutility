@@ -1,21 +1,244 @@
 #+TITLE: mutility
 
-modula's/miscellaneous/many/multi utilities
+modula's many-multi mega-miscellaneous meta-modulated macro-mutated utilities
 
 A collection of various utility functions and macros I use in my libraries.
 
-This is mostly for deduplication of code so I don't have to keep several copies of these functions across different projects. I don't really recommend depending on this library in your own since I may rename, rearrange, or remove things without warning.
+This is mostly for deduplication of code so I don't have to keep several copies of these functions across different projects. I don't really recommend depending on this library in your code since I may rename, rearrange, or remove things without warning. That being said, if you have any issues or need help with the library, please don't hesitate to let me know.
 
 All exported symbols are documented via their docstrings, which are of course accessible via Lisp's standard ~documentation~ and ~describe~ functions.
+
+* Noteworthy features
+
+** Sugar
+
+*** ~a~ macro
+
+Quickly generate lists containing repeated items or numeric series.
+
+#+BEGIN_SRC lisp
+;; four 4s:
+(a 1 4!4 2) ;=> (1 4 4 4 4 2)
+
+;; 10 random numbers:
+(a 'hello (random 10)!10 'goodbye) ;=> (HELLO 2 5 3 9 5 0 9 1 9 6 GOODBYE)
+
+;; series from -2 to 2:
+(a 'foo -2..2 'bar) ;=> (FOO -2 -1 0 1 2 BAR)
+#+END_SRC
+
+*** ~fn~ macro
+
+A sweeter way to write ~lambda~. Underscore (~_~) is treated as the argument of the lambda.
+
+#+BEGIN_SRC lisp
+(fn (random 10))
+;; is the same as
+(lambda () (random 10))
+
+;; and
+(fn (+ 2 _))
+;; is the same as
+(lambda (_) (+ 2 _))
+#+END_SRC
+
+*** ~keys~ generic
+
+Get a list of the keys of hash tables, plists, and anything else that defines a method for it. For example, [[https://github.com/defaultxr/cl-patterns][cl-patterns]] defines a method for its ~event~ class.
+
+#+BEGIN_SRC lisp
+(keys '(:foo 1 :bar 2)) ;=> (:FOO :BAR)
+
+(keys (alexandria:plist-hash-table (list :this 1337 :that 69))) ;=> (:THIS :THAT)
+#+END_SRC
+
+** Strings
+
+*** ~concat~
+
+Concatenate its non-nil inputs together into a string, similar to the elisp function of the same name.
+
+#+BEGIN_SRC lisp
+(defun say-hello (name &optional ask)
+  (concat "Hello, " name "!" (when ask " How are you doing today?")))
+
+(say-hello "Allison" t) ;=> "Hello, Allison! How are you doing today?"
+(say-hello "Gordon" nil) ;=> "Hello, Gordon!"
+#+END_SRC
+
+*** ~parse-boolean~
+
+Parse a string as a boolean by looking for common true/false inputs like y/n, 1/0, on/off, true/false, enable/disable, etc. If the input is not a known boolean-like string, defaults to the specified default value
+
+#+BEGIN_SRC lisp
+(parse-boolean "1") ;=> t
+(parse-boolean "0") ;=> nil
+(parse-boolean "y") ;=> t
+(parse-boolean "N") ;=> nil
+(parse-boolean "blah" t) ;=> t ;; "blah" can't be interpreted as a boolean, so it defaults to the provided value of t.
+#+END_SRC
+
+*** "friendly string" functions
+
+A few functions to generate more human-readable strings from numeric values.
+
+#+BEGIN_SRC lisp
+;; turn improper fractions into proper ones:
+(friendly-ratio-string 13/4) ;=> "3 1/4"
+(friendly-ratio-string 99/13) ;=> "7 8/13"
+
+;; turn a number of seconds into the typical time notation:
+(friendly-duration-string 67) ;=> "1:07"
+;; 3600 seconds is one hour:
+(friendly-duration-string 3600) ;=> "1:00:00"
+#+END_SRC
+
+** Math
+
+*** ~wrap~
+
+Wrap a number within a range like ~cl:mod~ but taking into account a lower bound as well.
+
+*** rounding functions
+Round, floor, or ceiling to the nearest multiple of a given number with ~round-by~, ~floor-by~, and ~ceiling-by~.
+
+#+BEGIN_SRC lisp
+(round-by 0.39 0.2) ;=> 0.4
+(round-by 97 25) ;=> 100
+
+(floor-by 0.39 0.2) ;=> 0.2
+(floor-by 97 25) ;=> 75
+
+(ceiling-by 0.22 0.2) ;=> 0.4
+(ceiling-by 27 25) ;=> 50
+#+END_SRC
+
+** Sequences
+
+*** ~length-upto~
+
+Count the number of items in a list, not counting beyond a specified number.
+
+#+BEGIN_SRC lisp
+(length-upto (make-list 2000) 20) ;=> 20
+#+END_SRC
+
+*** ~most~
+
+Get the most X item in a list, where X can be any comparison function. Similar to the standard ~reduce~ function, except that the ~key~ argument is only used for comparison, and the actual item from the list is still returned.
+
+#+BEGIN_SRC lisp
+;; get the item with the smallest car:
+(most '< '((2 :bar) (3 :baz) (1 :foo)) :key 'car) ;=> (1 :FOO)
+
+;; compare this to `reduce', which returns the result of calling KEY on the item, instead of returning the item itself:
+(reduce 'min '((2 :bar) (3 :baz) (1 :foo)) :key 'car) ;=> 1
+#+END_SRC
+
+*** ~flatten-1~
+
+Like ~alexandria:flatten~ but only flattens one layer.
+
+*** ~subseq*~
+
+Like the standard ~subseq~, but the START and END parameters can be negative to represent indexing from the end of the list.
+
+#+BEGIN_SRC lisp
+(subseq* (list 0 1 2 3 4 5) -3) ;=> (3 4 5)
+(subseq* (list 0 1 2 3 4 5) -3 -1) ;=> (3 4)
+#+END_SRC
+
+*** ~left-trim~
+
+Like ~string-left-trim~ but for lists instead of strings.
+
+# FIX: describe +.x when it's fully implemented
+# *** ~+.x~
+
+** Randomness
+
+*** ~random-coin~
+
+*** ~random-range~
+
+*** ~exponential-random-range~
+
+*** ~random-gauss~
+
+** Hash Tables
+
+*** save and restore
+
+** Miscellaneous
+
+*** ~open-url~
+
+*** ~generate-temporary-file-name~
+
+** Swank Extensions
+
+** Ranges
+
+Functionality for mapping numbers from one range to another.
+
+** ~defgeneric*~
+
+** ~defclass*~
+
+** Looping
+
+Looping functionality is in the "loopy" subsystem; run ~(ql:quickload :mutility/loopy)~ to load it.
+
+*** ~mapcar*~ and ~dolist*~
+
+Like the standard ~mapcar~ and ~dolist~, but includes the current index into the list.
+
+*** ~while~ macro
+
+Your standard "while" loop that repeats its body as long as its test condition is true. Additionally, it will return the last non-nil value it processed in the body or the test.
+
+*** ~do-while~ macro
+
+Like ~while~, but the body is run before the test condition is checked; i.e. the body is always run at least once.
+
+*** ~until~ macro
+
+The opposite of ~while~; runs its body as long as its test condition is false.
+
+*** ~accumulating~ macro
+
+Efficiently append to a list, which is then returned.
+
+#+BEGIN_SRC lisp
+(accumulating (dotimes (n 5) (accumulate (random 10)))) ;=> (0 2 3 4 1)
+#+END_SRC
 
 * Sub-systems
 
 - ~mutility/loopy~ is a small collection of various looping constructs like ~dolist*~, ~while~, ~do-while~, etc.
+- ~mutility/generic-cl~ defines a few extensions to the [[https://github.com/alex-gutev/generic-cl][generic-cl]] library.
 - ~mutility/test-helpers~ includes a few functions that are mostly useful for test suites.
+- ~mutility/tests~ is the FiveAM-based test suite for the library.
 
-* Tests
+* Tour
 
-To run the mutility tests:
+All source files are in the ~src/~ directory.
+
+- [[file:src/package.lisp][package.lisp]] - the package definition file.
+- [[file:src/mutility.lisp][mutility.lisp]] - mutility's "standard" functionality.
+- [[file:src/sugar.lisp][sugar.lisp]] - syntax shorteners and sweeteners.
+- [[file:src/ranges.lisp][ranges.lisp]] - define and translate between different types of ranges.
+- [[file:src/test-helpers.lisp][test-helpers.lisp]] - a few introspection functions to make testing easier.
+- [[file:src/loopy.lisp][loopy.lisp]] - various looping primitives.
+- [[file:src/scrapyard.lisp][scrapyard.lisp]] - failed experiments, old versions, and other code refuse.
+
+Mutility also includes a few extensions for other systems in ~src/extensions/~:
+
+- [[file:src/extensions/generic-cl-extensions.lisp][generic-cl-extensions.lisp]] - extensions to the generic-cl library. FIX
+- [[file:src/extensions/cl-org-mode-extensions.lisp][cl-org-mode-extensions.lisp]] - extensions to the cl-org-mode library. FIX
+- [[file:src/extensions/swank-extensions.lisp][swank-extensions.lisp]] - extensions to swank. FIX
+
+The test suite is located in ~t/~. To run the tests:
 
 #+BEGIN_SRC lisp
 (asdf:test-system :mutility)
