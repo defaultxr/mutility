@@ -28,6 +28,7 @@
    :un-intern
 
    :wrap
+   :fold
    :floor-by
    :ceiling-by
    :round-by

@@ -209,6 +209,19 @@ the other thing" :char-bag (list #\space #\newline)))
          (wrap 4 -1 4))
       "wrap doesn't wrap numbers within the given range correctly (when the bottom is non-zero)"))
 
+(test fold
+  "Test the `fold' function"
+  (is (= 0
+         (fold 2 -1 1)))
+  (is (= 0.2
+         (fold 0.2 -1 1)))
+  (is (= 1
+         (fold -1 0 1)))
+  (is (= 5
+         (fold 5 0 10)))
+  (is (= 6
+         (fold 8 0 7))))
+
 (test floor-by
   "Test the `floor-by' function"
   (is (= 1.5

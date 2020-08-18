@@ -440,11 +440,30 @@ Examples:
 ;; (wrap 5 0 10) ;; => 5
 ;; (wrap 15 0 10) ;; => 4
 
-See also: `cl:mod', `alexandria:clamp'"
+See also: `fold', `cl:mod', `alexandria:clamp'"
   (declare (type number number)
            (type number bottom)
            (type number top))
   (+ (mod (- number bottom) (- top bottom)) bottom))
+
+(defun fold (number &optional (bottom 0) (top 1))
+  "Fold numbers outside BOTTOM and TOP back into the range.
+
+Examples:
+
+;; (fold -1 0 1) ;=> 1
+;; (fold 5 0 10) ;=> 5
+;; (fold 8 0 7) ;=> 6
+
+See also: `wrap', `cl:mod', `alexandria:clamp'"
+  (declare (type number number)
+           (type number bottom)
+           (type number top))
+  (if (>= top number bottom)
+      number
+      (if (> number top)
+          (+ top (- top number))
+          (- bottom number))))
 
 (defun floor-by (number &optional (by 1))
   "Round NUMBER down to the previous multiple of BY.
