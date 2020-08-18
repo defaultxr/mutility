@@ -225,6 +225,25 @@ See also: `cl:with-accessors', `cl:with-slots'"
        (warn "Function ~s is obsolete; please use ~s instead." ',old-function-name ',new-function-name)
        whole)))
 
+(defmacro dprint (&rest args)
+  "Easy macro to get debug output for a list of variables, ARGS. For each argument in ARGS, print the argument itself, then print what it evaluates to. Returns the last value.
+
+Example:
+
+;; (dprint (random 10) (+ 2 2))
+
+...prints something like the following:
+(RANDOM 10): 6; (+ 2 2): 4;
+...and returns the value 4."
+  (with-gensyms (results)
+    `(let ((,results (list ,@args)))
+       (fresh-line)
+       (loop :for name :in ',args
+             :for val :in ,results
+             :do (format t "~s: ~s; " name val)
+             :finally (progn
+                        (terpri)
+                        (return val))))))
 
 (defgeneric keys (object)
   (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))

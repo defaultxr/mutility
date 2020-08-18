@@ -104,6 +104,18 @@
   ;; FIX
   )
 
+(test dprint
+  "Test the `dprint' macro"
+  (is (eql 0
+           (search "(+ 2 2): 4; (+ 6 6): 12;"
+                   (with-output-to-string (*standard-output*)
+                     (dprint (+ 2 2) (+ 6 6)))))
+      "dprint doesn't give the correct output")
+  (is (eql 4
+           (let ((*standard-output* (make-string-output-stream)))
+             (dprint (+ 2 2))))
+      "dprint doesn't return its last value"))
+
 (test keys
   "Test `keys' and its various methods"
   (is (null (keys nil))
