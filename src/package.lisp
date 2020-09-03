@@ -44,6 +44,7 @@
    ;; :repeat ;; conflicts with iterate
    :split-sequence
    :left-trim
+   :affixnew
    :insert-if
    :insert-sorted
 

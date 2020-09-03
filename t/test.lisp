@@ -299,6 +299,21 @@ the other thing" :char-bag (list #\space #\newline)))
              (left-trim (list 0 1 2) (list 2 1 0 3 4 5)))
       "left-trim returns incorrect results"))
 
+(test affixnew
+  "Test the `affixnew' function"
+  (let (foo
+        (num 0))
+    (flet ((add-one ()
+             (prog1 num
+               (incf num))))
+      (affixnew foo :foo)
+      (affixnew foo (add-one))
+      (affixnew foo :bar)
+      (affixnew foo (add-one))
+      (is (equal (list :foo 0 :bar 1)
+                 foo)
+          "affixnew does not produce correct results"))))
+
 (test insert-if
   "Test the `insert-if' function"
   (is (equal (list -2 -1 0 1 2)

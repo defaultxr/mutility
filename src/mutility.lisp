@@ -610,6 +610,14 @@ See also: `alexandria:flatten'"
 See also: `cl:string-left-trim'"
   (member-if-not (lambda (x) (position x (ensure-list bag) :test test)) list))
 
+(defmacro affixnew (place thing)
+  "Affix THING to the end of PLACE if it's not already a member.
+
+See also: `alexandria:appendf', `cl:pushnew'."
+  (once-only (thing)
+    `(unless (position ,thing ,place)
+       (appendf ,place (list ,thing)))))
+
 (defun insert-if (function list item)
   "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
 
