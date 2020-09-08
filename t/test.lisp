@@ -186,6 +186,11 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (string-equal "5:00" (friendly-duration-string 300)))
   (is (string-equal "1:00:00" (friendly-duration-string 3600))))
 
+(test pretty-print-tree
+  "Test the `pretty-print-tree' function"
+  ;; FIX
+  )
+
 (test my-intern
   ;; FIX
   )

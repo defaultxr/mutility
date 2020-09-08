@@ -23,6 +23,7 @@
    :parse-boolean
    :friendly-ratio-string
    :friendly-duration-string
+   :pretty-print-tree
 
    :my-intern
    :un-intern

@@ -413,6 +413,17 @@ See also: `friendly-ratio-string'"
                 (concat "0" secs)
                 secs))))
 
+;; FIX: ensure this works with Lisp's built-in indentation functionality?
+(defun pretty-print-tree (tree &optional (indent 0))
+  "Pretty print TREE, indenting the elements of each sublist."
+  (dolist (e tree)
+    (if (listp e)
+        (pretty-print-tree e (1+ indent))
+        (progn
+          (dotimes (n indent)
+            (princ "  "))
+          (format t "- ~s~%" e)))))
+
 ;;; packages
 
 (defun my-intern (string &optional package)
