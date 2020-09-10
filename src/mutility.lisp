@@ -762,8 +762,8 @@ See also: `save-hash-table'"
                              #+windows "start"
                              url)))
 
-(defun generate-temporary-file-name (&key name (directory "/tmp") extension attempt)
-  "Generate a string representing a full path to a new temporary file. The file name defaults to a timestamp. Will automatically create DIRECTORY if it doesn't exist. Will also attempt to generate a new name if a file with that name already exists. ATTEMPT is the attempt number if the filename already exists.
+(defun generate-temporary-file-name (&key name (directory (uiop:temporary-directory)) extension)
+  "Generate a string representing a full path to a new temporary file. The file name defaults to a timestamp. Will automatically create DIRECTORY if it doesn't exist. Will also attempt to generate a new name if a file with that name already exists.
 
 Example:
 
@@ -783,24 +783,20 @@ Example:
                                                           (list :min 2) #\-
                                                           (list :sec 2)))))
          (directory (etypecase directory
-                      (string (list :absolute
-                                    (string-left-trim
-                                     (list (uiop:directory-separator-for-host))
-                                     directory)))
-                      (pathname directory)
-                      (list directory)))
+                      ((or string pathname list) directory)))
          (type (typecase extension
+                 (null nil)
                  (symbol
                   (string-downcase (string extension)))
                  (string extension)))
-         (res (namestring
-               (make-pathname :directory directory
-                              :name (concat name (when attempt
-                                                   (concat "-" attempt)))
-                              :type type))))
-    (if (uiop:file-exists-p res)
-        (generate-temporary-file-name :name name :directory directory :extension type :attempt (if attempt (1+ attempt) 1))
-        res)))
+         (attempt 0))
+    (flet ((gen-filename (attempt)
+             (make-pathname :directory (pathname-directory directory)
+                            :name (format nil "~a~@[-~3,'0d~]" name (unless (zerop attempt) attempt))
+                            :type type)))
+      (loop :while (uiop:file-exists-p (gen-filename attempt))
+            :do (incf attempt))
+      (namestring (gen-filename attempt)))))
 
 ;; conditionally load swank-extensions if swank is available
 (eval-when (:compile-toplevel :load-toplevel :execute)
