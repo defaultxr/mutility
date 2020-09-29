@@ -71,7 +71,8 @@
                                      (if pack
                                          pack
                                          (when scan-external-packages
-                                           (ql:quickload link-package-name)
+                                           (when (find-package 'quicklisp)
+                                             (funcall (find-symbol "QUICKLOAD" 'quicklisp) link-package-name))
                                            (find-package link-package-name))))))
                 (when (or link-package scan-external-packages)
                   (unless (ignore-errors (find-symbol (string-upcase link-name) link-package))
