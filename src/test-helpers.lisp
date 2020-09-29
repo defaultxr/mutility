@@ -53,21 +53,31 @@
       (when-let ((doc (documentation symbol type)))
         (push doc res)))))
 
-(defun docstrings-with-broken-links (package)
-  "Scan the external symbols of PACKAGE for docstring links that point to nonexistent symbols."
+(defun docstrings-with-broken-links (package &optional scan-external-packages)
+  "Scan the external symbols of PACKAGE for docstring links that point to nonexistent symbols. If SCAN-EXTERNAL-PACKAGES is true, any links in docstrings that point to symbols from other packages will cause that package to be loaded to check if the link is broken."
   (let (symbols)
-    (do-external-symbols (sym package symbols)
-      (block next
-        (when-let ((linked (flatten (mapcar 'docstring-linked-symbol-names (all-docstrings sym)))))
+    (do-external-symbols (symbol package symbols)
+      (let (missing
+            (linked (flatten (mapcar 'docstring-linked-symbol-names (all-docstrings symbol)))))
+        (when linked
           (dolist (link linked)
             (when link
-              (let ((split (split-string link :char-bag (list #\:))))
-                (unless (if (= 1 (length split))
-                            (find-symbol (string-upcase (elt split 0)) package)
-                            (ignore-errors
-                             (find-symbol (string-upcase (elt split 1)) (string-upcase (elt split 0)))))
-                  (push sym symbols)
-                  (return-from next nil))))))))))
+              (let* ((split (split-string link :char-bag (list #\:)))
+                     (link-name (lastcar split))
+                     (link-package-name (if (= 1 (length split))
+                                            package
+                                            (string-upcase (car split))))
+                     (link-package (let ((pack (find-package link-package-name)))
+                                     (if pack
+                                         pack
+                                         (when scan-external-packages
+                                           (ql:quickload link-package-name)
+                                           (find-package link-package-name))))))
+                (when (or link-package scan-external-packages)
+                  (unless (ignore-errors (find-symbol (string-upcase link-name) link-package))
+                    (push link missing))))))
+          (when missing
+            (push (list symbol missing) symbols)))))))
 
 (export '(system-missing-attributes
           undocumented-symbols
