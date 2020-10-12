@@ -407,6 +407,14 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test open-url
+  ;; FIX
+  )
+
+(test generate-temporary-file-name
+  ;; FIX
+  )
+
 (test lisp-connections
   ;; FIX
   )
