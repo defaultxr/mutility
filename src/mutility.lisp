@@ -798,6 +798,12 @@ Example:
             :do (incf attempt))
       (namestring (gen-filename attempt)))))
 
+(defun lisp-connections ()
+  "Get a list of the current connections to this Lisp image."
+  (when-let ((package (cond ((find-package 'slynk) 'slynk)
+                            ((find-package 'swank) 'swank))))
+    (eval (intern "*CONNECTIONS*" package))))
+
 ;; conditionally load swank-extensions if swank is available
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (featurep :swank)

@@ -59,4 +59,5 @@
 
    :current-seconds
    :open-url
-   :generate-temporary-file-name))
+   :generate-temporary-file-name
+   :lisp-connections))

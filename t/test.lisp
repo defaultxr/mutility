@@ -406,3 +406,7 @@ the other thing" :char-bag (list #\space #\newline)))
 (test current-seconds
   ;; FIX
   )
+
+(test lisp-connections
+  ;; FIX
+  )
