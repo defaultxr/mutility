@@ -184,7 +184,8 @@ the other thing" :char-bag (list #\space #\newline)))
 (test friendly-duration-string
   "Test the `friendly-duration-string' function"
   (is (string-equal "5:00" (friendly-duration-string 300)))
-  (is (string-equal "1:00:00" (friendly-duration-string 3600))))
+  (is (string-equal "1:00:00" (friendly-duration-string 3600)))
+  (is (string-equal "0:08" (friendly-duration-string 8))))
 
 (test pretty-print-tree
   "Test the `pretty-print-tree' function"

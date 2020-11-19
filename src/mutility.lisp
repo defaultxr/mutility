@@ -399,19 +399,11 @@ See also: `friendly-ratio-string'"
          (hour (truncate (/ min 60)))
          (hourp (plusp hour))
          (min (mod min 60))
-         (mins (write-to-string min))
-         (sec (mod seconds 60))
-         (secs (write-to-string sec)))
+         (sec (mod seconds 60)))
     (concat (when hourp
               (concat hour ":"))
-            (if (and hourp (length= 1 mins))
-                (concat "0" mins)
-                mins)
-            ":"
-            (if (and (or hourp (plusp min))
-                     (length= 1 secs))
-                (concat "0" secs)
-                secs))))
+            (format nil (if hourp "~2,'0d" "~d") min)
+            (format nil ":~2,'0d" sec))))
 
 ;; FIX: ensure this works with Lisp's built-in indentation functionality?
 (defun pretty-print-tree (tree &optional (indent 0))
