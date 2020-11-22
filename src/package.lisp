@@ -6,7 +6,6 @@
   (:export
    :a
    :fn
-   :multiple-value-elt
    :with-access
 
    :define-obsolete-function-alias

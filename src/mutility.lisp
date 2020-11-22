@@ -170,16 +170,6 @@ See also: `repeat-by-!', `expand-ranges'"
       (let ((body (parse body)))
         `(lambda (,@args) ,@body)))))
 
-(defmacro multiple-value-elt (value-form index)
-  "Evaluates VALUE-FORM and returns the value at INDEX.
-
-Example:
-
-;; (multiple-value-elt (truncate 9/4) 1) ;=> 1/4
-
-See also: `cl:multiple-value-list', `cl:multiple-value-bind'"
-  `(elt (multiple-value-list ,value-form) ,index))
-
 (defmacro with-access (slots instance &body body)
   "Like `with-accessors' and `with-slots' combined; any slots provided as symbols are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
 
