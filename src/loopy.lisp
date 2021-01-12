@@ -128,6 +128,7 @@ See also: `uiop:while-collecting'."
               (,(ensure-symbol 'reset-accumulation) ()
                 (setf ,res-sym (list nil)
                       ,end-sym ,res-sym)))
+         (declare (ignorable #',(ensure-symbol 'reset-accumulation)))
          ,@body
          (cdr ,res-sym)))))
 
