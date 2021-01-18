@@ -454,9 +454,11 @@ See also: `wrap', `cl:mod', `alexandria:clamp'"
            (type number top))
   (if (>= top number bottom)
       number
-      (if (> number top)
-          (+ top (- top number))
-          (- bottom number))))
+      (let* ((range (- top bottom))
+             (modded (mod (- number bottom) (* 2 range))))
+        (if (>= modded range)
+            (+ top (- range modded))
+            (+ bottom modded)))))
 
 (defun floor-by (number &optional (by 1))
   "Round NUMBER down to the previous multiple of BY.

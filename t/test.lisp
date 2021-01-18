@@ -222,7 +222,13 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (= 5
          (fold 5 0 10)))
   (is (= 6
-         (fold 8 0 7))))
+         (fold 8 0 7)))
+  (is (= 1
+         (fold 5 0 2)))
+  (is (= 2
+         (fold -6 0 4)))
+  (is (= -6
+         (fold -190 -8 7))))
 
 (test floor-by
   "Test the `floor-by' function"
