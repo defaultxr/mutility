@@ -411,15 +411,21 @@ See also: `friendly-ratio-string'"
 (defun my-intern (string &optional package)
   "Converts STRING into a symbol, uppercasing it in the process.
 
-See also: `un-intern'"
+See also: `reintern', `un-intern'"
   (if package
       (intern (string-upcase string) package)
       (intern (string-upcase string))))
 
+(defun reintern (symbol &optional (package *package*))
+  "Reintern a symbol, changing its package to PACKAGE.
+
+See also: `my-intern', `un-intern'"
+  (intern (symbol-name symbol) package))
+
 (defun un-intern (symbol)
   "Converts a symbol into a string.
 
-See also: `my-intern'"
+See also: `reintern', `my-intern'"
   (string-downcase (write-to-string symbol)))
 
 ;;; math

@@ -25,6 +25,7 @@
    :pretty-print-tree
 
    :my-intern
+   :reintern
    :un-intern
 
    :wrap

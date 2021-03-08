@@ -192,6 +192,10 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test reintern
+  ;; FIX
+  )
+
 (test un-intern
   ;; FIX
   )
