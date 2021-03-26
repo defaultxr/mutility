@@ -11,7 +11,8 @@
   :mailto "defaultxr at gmail dot com"
   :source-control (:git "git@github.com:defaultxr/mutility.git")
   :depends-on (#:alexandria
-               #:local-time)
+               #:local-time
+               (:feature :sbcl (:require :sb-introspect))) ;; for function-arglist
   :pathname "src/"
   :serial t
   :components ((:file "package")

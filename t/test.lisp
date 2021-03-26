@@ -1,6 +1,7 @@
 (in-package #:mutility)
 
 (defpackage #:mutility/tests
+  (:local-nicknames (:m :mutility))
   (:use #:cl
         #:alexandria
         #:mutility
@@ -34,23 +35,23 @@
 
 (test a
   "Test the `a' macro and its helper functions"
-  (is (equal (mutility::repeat-by-! '(1))
+  (is (equal (m::repeat-by-! '(1))
              '(1)))
-  (is (equal (mutility::repeat-by-! '(1!3))
+  (is (equal (m::repeat-by-! '(1!3))
              '(1 1 1)))
-  (is (equal (mutility::repeat-by-! '(1!3!2))
+  (is (equal (m::repeat-by-! '(1!3!2))
              '((1 1 1) (1 1 1))))
-  (is (equal (mutility::repeat-by-! '(1!3 !2))
+  (is (equal (m::repeat-by-! '(1!3 !2))
              '((1 1 1) (1 1 1))))
-  (is (equal (mutility::repeat-by-! '((* 2 3)!2))
+  (is (equal (m::repeat-by-! '((* 2 3)!2))
              '((* 2 3) (* 2 3))))
-  (is (equal (mutility::repeat-by-! '(1!(* 2 2)))
+  (is (equal (m::repeat-by-! '(1!(* 2 2)))
              '(1 1 1 1)))
-  (is (equal (mutility::repeat-by-! '((* 2 1)!(* 2 2)))
+  (is (equal (m::repeat-by-! '((* 2 1)!(* 2 2)))
              '((* 2 1) (* 2 1) (* 2 1) (* 2 1))))
-  (is (equal (mutility::repeat-by-! '(1 (pn 1)))
+  (is (equal (m::repeat-by-! '(1 (pn 1)))
              '(1 (pn 1))))
-  (is (equal (mutility::repeat-by-! '(1 (pn 1) 3!2 2!3))
+  (is (equal (m::repeat-by-! '(1 (pn 1) 3!2 2!3))
              '(1 (pn 1) 3 3 2 2 2)))
   (is (equal (a 0..5)
              (list 0 1 2 3 4 5))
@@ -414,14 +415,25 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test function-arglist
+  (is (equalp (list '&optional (list 'm::probability 0.5))
+              (function-arglist 'random-coin))
+      "function-arglist doesn't return correct results for `random-coin'")
+  (is (equalp (list 'm::hash 'm::filename '&key (list 'm::if-exists :error))
+              (function-arglist 'save-hash-table))
+      "function-arglist doesn't return correct results for `save-hash-table'")
+  (is (equalp (list '&rest 'm::objects)
+              (function-arglist 'concat))
+      "function-arglist doesn't return correct results for `concat'"))
+
+(test lisp-connections
+  ;; FIX
+  )
+
 (test open-url
   ;; FIX
   )
 
 (test generate-temporary-file-name
-  ;; FIX
-  )
-
-(test lisp-connections
   ;; FIX
   )

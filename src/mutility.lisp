@@ -739,11 +739,42 @@ See also: `save-hash-table'"
         (setf (gethash (car cell) hash) (cdr cell))))
     hash))
 
-;;; unsorted
+;;; introspection
 
 (defun current-seconds ()
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
+
+;; swiped from https://stackoverflow.com/questions/15465138/find-functions-arity-in-common-lisp
+(defun function-arglist (function)
+  "Get the signature of FUNCTION."
+  #+allegro (excl:arglist function)
+  #+clisp (sys::arglist function)
+  #+(or cmu scl)
+  (let ((f (coerce function 'function)))
+    (typecase f
+      (standard-generic-function (pcl:generic-function-lambda-list f))
+      (eval:interpreted-function (eval:interpreted-function-arglist f))
+      (function (values (read-from-string (kernel:%function-arglist f))))))
+  #+cormanlisp (ccl:function-lambda-list
+                (typecase function (symbol (fdefinition function)) (t function)))
+  #+gcl (let ((function (etypecase function
+                          (symbol function)
+                          (function (si:compiled-function-name function)))))
+          (get function 'si:debug))
+  #+lispworks (lw:function-lambda-list function)
+  #+lucid (lcl:arglist function)
+  #+sbcl (sb-introspect:function-lambda-list function)
+  #-(or allegro clisp cmu cormanlisp gcl lispworks lucid sbcl scl)
+  (error 'not-implemented :proc (list 'arglist function)))
+
+(defun lisp-connections ()
+  "Get a list of the current connections to this Lisp image."
+  (when-let ((package (cond ((find-package 'slynk) 'slynk)
+                            ((find-package 'swank) 'swank))))
+    (eval (intern "*CONNECTIONS*" package))))
+
+;;; files and urls
 
 (defun open-url (url)
   "Open a URL via the OS's default application."
@@ -787,12 +818,6 @@ Example:
       (loop :while (uiop:file-exists-p (gen-filename attempt))
             :do (incf attempt))
       (namestring (gen-filename attempt)))))
-
-(defun lisp-connections ()
-  "Get a list of the current connections to this Lisp image."
-  (when-let ((package (cond ((find-package 'slynk) 'slynk)
-                            ((find-package 'swank) 'swank))))
-    (eval (intern "*CONNECTIONS*" package))))
 
 ;; conditionally load swank-extensions if swank is available
 (eval-when (:compile-toplevel :load-toplevel :execute)

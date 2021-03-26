@@ -58,6 +58,8 @@
    :restore-hash-table
 
    :current-seconds
+   :function-arglist
+   :lisp-connections
+   
    :open-url
-   :generate-temporary-file-name
-   :lisp-connections))
+   :generate-temporary-file-name))
