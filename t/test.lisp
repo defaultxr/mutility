@@ -129,6 +129,18 @@
           (mapcar (lambda (x) (member x k)) (list :foo :bar :baz :qux))))
       "keys doesn't work correctly for hashes"))
 
+(test my-intern
+  ;; FIX
+  )
+
+(test reintern
+  ;; FIX
+  )
+
+(test un-intern
+  ;; FIX
+  )
+
 (test friendly-symbol
   "Test the `friendly-symbol' function"
   (is (eql :foo
@@ -186,18 +198,6 @@ the other thing" :char-bag (list #\space #\newline)))
 
 (test pretty-print-tree
   "Test the `pretty-print-tree' function"
-  ;; FIX
-  )
-
-(test my-intern
-  ;; FIX
-  )
-
-(test reintern
-  ;; FIX
-  )
-
-(test un-intern
   ;; FIX
   )
 

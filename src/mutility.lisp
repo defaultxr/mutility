@@ -253,6 +253,26 @@ Example:
 
 ;;; symbols
 
+(defun my-intern (string &optional package)
+  "Converts STRING into a symbol, uppercasing it in the process.
+
+See also: `reintern', `un-intern'"
+  (if package
+      (intern (string-upcase string) package)
+      (intern (string-upcase string))))
+
+(defun reintern (symbol &optional (package *package*))
+  "Reintern a symbol, changing its package to PACKAGE.
+
+See also: `my-intern', `un-intern'"
+  (intern (symbol-name symbol) package))
+
+(defun un-intern (symbol)
+  "Converts a symbol into a string.
+
+See also: `reintern', `my-intern'"
+  (string-downcase (write-to-string symbol)))
+
 (defun friendly-symbol (input &optional (package :keyword))
   "Return INPUT as a symbol, with all non-letter, non-number, and non-hyphen characters removed.
 
@@ -405,28 +425,6 @@ See also: `friendly-ratio-string'"
           (dotimes (n indent)
             (princ "  "))
           (format t "- ~s~%" e)))))
-
-;;; packages
-
-(defun my-intern (string &optional package)
-  "Converts STRING into a symbol, uppercasing it in the process.
-
-See also: `reintern', `un-intern'"
-  (if package
-      (intern (string-upcase string) package)
-      (intern (string-upcase string))))
-
-(defun reintern (symbol &optional (package *package*))
-  "Reintern a symbol, changing its package to PACKAGE.
-
-See also: `my-intern', `un-intern'"
-  (intern (symbol-name symbol) package))
-
-(defun un-intern (symbol)
-  "Converts a symbol into a string.
-
-See also: `reintern', `my-intern'"
-  (string-downcase (write-to-string symbol)))
 
 ;;; math
 

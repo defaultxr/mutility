@@ -13,6 +13,9 @@
 
    :keys
 
+   :my-intern
+   :reintern
+   :un-intern
    :friendly-symbol
 
    :concat
@@ -23,10 +26,6 @@
    :friendly-ratio-string
    :friendly-duration-string
    :pretty-print-tree
-
-   :my-intern
-   :reintern
-   :un-intern
 
    :wrap
    :fold
