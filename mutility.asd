@@ -17,7 +17,7 @@
   :serial t
   :components ((:file "package")
                (:file "mutility")
-               ;; swank-extensions.lisp is conditionally loaded at the end of mutility.lisp
+               ;; emacs-extensions.lisp is conditionally loaded at the end of mutility.lisp
                )
   :in-order-to ((test-op (test-op "mutility/tests"))))
 

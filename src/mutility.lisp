@@ -819,7 +819,8 @@ Example:
             :do (incf attempt))
       (namestring (gen-filename attempt)))))
 
-;; conditionally load swank-extensions if swank is available
+;; conditionally load emacs-extensions if swank or slynk are available
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (when (featurep :swank)
-    (load (asdf:system-relative-pathname :mutility "src/extensions/swank-extensions.lisp"))))
+  (when (or (featurep :swank)
+            (featurep :slynk))
+    (load (asdf:system-relative-pathname :mutility "src/extensions/emacs-extensions.lisp"))))
