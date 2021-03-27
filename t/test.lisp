@@ -437,3 +437,7 @@ the other thing" :char-bag (list #\space #\newline)))
 (test generate-temporary-file-name
   ;; FIX
   )
+
+(test locate-dominating-file
+  ;; FIX
+  )

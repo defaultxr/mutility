@@ -819,6 +819,23 @@ Example:
             :do (incf attempt))
       (namestring (gen-filename attempt)))))
 
+(defun locate-dominating-file (directory name)
+  "Starting at DIRECTORY, look for a file named NAME in the current directory and successive parents, returning the first one found or nil if none.
+
+Similar to the Emacs function \"locate-dominating-file\"."
+  (labels ((try-next (directory)
+             (let ((check (uiop:merge-pathnames* name directory)))
+               (if (file-exists-p check)
+                   check
+                   (let ((next (parent-directory directory)))
+                     (if (uiop:pathname-equal directory next)
+                         nil
+                         (try-next next)))))))
+    (when-let ((res (try-next (ensure-directory-trailing-slash (full-path directory)))))
+      (if (stringp directory)
+          (namestring res)
+          res))))
+
 ;; conditionally load emacs-extensions if swank or slynk are available
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (or (featurep :swank)
