@@ -36,6 +36,8 @@
 
    :list-length-upto
    :length-upto
+   :list-length>=
+   :list-length>
    :nth-wrap
    :elt-wrap
    :find-any

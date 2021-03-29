@@ -264,6 +264,17 @@ the other thing" :char-bag (list #\space #\newline)))
     (is (= rand res)
         "list-length-upto gave incorrect results for a list of length 100 and a MAX of ~s; returned ~s" rand res)))
 
+(test list-length>=
+  (let* ((ll (random 100))
+         (rand (random 100))
+         (res (list-length>= (make-list ll) rand)))
+    (is (eql (>= ll rand) res)
+        "list-length>= gave incorrect results for a list of length ~s and an N of ~s; returned ~s" ll rand res)))
+
+(test list-length>
+  ;; not really needed since it just forwards to `list-length>=' anyway...
+  )
+
 (test nth-wrap
   ;; FIX
   )

@@ -518,6 +518,26 @@ See also: `alexandria:length='"
     "Deprecated and renamed to `list-length-upto'."
     (apply #'list-length-upto list (list max))))
 
+(defun list-length>= (list n)
+  "True if LIST is at least N in length. Probably more efficient than doing something like (>= (length list) n).
+
+Example:
+
+;; (list-length>= (make-list 300) 10) ;=> T
+
+See also: `list-length>', `list-length-upto', `alexandria:length='"
+  (let ((current 0))
+    (dolist (item list nil)
+      (incf current)
+      (when (>= current n)
+        (return-from list-length>= t)))))
+
+(defun list-length> (list n)
+  "True if LIST is more than N in length.
+
+See also: `list-length>=', `alexandria:length='"
+  (list-length>= list (1+ n)))
+
 (defun nth-wrap (n list)
   "Get the Nth item in LIST, wrapping the index if necessary.
 
