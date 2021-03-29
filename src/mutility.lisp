@@ -78,7 +78,7 @@ See also: `repeat-by', `a'"
                        (when (symbolp c)
                          (when-let* ((sname (write-to-string c))
                                      (excl-pos (position #\! sname)))
-                           (if (= 0 excl-pos)
+                           (if (zerop excl-pos)
                                (error "Failed to parse arguments for this invocation of `repeat-by-!': (a ~s ~s)" list add-list)
                                (let ((split (split-by-! sname)))
                                  (setf c (read-from-string (car split)))
@@ -101,7 +101,7 @@ See also: `repeat-by', `a'"
                                          (if (symbolp chk)
                                              (let* ((sname (write-to-string chk))
                                                     (excl-pos (position #\! sname)))
-                                               (if (and excl-pos (= 0 excl-pos))
+                                               (if (and excl-pos (zerop excl-pos))
                                                    (progn
                                                      (setf r (append r (mapcar 'eval (mapcar 'read-from-string (split-by-! sname)))))
                                                      (when (char= #\! (elt sname (1- (length sname))))
@@ -488,22 +488,14 @@ Examples:
 See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
 
-;; FIX: remove this.
-(defun round-by-direction (number &optional (by 1))
-  "Round NUMBER to the nearest multiple of BY. With positive BY, round up; with negative, round down.
-
-Examples:
-
-;; (round-by-direction 0.5 -1) ;; => 0
-;; (round-by-direction 0.5 1) ;; => 1
-
-See also: `round-by', `cl:round'"
-  (warn "round-by-direction is deprecated; use either floor-by, ceiling-by, or round-by instead.")
-  (if (= 0 (mod number by))
-      number
-      (let* ((positive (plusp by))
-             (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
-        (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff)))))
+(uiop:with-deprecation (:warning)
+  (defun round-by-direction (number &optional (by 1))
+    "Deprecated; use either `floor-by', `ceiling-by', or `round-by' instead."
+    (if (zerop (mod number by))
+        number
+        (let* ((positive (plusp by))
+               (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
+          (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff))))))
 
 ;;; lists and sequences
 
@@ -772,7 +764,7 @@ See also: `save-hash-table'"
                             ((find-package 'swank) 'swank))))
     (eval (intern "*CONNECTIONS*" package))))
 
-;;; files and urls
+;;; file utilities
 
 (defun open-url (url)
   "Open a URL via the OS's default application."
