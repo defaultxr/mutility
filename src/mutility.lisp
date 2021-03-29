@@ -787,7 +787,7 @@ See also: `save-hash-table'"
   "Get a list of the current connections to this Lisp image."
   (when-let ((package (cond ((find-package 'slynk) 'slynk)
                             ((find-package 'swank) 'swank))))
-    (eval (intern "*CONNECTIONS*" package))))
+    (symbol-value (find-symbol "*CONNECTIONS*" package))))
 
 ;;; file utilities
 
