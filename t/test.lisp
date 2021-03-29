@@ -258,9 +258,11 @@ the other thing" :char-bag (list #\space #\newline)))
          (round-by 3.25 0.25))
       "round-by gives incorrect results when its input is a multiple of the divisor"))
 
-(test length-upto
-  ;; FIX
-  )
+(test list-length-upto
+  (let* ((rand (random 100))
+         (res (list-length-upto (make-list 100) rand)))
+    (is (= rand res)
+        "list-length-upto gave incorrect results for a list of length 100 and a MAX of ~s; returned ~s" rand res)))
 
 (test nth-wrap
   ;; FIX

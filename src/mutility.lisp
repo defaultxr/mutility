@@ -499,7 +499,7 @@ See also: `cl:round', `floor-by', `ceiling-by'"
 
 ;;; lists and sequences
 
-(defun length-upto (list &optional (max 10))
+(defun list-length-upto (list &optional (max 10))
   "Get the length of LIST, not counting above MAX.
 
 Example:
@@ -512,6 +512,11 @@ See also: `alexandria:length='"
           :repeat max
           :do (incf res))
     res))
+
+(uiop:with-deprecation (:style-warning)
+  (defun length-upto (list &optional (max 10))
+    "Deprecated and renamed to `list-length-upto'."
+    (apply #'list-length-upto list (list max))))
 
 (defun nth-wrap (n list)
   "Get the Nth item in LIST, wrapping the index if necessary.

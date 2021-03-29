@@ -34,6 +34,7 @@
    :round-by
    :round-by-direction
 
+   :list-length-upto
    :length-upto
    :nth-wrap
    :elt-wrap
