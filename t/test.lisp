@@ -141,6 +141,14 @@
   ;; FIX
   )
 
+(test friendly-string
+  "Test the `friendly-string' function"
+  (is (string= "foo"
+               (friendly-string "foo"))
+      "friendly-symbol doesn't convert strings to keywords correctly")
+  (is (string= "foos-bar-baz-and-qux"
+               (friendly-string "foo's bar, baz, and qux"))))
+
 (test friendly-symbol
   "Test the `friendly-symbol' function"
   (is (eql :foo

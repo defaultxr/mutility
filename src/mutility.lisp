@@ -273,32 +273,39 @@ See also: `my-intern', `un-intern'"
 See also: `reintern', `my-intern'"
   (string-downcase (write-to-string symbol)))
 
-(defun friendly-symbol (input &optional (package :keyword))
-  "Return INPUT as a symbol, with all non-letter, non-number, and non-hyphen characters removed.
+(defun friendly-string (input)
+  "Return INPUT as a string with all non-letter, non-number, and non-hyphen characters removed.
 
 Example:
 
 ;; (friendly-symbol \"foo's bar, baz, and qux\") ;=> :FOOS-BAR-BAZ-AND-QUX
 
-See also: `parse-boolean', `friendly-ratio-string', `friendly-duration-string'"
-  (intern
-   (let ((str (string-upcase
-               (remove-if-not
-                (lambda (letter)
-                  (or (digit-char-p letter)
-                      (alpha-char-p letter)
-                      (char= #\- letter)))
-                (substitute #\- #\_
-                            (substitute #\- #\space (etypecase input
-                                                      (string input)
-                                                      (symbol (symbol-name input)))))))))
-     (loop :for pos := (search "--" str)
-           :if pos
-             :do (setf str (concat (subseq str 0 pos) "-" (subseq str (+ 2 pos))))
-           :else
-             :do (loop-finish))
-     str)
-   package))
+See also: `friendly-symbol', `parse-boolean', `friendly-ratio-string', `friendly-duration-string'"
+  (let ((str (remove-if-not
+              (lambda (letter)
+                (or (digit-char-p letter)
+                    (alpha-char-p letter)
+                    (char= #\- letter)))
+              (substitute #\- #\_
+                          (substitute #\- #\space (etypecase input
+                                                    (string input)
+                                                    (symbol (symbol-name input))))))))
+    (loop :for pos := (search "--" str)
+          :if pos
+            :do (setf str (concat (subseq str 0 pos) "-" (subseq str (+ 2 pos))))
+          :else
+            :do (loop-finish))
+    str))
+
+(defun friendly-symbol (input &optional (package :keyword))
+  "Return INPUT as a symbol with all non-letter, non-number, and non-hyphen characters removed.
+
+Example:
+
+;; (friendly-symbol \"foo's bar, baz, and qux\") ;=> :FOOS-BAR-BAZ-AND-QUX
+
+See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly-duration-string'"
+  (intern (string-upcase (friendly-string input)) package))
 
 ;;; strings
 
