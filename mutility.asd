@@ -32,7 +32,7 @@
   :components ((:file "loopy")))
 
 (asdf:defsystem #:mutility/test-helpers
-  :description "modula's utilities with \"test helper\" functions"
+  :description "modula's utilities: functions for assisting with writing tests"
   :author "modula t."
   :license "MIT"
   :version "0.5"

@@ -71,9 +71,9 @@ See also: `repeat-by', `a'"
        (when add-list
          (list 'list))
        (loop :until (>= i input-length)
-             :for c = (elt list i)
-             :for r = (list)
-             :for nxt = nil ;; nxt means next value should be added to repeats even if it doesn't have !
+             :for c := (elt list i)
+             :for r := (list)
+             :for nxt := nil ;; nxt means next value should be added to repeats even if it doesn't have !
              :append (progn
                        (when (symbolp c)
                          (when-let* ((sname (write-to-string c))
@@ -88,7 +88,7 @@ See also: `repeat-by', `a'"
                        (incf i)
                        (let ((continue t))
                          (loop :while (and continue (< i input-length))
-                               :for chk = (elt list i)
+                               :for chk := (elt list i)
                                :do (progn
                                      (if nxt
                                          (progn
