@@ -403,7 +403,7 @@ See also: `friendly-duration-string'"
      (write-to-string ratio))))
 
 ;; FIX: make this calculate days, weeks, etc as well?
-(defun friendly-duration-string (seconds)
+(defun friendly-duration-string (seconds &key include-ms)
   "Format a number of seconds as a more human-readable string. For now, hours are the biggest unit considered.
 
 Example:
@@ -417,10 +417,13 @@ See also: `friendly-ratio-string'"
          (hourp (plusp hour))
          (min (mod min 60))
          (sec (mod seconds 60)))
-    (concat (when hourp
-              (concat hour ":"))
-            (format nil (if hourp "~2,'0d" "~d") min)
-            (format nil ":~2,'0d" sec))))
+    (multiple-value-bind (sec frac) (truncate sec)
+      (concat (when hourp
+                (concat hour ":"))
+              (format nil (if hourp "~2,'0d" "~d") min)
+              (format nil ":~2,'0d" sec)
+              (when include-ms
+                (format nil ".~3,'0d" (truncate (* 1000 frac))))))))
 
 ;; FIX: ensure this works with Lisp's built-in indentation functionality?
 (defun pretty-print-tree (tree &optional (indent 0))
