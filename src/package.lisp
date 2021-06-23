@@ -8,7 +8,6 @@
    :fn
    :with-access
 
-   :define-obsolete-function-alias
    :dprint
 
    :keys

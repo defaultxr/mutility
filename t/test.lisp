@@ -97,10 +97,6 @@
                  (accumulate 6))))
       "accumulating's reset-accumulation function doesn't reset the accumulated list"))
 
-(test define-obsolete-function-alias
-  ;; FIX
-  )
-
 (test dprint
   "Test the `dprint' macro"
   (is (eql 0

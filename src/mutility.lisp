@@ -206,14 +206,6 @@ See also: `cl:with-accessors', `cl:with-slots'"
              ,@slots-form)
           (car slots-form)))))
 
-(defmacro define-obsolete-function-alias (old-function-name new-function-name) ;; from https://groups.google.com/forum/#!msg/comp.lang.lisp/uoHap8ZQKs8/simXrFNr_EYJ
-  "Define an alias for an obsolete function. The alias will warn about the obsolete function when it is used."
-  `(progn
-     (defun ,old-function-name (&rest args) (apply #',new-function-name args))
-     (define-compiler-macro ,old-function-name (&whole whole &rest args)
-       (declare (ignore args))
-       (warn "Function ~s is obsolete; please use ~s instead." ',old-function-name ',new-function-name)
-       whole)))
 
 (defmacro dprint (&rest args)
   "Easy macro to get debug output for a list of variables, ARGS. For each argument in ARGS, print the argument itself, then print what it evaluates to. Returns the last value.
