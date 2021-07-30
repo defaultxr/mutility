@@ -286,6 +286,7 @@ the other thing" :char-bag (list #\space #\newline)))
       "elt-wrap returns incorrect results"))
 
 (test find-any
+  "Test the `find-any' function"
   ;; FIX
   )
 

@@ -718,7 +718,7 @@ See also: `random-range', `random-gauss'"
 (defun random-gauss (mean standard-deviation)
   "Generate a random number from a normal (Gaussian) distribution.
 
-See also: `random-range', `exponential-random-range'"
+See also: `random-range', `exponential-random-range', `alexandria:gaussian-random'"
   (let* ((first-random (random 1.0))
          (sqrt-result (if (equal first-random 0.0)
                           (sqrt most-positive-single-float)
