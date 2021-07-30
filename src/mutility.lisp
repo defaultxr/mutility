@@ -245,13 +245,11 @@ Example:
 
 ;;; symbols
 
-(defun my-intern (string &optional package)
-  "Converts STRING into a symbol, uppercasing it in the process.
+(defun my-intern (string &optional (package *package*))
+  "Uppercase and convert STRING into a symbol.
 
 See also: `reintern', `un-intern'"
-  (if package
-      (intern (string-upcase string) package)
-      (intern (string-upcase string))))
+  (intern (string-upcase string) package))
 
 (defun reintern (symbol &optional (package *package*))
   "Reintern a symbol, changing its package to PACKAGE.
