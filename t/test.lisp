@@ -73,10 +73,6 @@
   ;; FIX
   )
 
-(test dolist*
-  ;; FIX
-  )
-
 (test accumulating
   "Test the `accumulating' macro"
   (is (equal (list 1 2 3)

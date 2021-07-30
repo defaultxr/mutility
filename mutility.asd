@@ -26,7 +26,8 @@
   :author "modula t."
   :license "MIT"
   :version "0.5"
-  :depends-on (#:mutility)
+  :depends-on (#:mutility
+               #:trivial-do)
   :pathname "src/"
   :serial t
   :components ((:file "loopy")))

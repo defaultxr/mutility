@@ -23,31 +23,14 @@ See also: `cl:mapcar', `dolist*'"
 ;;   (mapcar ))
 
 ;; (defmacro mapplist (function &rest lists)
-
 ;;   (with-gensyms (key value)
 ;;     `(loop ,@(loop :for list :in lists
 ;;                    :append (list :for (,key ,value) :on ,list :by #'cddr
 ;;                                  ))))
 ;;   (mapcar ))
 
-(defmacro dolist* ((item index list &optional result) &body body)
-  "Like the standard `cl:dolist' but includes the current index into LIST as another variable, INDEX.
+(import '(trivial-do:dolist* trivial-do:doalist trivial-do:dohash trivial-do:doseq trivial-do:doseq*))
 
-Example:
-
-;; (dolist* (item index (list 'this 'that 'the-other-thing))
-;;   (format t \"Item #~s is ~s!~%\" index item))
-;; ;=> nil
-;; output:
-;; Item #0 is THIS!
-;; Item #1 is THAT!
-;; Item #2 is THE-OTHER-THING!
-
-See also: `cl:dolist', `mapcar*', `cl:dotimes'"
-  `(let ((,index 0))
-     (dolist (,item ,list ,result)
-       ,@body
-       (incf ,index 1))))
 
 (defmacro while (test &body body)
   "If TEST is true, run BODY, then loop back to the beginning. Returns the last item in TEST or BODY before the end of the loop.
@@ -133,7 +116,11 @@ See also: `uiop:while-collecting'."
          (cdr ,res-sym)))))
 
 (export (list 'mapcar*
-              'dolist*
+              'trivial-do:doalist
+              'trivial-do:dohash
+              'trivial-do:dolist*
+              'trivial-do:doseq
+              'trivial-do:doseq*
               'while
               'do-while
               'until
