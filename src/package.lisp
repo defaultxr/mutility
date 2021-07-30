@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:mutility
+(uiop:define-package #:mutility
   (:use #:cl
         #:alexandria)
   (:export
