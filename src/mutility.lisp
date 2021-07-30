@@ -260,7 +260,7 @@ See also: `my-intern', `un-intern'"
   (intern (symbol-name symbol) package))
 
 (defun un-intern (symbol)
-  "Converts a symbol into a string.
+  "Converts a symbol into a lowercase string.
 
 See also: `reintern', `my-intern'"
   (string-downcase (write-to-string symbol)))
