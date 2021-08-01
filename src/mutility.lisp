@@ -223,9 +223,8 @@ Example:
        (loop :for name :in ',args
              :for val :in ,results
              :do (format t "~s: ~s; " name val)
-             :finally (progn
-                        (terpri)
-                        (return val))))))
+             :finally (terpri)
+                      (return val)))))
 
 (defgeneric keys (object)
   (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))
@@ -303,16 +302,15 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
   "Concatenates all OBJECTS together into a string (other than nils, which are skipped).
 
 See also: `cl:concatenate', `uiop:strcat'"
-  (format nil "~{~A~}" (remove nil objects)))
+  (format nil "~{~@[~A~]~}" objects))
 
-(defun output (&rest items)
-  "Concatenates and prints ITEMS, returning the last one.
+(defun output (&rest objects)
+  "Concatenates and prints OBJECTS, returning the last one.
 
 See also: `concat'"
-  (fresh-line)
-  (format t "~{~A~}~%" (remove nil items))
+  (format t "~&~{~@[~A~]~}~%" objects)
   (finish-output)
-  (car (last items)))
+  (car (last objects)))
 
 (defun split-string (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.

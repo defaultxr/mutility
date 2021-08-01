@@ -150,15 +150,28 @@
            (friendly-symbol "foo's bar, baz, and qux"))))
 
 (test concat
-  ;; FIX
-  )
+  "Test the `concat' function"
+  (is (string= "FOOBAR"
+               (concat 'foo nil 'bar)))
+  (is (string= "123"
+               (concat 1 2 3)))
+  (is (string= "foobar"
+               (concat nil "foo" "bar" nil))))
 
 (test output
-  ;; FIX
-  )
+  "Test the `output' function"
+  (is (string= (format nil "FOOBAR~%")
+               (with-output-to-string (*standard-output*)
+                 (output 'foo nil 'bar))))
+  (is (string= (format nil "123~%")
+               (with-output-to-string (*standard-output*)
+                 (output nil 1 2 3))))
+  (is (string= (format nil "foobar~%")
+               (with-output-to-string (*standard-output*)
+                 (output "foo" "bar" nil)))))
 
 (test split-string
-  "Test split-string"
+  "Test the `split-string' function"
   (is (equal (list "" "")
              (split-string "d" :char-bag (list #\d) :include-empty t))
       "split-string is incorrect for strings consisting only of the divider and include-empty true")
