@@ -40,6 +40,7 @@
    :list-length>
    :nth-wrap
    :elt-wrap
+   :find-if*
    :find-any
    :most
    :flatten-1

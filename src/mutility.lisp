@@ -558,8 +558,27 @@ See also: `nth-wrap'"
            (type sequence sequence))
   (elt sequence (mod n (length sequence))))
 
+(defun find-if* (predicate sequence) ;; FIX: need to implement `find-if''s other arguments
+  "Like `find-if', but return the index of the found item as a second value.
+
+See also: `find-any'"
+  (if (listp sequence)
+      (let ((index 0))
+        (dolist (item sequence)
+          (when (funcall predicate item)
+            (return-from find-if* (values item index)))
+          (incf index)))
+      (let ((length (length sequence)))
+        (do ((index 0 (1+ index)))
+            ((>= index length))
+          (let ((item (elt sequence index)))
+            (when (funcall predicate item)
+              (return-from find-if* (values item index))))))))
+
 (defun find-any (items list &key test)
-  "Returns the first item from ITEMS that is found in LIST, or nil if none."
+  "Returns the first item from ITEMS that is found in LIST, or nil if none.
+
+See also: `find-if*'"
   (dolist (item items)
     (when (position item list :test test)
       (return-from find-any item))))
