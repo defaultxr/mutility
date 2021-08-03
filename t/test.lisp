@@ -170,6 +170,11 @@
                (with-output-to-string (*standard-output*)
                  (output "foo" "bar" nil)))))
 
+(test vowel-char-p
+  "Test the `vowel-char-p' function"
+  (dolist (c (list #\a #\e #\i #\o #\u #\A #\E #\I #\O #\U))
+    (is-true (vowel-char-p c))))
+
 (test split-string
   "Test the `split-string' function"
   (is (equal (list "" "")
