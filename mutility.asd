@@ -12,6 +12,7 @@
   :source-control (:git "git@github.com:defaultxr/mutility.git")
   :depends-on (#:alexandria
                #:local-time
+               #:closer-mop
                (:feature :sbcl (:require :sb-introspect))) ;; for function-arglist
   :pathname "src/"
   :serial t

@@ -206,6 +206,118 @@ See also: `cl:with-accessors', `cl:with-slots'"
              ,@slots-form)
           (car slots-form)))))
 
+(defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t))
+  "Define a dictionary named NAME that maps symbols to objects. Defines several macros and functions to get and set those mappings and deal with the associated objects.
+
+Defines the *NAME-dictionary* hash table and the following functions:
+
+- NAME-p - test whether an object is an instance of NAME (if NAME is a class).
+- find-NAME - find the object in the dictionary with the specified name.
+- (setf find-NAME) - set the object in the dictionary with the specified name.
+- all-NAMEs - get a list of all of the objects in the dictionary.
+- all-NAME-names - get a list of all symbols defined in the dictionary.
+- NAME-names - get a list of all names in the dictionary that point to the specified object, optionally including aliases.
+- if NAME is the name of a class, also define methods specializing on symbols for each of that class's accessors, which look up the object pointed to by that symbol and return the value of that method being called on said object.
+
+Options:
+
+- name-type - the type that a NAME name can be.
+- include-errorp - whether to include the errorp keyword argument for find-NAME.
+- errorp-default - the default value for find-NAME's errorp argument."
+  (let* ((name-string (string-downcase (symbol-name name)))
+         (dict-symbol (my-intern (concat "*" name "-dictionary*") *package*))
+         (test-symbol (my-intern (concat name '-p) *package*))
+         (find-symbol (my-intern (concat 'find- name) *package*))
+         (class (find-class name nil))
+         (class-slots (when class
+                        (closer-mop:class-direct-slots class)))
+         (class-method-names (when class
+                               (mapcar (fn (closer-mop:generic-function-name (closer-mop:method-generic-function _)))
+                                       (remove-if-not (fn (typep _ 'closer-mop:standard-reader-method))
+                                                      (closer-mop:specializer-direct-methods class)))))
+         (has-name (position 'name class-slots :key #'closer-mop:slot-definition-name :test #'string=)))
+    (when (and class (not has-name))
+      (warn "Found class ~s but it doesn't appear to have a NAME slot." class))
+    `(progn
+       (defvar ,dict-symbol (make-hash-table :test ',(if (string= 'symbol name-type) 'eql 'equal))
+         ,(concatenate 'string "The " name-string " dictionary hash table.
+
+See also: `find-" name-string "'"))
+       (defun ,test-symbol (object)
+         ,(concat "Test whether OBJECT is a" (when (vowel-char-p (char name-string 0)) "n") " " name-string ".
+
+See also: `find-" name-string "'")
+         (typep object ',name))
+       (defun ,find-symbol (name &key ,@(when include-errorp (list (list 'errorp errorp-default))) (dictionary ,dict-symbol))
+         ,(concat "Get the object named NAME in the " name-string " dictionary. If ERRORP is true, signals an error when NAME isn't found in the dictionary. Returns t or nil as a second value showing whether the symbol was found.
+
+See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-names'")
+         (if (,test-symbol name)
+             name
+             (let ((res (gethash name dictionary))) ;; FIX: improve the error message/condition; make it into its own class. but should there be just one class (maybe something like 'mutility:dictionary-entry-not-found-error) or should each dictionary define its own error (i.e. 'pdef-not-found)?
+               (if res
+                   (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
+                       (,find-symbol res)
+                       res)
+                   ,(if include-errorp
+                        '(when errorp
+                          (error "Nothing named ~s found in this dictionary." name))
+                        (when errorp-default
+                          '(error "Nothing named ~s found in this dictionary." name)))))))
+       (defun (setf ,find-symbol) (value name &key errorp (dictionary ,dict-symbol))
+         (declare (ignore errorp))
+         (setf (gethash name dictionary) value))
+       (defun ,(my-intern (concat 'all- name 's)) (&key package (dictionary ,dict-symbol))
+         ,(concat "Get a list of all defined " name-string " objects in DICTIONARY. With PACKAGE, get only " name-string "s whose name is a symbol in that package.
+
+See also: `all-" name-string "-names', `" name-string "-names', `find-" name-string "'")
+         (let ((objects (remove-if-not #',test-symbol (hash-table-values dictionary))))
+           (if package
+               (let ((package (etypecase package
+                                (package package)
+                                (symbol (find-package package)))))
+                 (remove-if-not (fn (eql (symbol-package _) package)) objects))
+               objects)))
+       (defun ,(my-intern (concat 'all- name '-names)) (&key (include-aliases t) package (dictionary ,dict-symbol))
+         ,(concat "Get a list of the names of all defined " name-string " objects.
+
+See also: `all-" name-string "s', `" name-string "-names'")
+         (let ((names (if include-aliases
+                          (keys dictionary)
+                          (let (res)
+                            (maphash (lambda (k v)
+                                       (unless (typep v ',name-type)
+                                         (push k res)))
+                                     dictionary)
+                            res))))
+           (if package
+               (let ((package (etypecase package
+                                (package package)
+                                (symbol (find-package package)))))
+                 (remove-if-not (fn (and (symbolp _)
+                                         (eql (symbol-package _) package)))
+                                names))
+               names)))
+       ,@(when has-name
+           `((defun ,(my-intern (concat name '-names)) (name &key (dictionary ,dict-symbol))
+               ,(concat "Get a list of all the names in DICTIONARY that point to NAME.
+
+See also: `all-" name-string "-names', `all-" name-string "s'")
+               (when-let* ((object (,find-symbol name))
+                           (real-name (slot-value object name)))
+                 (loop :for key :being :the hash-keys :of dictionary
+                         :using (hash-value value)
+                       :if (or (eq value object)
+                               (equalp value real-name))
+                         :collect key)))))
+       ,@(when (and class class-method-names)
+           (mapcar (lambda (method)
+                     `(progn
+                        (defmethod ,method ((symbol symbol))
+                          (,method (,find-symbol symbol)))
+                        (defmethod ,method ((null null))
+                          nil)))
+                   class-method-names)))))
 
 (defmacro dprint (&rest args)
   "Easy macro to get debug output for a list of variables, ARGS. For each argument in ARGS, print the argument itself, then print what it evaluates to. Returns the last value.

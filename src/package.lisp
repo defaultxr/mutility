@@ -7,6 +7,7 @@
    :a
    :fn
    :with-access
+   :define-dictionary
 
    :dprint
 
