@@ -206,6 +206,20 @@ See also: `cl:with-accessors', `cl:with-slots'"
              ,@slots-form)
           (car slots-form)))))
 
+(define-condition no-dictionary-entry ()
+  ((entry :initarg :entry :reader no-dictionary-entry-entry :documentation "The name of the entry being looked up.")
+   (dictionary-name :initarg :dictionary-name :reader no-dictionary-entry-dictionary-name :documentation "The name of the dictionary.")
+   (dictionary :initarg :dictionary :reader no-dictionary-entry-dictionary :documentation "The dictionary object itself."))
+  (:report
+   (lambda (condition stream)
+     (format stream "~@<No entry ~S found in the ~S dictionary.~@:>"
+             (no-dictionary-entry-entry condition)
+             (no-dictionary-entry-dictionary-name condition)))))
+
+(setf (documentation 'no-dictionary-entry-entry) "The name of the entry being looked up."
+      (documentation 'no-dictionary-entry-dictionary-name) "The name of the dictionary."
+      (documentation 'no-dictionary-entry-dictionary) "The dictionary object itself.")
+
 (defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t))
   "Define a dictionary named NAME that maps symbols to objects. Defines several macros and functions to get and set those mappings and deal with the associated objects.
 
@@ -254,16 +268,16 @@ See also: `find-" name-string "'")
 See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-names'")
          (if (,test-symbol name)
              name
-             (let ((res (gethash name dictionary))) ;; FIX: improve the error message/condition; make it into its own class. but should there be just one class (maybe something like 'mutility:dictionary-entry-not-found-error) or should each dictionary define its own error (i.e. 'pdef-not-found)?
+             (let ((res (gethash name dictionary)))
                (if res
                    (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
                        (,find-symbol res)
                        res)
                    ,(if include-errorp
-                        '(when errorp
-                          (error "Nothing named ~s found in this dictionary." name))
+                        `(when errorp
+                           (error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol))
                         (when errorp-default
-                          '(error "Nothing named ~s found in this dictionary." name)))))))
+                          `(error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol)))))))
        (defun (setf ,find-symbol) (value name &key errorp (dictionary ,dict-symbol))
          (declare (ignore errorp))
          (setf (gethash name dictionary) value))

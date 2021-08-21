@@ -7,6 +7,10 @@
    :a
    :fn
    :with-access
+   :no-dictionary-entry
+   :no-dictionary-entry-entry
+   :no-dictionary-entry-dictionary-name
+   :no-dictionary-entry-dictionary
    :define-dictionary
 
    :dprint
