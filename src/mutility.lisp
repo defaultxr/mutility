@@ -250,7 +250,7 @@ Options:
                                (mapcar (fn (closer-mop:generic-function-name (closer-mop:method-generic-function _)))
                                        (remove-if-not (fn (typep _ 'closer-mop:standard-reader-method))
                                                       (closer-mop:specializer-direct-methods class)))))
-         (has-name (position 'name class-slots :key #'closer-mop:slot-definition-name :test #'string=)))
+         (has-name (find 'name class-slots :key #'closer-mop:slot-definition-name :test #'string=)))
     (when (and class (not has-name))
       (warn "Found class ~s but it doesn't appear to have a NAME slot." class))
     `(progn
@@ -319,7 +319,7 @@ See also: `all-" name-string "s', `" name-string "-names'")
 
 See also: `all-" name-string "-names', `all-" name-string "s'")
                (when-let* ((object (,find-symbol name))
-                           (real-name (slot-value object name)))
+                           (real-name (slot-value object ',(closer-mop:slot-definition-name has-name))))
                  (loop :for key :being :the hash-keys :of dictionary
                          :using (hash-value value)
                        :if (or (eq value object)
