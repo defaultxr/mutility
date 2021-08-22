@@ -216,9 +216,9 @@ See also: `cl:with-accessors', `cl:with-slots'"
              (no-dictionary-entry-entry condition)
              (no-dictionary-entry-dictionary-name condition)))))
 
-(setf (documentation 'no-dictionary-entry-entry) "The name of the entry being looked up."
-      (documentation 'no-dictionary-entry-dictionary-name) "The name of the dictionary."
-      (documentation 'no-dictionary-entry-dictionary) "The dictionary object itself.")
+(setf (documentation 'no-dictionary-entry-entry 'function) "The name of the entry being looked up."
+      (documentation 'no-dictionary-entry-dictionary-name 'function) "The name of the dictionary."
+      (documentation 'no-dictionary-entry-dictionary 'function) "The dictionary object itself.")
 
 (defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t))
   "Define a dictionary named NAME that maps symbols to objects. Defines several macros and functions to get and set those mappings and deal with the associated objects.
