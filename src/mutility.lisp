@@ -214,7 +214,8 @@ See also: `cl:with-accessors', `cl:with-slots'"
    (lambda (condition stream)
      (format stream "~@<No entry ~S found in the ~S dictionary.~@:>"
              (no-dictionary-entry-entry condition)
-             (no-dictionary-entry-dictionary-name condition)))))
+             (no-dictionary-entry-dictionary-name condition))))
+  (:documentation "Condition for when a dictionary entry is not found."))
 
 (setf (documentation 'no-dictionary-entry-entry 'function) "The name of the entry being looked up."
       (documentation 'no-dictionary-entry-dictionary-name 'function) "The name of the dictionary."
