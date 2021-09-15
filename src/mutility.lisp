@@ -282,7 +282,7 @@ See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-name
        (defun (setf ,find-symbol) (value name &key errorp (dictionary ,dict-symbol))
          (declare (ignore errorp))
          (setf (gethash name dictionary) value))
-       (defun ,(my-intern (concat 'all- name 's)) (&key package (dictionary ,dict-symbol))
+       (defun ,(my-intern (concat 'all- name 's) *package*) (&key package (dictionary ,dict-symbol))
          ,(concat "Get a list of all defined " name-string " objects in DICTIONARY. With PACKAGE, get only " name-string "s whose name is a symbol in that package.
 
 See also: `all-" name-string "-names', `" name-string "-names', `find-" name-string "'")
@@ -293,7 +293,7 @@ See also: `all-" name-string "-names', `" name-string "-names', `find-" name-str
                                 (symbol (find-package package)))))
                  (remove-if-not (fn (eql (symbol-package _) package)) objects))
                objects)))
-       (defun ,(my-intern (concat 'all- name '-names)) (&key (include-aliases t) package (dictionary ,dict-symbol))
+       (defun ,(my-intern (concat 'all- name '-names) *package*) (&key (include-aliases t) package (dictionary ,dict-symbol))
          ,(concat "Get a list of the names of all defined " name-string " objects.
 
 See also: `all-" name-string "s', `" name-string "-names'")
@@ -314,7 +314,7 @@ See also: `all-" name-string "s', `" name-string "-names'")
                                 names))
                names)))
        ,@(when has-name
-           `((defun ,(my-intern (concat name '-names)) (name &key (dictionary ,dict-symbol))
+           `((defun ,(my-intern (concat name '-names) *package*) (name &key (dictionary ,dict-symbol)) ;; FIX: add include-aliases argument
                ,(concat "Get a list of all the names in DICTIONARY that point to NAME.
 
 See also: `all-" name-string "-names', `all-" name-string "s'")
