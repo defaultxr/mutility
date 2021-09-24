@@ -354,7 +354,7 @@ Example:
                       (return val)))))
 
 (defgeneric keys (object)
-  (:documentation "Get the keys of OBJECT, whether it be a plist, event, etc."))
+  (:documentation "Get the keys of OBJECT, whether it be a plist, hash table, etc."))
 
 (defmethod keys ((object null))
   nil)
@@ -430,13 +430,13 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
 ;;; strings
 
 (defun concat (&rest objects)
-  "Concatenates all OBJECTS together into a string (other than nils, which are skipped).
+  "Concatenate all non-nil OBJECTS together into a string.
 
 See also: `cl:concatenate', `uiop:strcat'"
   (format nil "~{~@[~A~]~}" objects))
 
 (defun output (&rest objects)
-  "Concatenates and prints OBJECTS, returning the last one.
+  "Concatenate (as per `concat') and print OBJECTS, returning the last one.
 
 See also: `concat'"
   (format t "~&~{~@[~A~]~}~%" objects)
