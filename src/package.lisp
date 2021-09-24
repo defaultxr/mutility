@@ -17,9 +17,11 @@
 
    :keys
 
+   :upcase-intern
    :my-intern
    :reintern
    :un-intern
+
    :friendly-string
    :friendly-symbol
 

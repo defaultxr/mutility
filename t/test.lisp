@@ -121,15 +121,11 @@
           (mapcar (lambda (x) (member x k)) (list :foo :bar :baz :qux))))
       "keys doesn't work correctly for hashes"))
 
-(test my-intern
+(test upcase-intern
   ;; FIX
   )
 
 (test reintern
-  ;; FIX
-  )
-
-(test un-intern
   ;; FIX
   )
 

@@ -240,9 +240,9 @@ Options:
 - include-errorp - whether to include the errorp keyword argument for find-NAME.
 - errorp-default - the default value for find-NAME's errorp argument."
   (let* ((name-string (string-downcase (symbol-name name)))
-         (dict-symbol (my-intern (concat "*" name "-dictionary*") *package*))
-         (test-symbol (my-intern (concat name '-p) *package*))
-         (find-symbol (my-intern (concat 'find- name) *package*))
+         (dict-symbol (upcase-intern (concat "*" name "-dictionary*") *package*))
+         (test-symbol (upcase-intern (concat name '-p) *package*))
+         (find-symbol (upcase-intern (concat 'find- name) *package*))
          (class (find-class name nil))
          (class-slots (when class
                         (closer-mop:class-direct-slots class)))
@@ -282,7 +282,7 @@ See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-name
        (defun (setf ,find-symbol) (value name &key errorp (dictionary ,dict-symbol))
          (declare (ignore errorp))
          (setf (gethash name dictionary) value))
-       (defun ,(my-intern (concat 'all- name 's) *package*) (&key package (dictionary ,dict-symbol))
+       (defun ,(upcase-intern (concat 'all- name 's) *package*) (&key package (dictionary ,dict-symbol))
          ,(concat "Get a list of all defined " name-string " objects in DICTIONARY. With PACKAGE, get only " name-string "s whose name is a symbol in that package.
 
 See also: `all-" name-string "-names', `" name-string "-names', `find-" name-string "'")
@@ -293,7 +293,7 @@ See also: `all-" name-string "-names', `" name-string "-names', `find-" name-str
                                 (symbol (find-package package)))))
                  (remove-if-not (fn (eql (symbol-package _) package)) objects))
                objects)))
-       (defun ,(my-intern (concat 'all- name '-names) *package*) (&key (include-aliases t) package (dictionary ,dict-symbol))
+       (defun ,(upcase-intern (concat 'all- name '-names) *package*) (&key (include-aliases t) package (dictionary ,dict-symbol))
          ,(concat "Get a list of the names of all defined " name-string " objects.
 
 See also: `all-" name-string "s', `" name-string "-names'")
@@ -314,7 +314,7 @@ See also: `all-" name-string "s', `" name-string "-names'")
                                 names))
                names)))
        ,@(when has-name
-           `((defun ,(my-intern (concat name '-names) *package*) (name &key (dictionary ,dict-symbol)) ;; FIX: add include-aliases argument
+           `((defun ,(upcase-intern (concat name '-names) *package*) (name &key (dictionary ,dict-symbol)) ;; FIX: add include-aliases argument
                ,(concat "Get a list of all the names in DICTIONARY that point to NAME.
 
 See also: `all-" name-string "-names', `all-" name-string "s'")
@@ -371,23 +371,27 @@ Example:
 
 ;;; symbols
 
-(defun my-intern (string &optional (package *package*))
+(defun upcase-intern (string &optional (package *package*))
   "Uppercase and convert STRING into a symbol.
 
-See also: `reintern', `un-intern'"
+See also: `reintern', `string-downcase'"
   (intern (string-upcase string) package))
+
+(uiop:with-deprecation (:style-warning)
+  (defun my-intern (string &optional (package *package*))
+    "Deprecated alias for `upcase-intern'."
+    (upcase-intern string package)))
 
 (defun reintern (symbol &optional (package *package*))
   "Reintern a symbol, changing its package to PACKAGE.
 
-See also: `my-intern', `un-intern'"
+See also: `upcase-intern', `string-downcase'"
   (intern (symbol-name symbol) package))
 
-(defun un-intern (symbol)
-  "Converts a symbol into a lowercase string.
-
-See also: `reintern', `my-intern'"
-  (string-downcase (write-to-string symbol)))
+(uiop:with-deprecation (:style-warning)
+  (defun un-intern (symbol)
+    "Deprecated alias for `string-downcase'."
+    (string-downcase symbol)))
 
 (defun friendly-string (input)
   "Return INPUT as a string with all non-letter, non-number, and non-hyphen characters removed.
