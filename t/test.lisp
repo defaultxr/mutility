@@ -124,8 +124,10 @@
       "keys doesn't work correctly for hashes"))
 
 (test upcase-intern
-  ;; FIX
-  )
+  "Test the `upcase-intern' function"
+  (is (string= 'foo (upcase-intern "foo")))
+  (is (eql (find-package 'mutility/tests)
+           (symbol-package (upcase-intern "bar" 'mutility/tests)))))
 
 (test friendly-string
   "Test the `friendly-string' function"
