@@ -6,6 +6,7 @@
   (:export
    :a
    :fn
+   :cut
    :with-access
    :no-dictionary-entry
    :no-dictionary-entry-entry

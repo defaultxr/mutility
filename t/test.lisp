@@ -68,6 +68,13 @@
   ;; FIX
   )
 
+(test cut
+  "Test the `cut' macro"
+  (is-true (= 2 (funcall (cut '- 3 <>) 1)))
+  (is-true (= 0 (funcall (cut '- 3 <> <>) 2 1)))
+  (is-true (= 1 (funcall (cut '- 3 <> 0) 2)))
+  (is-true (= 1 (funcall (cut <> 3 <>) '- 2))))
+
 (test accumulating
   "Test the `accumulating' macro"
   (is (equal (list 1 2 3)

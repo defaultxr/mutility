@@ -154,7 +154,9 @@ See also: `repeat-by-!', `expand-ranges'"
   (expand-ranges (repeat-by-! args t)))
 
 (defmacro fn (&body body)
-  "Syntax sugar for making `lambda's. BODY is the function body. Underscores in the body can be used to represent the argument to the function."
+  "Syntax sugar for making `lambda's. BODY is the function body. Underscores in the body can be used to represent the argument to the function.
+
+See also: `cut'"
   (let ((args (list)))
     (labels ((parse (list)
                (mapcar (lambda (i)
@@ -169,6 +171,35 @@ See also: `repeat-by-!', `expand-ranges'"
                        list)))
       (let ((body (parse body)))
         `(lambda (,@args) ,@body)))))
+
+(defmacro cut (func &rest args)
+  "The cut macro; notation for specializing parameters without currying, as described in SRFI 26.
+
+https://srfi.schemers.org/srfi-26/srfi-26.html
+
+Examples:
+
+;; (cut '/ 1 <>) ;=> (lambda (x) (/ 1 x))
+;; (cut <> 1 2) ;=> (lambda (func) (funcall func 1 2))
+;; (cut '+ <> <>) ;=> (lambda (x y) (+ x y))
+
+See also: `fn'"
+  (flet ((<>-p (i)
+           (and (symbolp i)
+                (string= '<> i))))
+    (let* ((gensyms (when (<>-p func)
+                      (list (gensym))))
+           (arg-symbols (if (<>-p func)
+                            (copy-list gensyms)
+                            (list func))))
+      (dolist (arg args)
+        (push (if (<>-p arg)
+                  (let ((sym (gensym)))
+                    (push sym gensyms)
+                    sym)
+                  arg)
+              arg-symbols))
+      `(lambda (,@(nreverse gensyms)) (funcall ,@(nreverse arg-symbols))))))
 
 (uiop:with-deprecation (:style-warning)
   (defmacro with-access (slots instance &body body)
