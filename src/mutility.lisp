@@ -495,6 +495,12 @@ See also: `concat'"
 See also: `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
   (member char (list #\a #\e #\i #\o #\u) :test #'char-equal))
 
+(defun string-designator-p (object)
+  "True if OBJECT is a string-designator, i.e. a string or symbol.
+
+See also: `alexandria:string-designator'"
+  (typep object 'string-designator))
+
 (defun split-string (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 

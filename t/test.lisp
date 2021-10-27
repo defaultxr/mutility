@@ -171,6 +171,17 @@
   (dolist (c (list #\a #\e #\i #\o #\u #\A #\E #\I #\O #\U))
     (is-true (vowel-char-p c))))
 
+(test string-designator-p
+  "Test the `string-designator-p' function"
+  (is-true (string-designator-p 'foo))
+  (is-true (string-designator-p "FOO"))
+  (is-true (string-designator-p :foo))
+  (is-true (string-designator-p nil))
+  (is-true (string-designator-p t))
+  (is-false (string-designator-p 3))
+  (is-false (string-designator-p (list 1 2)))
+  (is-false (string-designator-p (lambda () "foo"))))
+
 (test split-string
   "Test the `split-string' function"
   (is (equal (list "" "")

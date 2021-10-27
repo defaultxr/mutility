@@ -29,6 +29,7 @@
    :concat
    :output
    :vowel-char-p
+   :string-designator-p
    :split-string
    :replace-all
    :parse-boolean
