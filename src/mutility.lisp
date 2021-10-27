@@ -206,7 +206,7 @@ See also: `cl:with-accessors', `cl:with-slots'"
              ,@slots-form)
           (car slots-form)))))
 
-(define-condition no-dictionary-entry ()
+(define-condition no-dictionary-entry (error)
   ((entry :initarg :entry :reader no-dictionary-entry-entry :documentation "The name of the entry being looked up.")
    (dictionary-name :initarg :dictionary-name :reader no-dictionary-entry-dictionary-name :documentation "The name of the dictionary.")
    (dictionary :initarg :dictionary :reader no-dictionary-entry-dictionary :documentation "The dictionary object itself."))
@@ -221,29 +221,41 @@ See also: `cl:with-accessors', `cl:with-slots'"
       (documentation 'no-dictionary-entry-dictionary-name 'function) "The name of the dictionary."
       (documentation 'no-dictionary-entry-dictionary 'function) "The dictionary object itself.")
 
-(defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t))
-  "Define a dictionary named NAME that maps symbols to objects. Defines several macros and functions to get and set those mappings and deal with the associated objects.
+(defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t) (define-class-functions :if-class-exists) find-function-name)
+  "Define a \"dictionary\" named NAME that maps symbols to objects. Defines the *NAME-dictionary* hash table and several functions for access to said table and the associated objects. If NAME is also the name of a class and DEFINE-CLASS-METHODS is true, also defines methods for each of the class's accessor functions specializing 
 
-Defines the *NAME-dictionary* hash table and the following functions:
+Functions defined:
 
-- NAME-p - test whether an object is an instance of NAME (if NAME is a class).
-- find-NAME - find the object in the dictionary with the specified name.
-- (setf find-NAME) - set the object in the dictionary with the specified name.
-- all-NAMEs - get a list of all of the objects in the dictionary.
-- all-NAME-names - get a list of all symbols defined in the dictionary.
-- NAME-names - get a list of all names in the dictionary that point to the specified object, optionally including aliases.
-- if NAME is the name of a class, also define methods specializing on symbols for each of that class's accessors, which look up the object pointed to by that symbol and return the value of that method being called on said object.
+- NAME-p - Test whether an object is an instance of NAME (if NAME is a class).
+- find-NAME - Find the object in the dictionary with the specified name.
+- (setf find-NAME) - Set the object in the dictionary with the specified name.
+- all-NAMEs - Get a list of all of the objects in the dictionary.
+- all-NAME-names - Get a list of all symbols defined in the dictionary.
+- NAME-names - Get a list of all names in the dictionary that point to the specified object, optionally including aliases.
+- If NAME is the name of a class and DEFINE-CLASS-FUNCTIONS is true, also define methods specializing on symbols for each of that class's accessors, which look up the object pointed to by that symbol and return the value of that method being called on said object.
 
 Options:
 
-- name-type - the type that a NAME name can be.
-- include-errorp - whether to include the errorp keyword argument for find-NAME.
-- errorp-default - the default value for find-NAME's errorp argument."
-  (let* ((name-string (string-downcase (symbol-name name)))
+- NAME-TYPE - The type that a NAME dictionary name (key) can be; typically symbol, string, or string-designator.
+- INCLUDE-ERRORP - Whether to include the errorp keyword argument for find-NAME.
+- ERRORP-DEFAULT - The default value for find-NAME's errorp argument.
+- DEFINE-CLASS-FUNCTIONS - If t, define functions and methods for the class named NAME and error if no such class exists. If :if-class-exists, define methods if the class exists but don't error otherwise. If nil, don't define any methods even if the class exists.
+- FIND-FUNCTION-NAME - The name that should be used to define the find-NAME function. Defaults to find-NAME.
+
+Example:
+
+;; (define-dictionary foo)
+;;
+;; (setf (find-foo 'bar) (list 1 2 3))
+;;
+;; (find-foo 'bar) ;=> (1 2 3)
+
+See also: `make-hash-table', `find-class', `do-symbols'"
+  (let* ((name-string (string-downcase name))
          (dict-symbol (upcase-intern (concat "*" name "-dictionary*") *package*))
          (test-symbol (upcase-intern (concat name '-p) *package*))
-         (find-symbol (upcase-intern (concat 'find- name) *package*))
-         (class (find-class name nil))
+         (find-symbol (or find-function-name (upcase-intern (concat 'find- name) *package*)))
+         (class (and define-class-functions (find-class name nil)))
          (class-slots (when class
                         (closer-mop:class-direct-slots class)))
          (class-method-names (when class
@@ -251,7 +263,10 @@ Options:
                                        (remove-if-not (fn (typep _ 'closer-mop:standard-reader-method))
                                                       (closer-mop:specializer-direct-methods class)))))
          (has-name (find 'name class-slots :key #'closer-mop:slot-definition-name :test #'string=)))
-    (when (and class (not has-name))
+    (when (and (eql t define-class-functions)
+               (not class))
+      (error "DEFINE-CLASS-FUNCTIONS is t, but no class named ~s could be found." name))
+    (when (and class define-class-functions (not has-name))
       (warn "Found class ~s but it doesn't appear to have a NAME slot." class))
     `(progn
        (defvar ,dict-symbol (make-hash-table :test ',(if (string= 'symbol name-type) 'eql 'equal))
@@ -272,7 +287,7 @@ See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-name
              (let ((res (gethash name dictionary)))
                (if res
                    (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
-                       (,find-symbol res)
+                       (,find-symbol res ,@(when include-errorp (list :errorp 'errorp)) :dictionary dictionary)
                        res)
                    ,(if include-errorp
                         `(when errorp
