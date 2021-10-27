@@ -68,11 +68,6 @@
   ;; FIX
   )
 
-(test with-access
-  "Test the `with-access' macro"
-  ;; FIX
-  )
-
 (test accumulating
   "Test the `accumulating' macro"
   (is (equal (list 1 2 3)

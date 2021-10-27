@@ -170,8 +170,11 @@ See also: `repeat-by-!', `expand-ranges'"
       (let ((body (parse body)))
         `(lambda (,@args) ,@body)))))
 
-(defmacro with-access (slots instance &body body)
-  "Like `with-accessors' and `with-slots' combined; any slots provided as symbols are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
+(uiop:with-deprecation (:style-warning)
+  (defmacro with-access (slots instance &body body)
+    "Deprecated; recommended to use metabang-bind's \"bind\" macro instead.
+
+Like `with-accessors' and `with-slots' combined; any slots provided as symbols are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
 
 Example:
 
@@ -187,24 +190,24 @@ If FOO is a function and BAR is not:
 ;;     (format t \"~s ~s~%\" foo bar)))
 
 See also: `cl:with-accessors', `cl:with-slots'"
-  (multiple-value-bind (accessors slots)
-      (uiop:while-collecting (a s)
-        (dolist (slot slots)
-          (cond
-            ((listp slot)
-             (a slot))
-            ((fboundp slot)
-             (a (list slot slot)))
-            (t
-             (s slot)))))
-    (let ((slots-form (if slots
-                          `((with-slots (,@slots) ,instance
-                              ,@body))
-                          body)))
-      (if accessors
-          `(with-accessors (,@accessors) ,instance
-             ,@slots-form)
-          (car slots-form)))))
+    (multiple-value-bind (accessors slots)
+        (uiop:while-collecting (a s)
+          (dolist (slot slots)
+            (cond
+              ((listp slot)
+               (a slot))
+              ((fboundp slot)
+               (a (list slot slot)))
+              (t
+               (s slot)))))
+      (let ((slots-form (if slots
+                            `((with-slots (,@slots) ,instance
+                                ,@body))
+                            body)))
+        (if accessors
+            `(with-accessors (,@accessors) ,instance
+               ,@slots-form)
+            (car slots-form))))))
 
 (define-condition no-dictionary-entry (error)
   ((entry :initarg :entry :reader no-dictionary-entry-entry :documentation "The name of the entry being looked up.")
