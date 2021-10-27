@@ -125,10 +125,6 @@
   ;; FIX
   )
 
-(test reintern
-  ;; FIX
-  )
-
 (test friendly-string
   "Test the `friendly-string' function"
   (is (string= "foo"

@@ -389,21 +389,18 @@ Example:
 (defun upcase-intern (string &optional (package *package*))
   "Uppercase and convert STRING into a symbol.
 
-See also: `reintern', `string-downcase'"
+See also: `alexandria:ensure-symbol', `string-downcase'"
   (intern (string-upcase string) package))
 
 (uiop:with-deprecation (:style-warning)
   (defun my-intern (string &optional (package *package*))
     "Deprecated alias for `upcase-intern'."
-    (upcase-intern string package)))
+    (upcase-intern string package))
 
-(defun reintern (symbol &optional (package *package*))
-  "Reintern a symbol, changing its package to PACKAGE.
+  (defun reintern (symbol &optional (package *package*))
+    "Deprecated function; recommend using `alexandria:ensure-symbol' instead."
+    (intern (symbol-name symbol) package))
 
-See also: `upcase-intern', `string-downcase'"
-  (intern (symbol-name symbol) package))
-
-(uiop:with-deprecation (:style-warning)
   (defun un-intern (symbol)
     "Deprecated alias for `string-downcase'."
     (string-downcase symbol)))
