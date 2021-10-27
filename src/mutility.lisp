@@ -160,7 +160,7 @@ See also: `repeat-by-!', `expand-ranges'"
                (mapcar (lambda (i)
                          (typecase i
                            (list (parse i))
-                           (symbol (if (string= "_" i)
+                           (symbol (if (string= '_ i)
                                        (progn
                                          (pushnew i args)
                                          i)
@@ -456,7 +456,7 @@ See also: `cl:concatenate', `uiop:strcat'"
 See also: `concat'"
   (format t "~&~{~@[~A~]~}~%" objects)
   (finish-output)
-  (car (last objects)))
+  (lastcar objects))
 
 (defun vowel-char-p (char)
   "True if CHAR is a vowel character (i.e. a, e, i, o, or u). Y and w are not tested.
@@ -762,7 +762,7 @@ Example:
 See also: `alexandria:flatten'"
   (apply #'append (mapcar #'ensure-list list)))
 
-(defun subseq* (sequence start &optional end)
+(defun subseq* (sequence start &optional end) ;; FIX: name conflicts with alexandria-2:subseq*
   "Like subseq, but allows start and end to be negative."
   (let ((length (length sequence)))
     (subseq sequence (if (< start 0)
@@ -997,7 +997,7 @@ Example:
          (type (typecase extension
                  (null nil)
                  (symbol
-                  (string-downcase (string extension)))
+                  (string-downcase extension))
                  (string extension)))
          (attempt 0))
     (flet ((gen-filename (attempt)

@@ -10,7 +10,7 @@
 (in-package #:mutility/tests)
 
 (def-suite mutility-tests
-    :description "mutility test suite.")
+  :description "mutility test suite.")
 
 (in-suite mutility-tests)
 
