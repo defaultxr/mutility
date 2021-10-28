@@ -1000,7 +1000,15 @@ See also: `save-hash-table'"
                             ((find-package 'swank) 'swank))))
     (symbol-value (find-symbol "*CONNECTIONS*" package))))
 
-;;; file utilities
+;;; files
+
+(deftype pathname-designator ()
+  "An object that can be used to designate a pathname, i.e. a string or pathname."
+  '(or string pathname))
+
+(defun pathname-designator-p (object)
+  "True if OBJECT is a `pathname-designator', i.e. a string or pathname."
+  (typep object 'pathname-designator))
 
 (defun open-url (url)
   "Open a URL via the OS's default application."

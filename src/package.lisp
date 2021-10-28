@@ -74,6 +74,8 @@
    :function-arglist
    :lisp-connections
    
+   :pathname-designator
+   :pathname-designator-p
    :open-url
    :generate-temporary-file-name
    :locate-dominating-file))

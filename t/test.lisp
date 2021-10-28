@@ -478,6 +478,14 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test pathname-designator-p
+  "Test the `pathname-designator-p' function"
+  (is-true (pathname-designator-p "/home/blah.txt"))
+  (is-true (pathname-designator-p #P"/home/blah.txt"))
+  (is-false (pathname-designator-p nil))
+  (is-false (pathname-designator-p '/home/blah.txt))
+  (is-false (pathname-designator-p :foo)))
+
 (test open-url
   ;; FIX
   )
