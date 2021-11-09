@@ -31,6 +31,29 @@ See also: `cl:mapcar', `dolist*'"
 
 (import '(trivial-do:dolist* trivial-do:doalist trivial-do:dohash trivial-do:doseq trivial-do:doseq*))
 
+(defmacro dorange ((var from to &optional by result) &body body)
+  "Execute BODY multiple times, with VAR bound to a number starting at FROM and increasing by BY after each iteration until VAR passes or is equal to TO. Finally, RESULT is returned.
+
+Example:
+
+;; (dorange (v 0 5 2 t)
+;;   (print v)) ;; prints 0, 2, and 4, then returns T
+
+See also: `cl:dotimes', `cl:loop', `cl:dolist'"
+  (assert (not (eql 0 by)) (by) "BY argument cannot be zero.")
+  (with-gensyms (tosym signsym startsym)
+    `(let* ((,var ,from)
+            (,tosym ,to)
+            (,signsym (signum (- ,var ,tosym))))
+       (block nil
+         (tagbody
+            ,startsym
+            ,@body
+            (incf ,var ,(or by `(- ,signsym)))
+            (unless (or (= ,signsym (signum (- ,tosym ,var)))
+                        (= ,from ,tosym))
+              (go ,startsym)))
+         ,result))))
 
 (defmacro while (test &body body)
   "If TEST is true, run BODY, then loop back to the beginning. Returns the last item in TEST or BODY before the end of the loop.
@@ -121,6 +144,7 @@ See also: `uiop:while-collecting'."
               'trivial-do:dolist*
               'trivial-do:doseq
               'trivial-do:doseq*
+              'dorange
               'while
               'do-while
               'until
