@@ -44,6 +44,11 @@
    #:round-by
    #:round-by-direction
 
+   #:random-coin
+   #:random-range
+   #:exponential-random-range
+   #:random-gauss
+
    #:length-upto
    #:list-length-upto
    #:list-length>=
@@ -62,10 +67,6 @@
    #:insert-if
    #:insert-sorted
 
-   #:random-coin
-   #:random-range
-   #:exponential-random-range
-   #:random-gauss
 
    #:save-hash-table
    #:restore-hash-table

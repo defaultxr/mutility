@@ -685,6 +685,60 @@ See also: `cl:round', `floor-by', `ceiling-by'"
                (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
           (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff))))))
 
+;;; randomness
+
+(defun random-coin (&optional (probability 0.5))
+  "Randomly return true with a probability of PROBABILITY/1."
+  (<= (random 1.0) probability))
+
+(defun random-range (low &optional high)
+  "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW).
+
+See also: `exponential-random-range', `random-gauss'"
+  (if high
+      (let ((rval (- high low)))
+        (+ low
+           (random (if (integerp rval)
+                       (1+ rval)
+                       rval))))
+      (random low)))
+
+(defun random-range.new (low &optional high) ;; version 2, with support for ratios - FIX
+  "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW)."
+  (flet ((rnd (number)
+           (if (typep number 'ratio)
+               (/ (random (1+ (numerator number))) (denominator number))
+               (random number))))
+    (if high
+        (let ((rval (- high low)))
+          (+ low
+             (rnd (if (integerp rval)
+                      (1+ rval)
+                      rval))))
+        (rnd low))))
+
+(defun exponential-random-range (low high) ;; adapted from supercollider/include/plugin_interface/SC_RGen.h
+  "Generate a random number between LOW and HIGH, with exponential distribution.
+
+See also: `random-range', `random-gauss'"
+  (* low
+     (exp (* (log (/ high
+                     low))
+             (random 1d0)))))
+
+(defun random-gauss (mean standard-deviation)
+  "Generate a random number from a normal (Gaussian) distribution.
+
+See also: `random-range', `exponential-random-range', `alexandria:gaussian-random'"
+  (let* ((first-random (random 1.0))
+         (sqrt-result (if (equal first-random 0.0)
+                          (sqrt most-positive-single-float)
+                          (sqrt (* -2 (log first-random))))))
+    (+ (* sqrt-result
+          (sin (random (* 2 pi)))
+          standard-deviation)
+       mean)))
+
 ;;; lists and sequences
 
 (defun list-length-upto (list &optional (max 10))
@@ -879,59 +933,6 @@ Example:
 See also: `insert-if'"
   (insert-if (fn (>= _ number)) list number))
 
-;;; randomness
-
-(defun random-coin (&optional (probability 0.5))
-  "Randomly return true with a probability of PROBABILITY/1."
-  (<= (random 1.0) probability))
-
-(defun random-range (low &optional high)
-  "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW).
-
-See also: `exponential-random-range', `random-gauss'"
-  (if high
-      (let ((rval (- high low)))
-        (+ low
-           (random (if (integerp rval)
-                       (1+ rval)
-                       rval))))
-      (random low)))
-
-(defun random-range.new (low &optional high) ;; version 2, with support for ratios - FIX
-  "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW)."
-  (flet ((rnd (number)
-           (if (typep number 'ratio)
-               (/ (random (1+ (numerator number))) (denominator number))
-               (random number))))
-    (if high
-        (let ((rval (- high low)))
-          (+ low
-             (rnd (if (integerp rval)
-                      (1+ rval)
-                      rval))))
-        (rnd low))))
-
-(defun exponential-random-range (low high) ;; adapted from supercollider/include/plugin_interface/SC_RGen.h
-  "Generate a random number between LOW and HIGH, with exponential distribution.
-
-See also: `random-range', `random-gauss'"
-  (* low
-     (exp (* (log (/ high
-                     low))
-             (random 1d0)))))
-
-(defun random-gauss (mean standard-deviation)
-  "Generate a random number from a normal (Gaussian) distribution.
-
-See also: `random-range', `exponential-random-range', `alexandria:gaussian-random'"
-  (let* ((first-random (random 1.0))
-         (sqrt-result (if (equal first-random 0.0)
-                          (sqrt most-positive-single-float)
-                          (sqrt (* -2 (log first-random))))))
-    (+ (* sqrt-result
-          (sin (random (* 2 pi)))
-          standard-deviation)
-       mean)))
 
 ;;; hash tables
 
