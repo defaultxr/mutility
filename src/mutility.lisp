@@ -316,6 +316,7 @@ See also: `find-" name-string "'")
          ,(concat "Get the object named NAME in the " name-string " dictionary. If ERRORP is true, signals an error when NAME isn't found in the dictionary. Returns t or nil as a second value showing whether the symbol was found.
 
 See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-names'")
+         (check-type name (and ,name-type (not null)))
          (if (,test-symbol name)
              name
              (let ((res (gethash name dictionary)))
