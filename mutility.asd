@@ -55,6 +55,7 @@
   :pathname "t/"
   :serial t
   :components ((:file "test")
+               (:file "mutility")
                (:file "loopy"))
   :perform (test-op (op c)
                     (uiop:symbol-call :fiveam :run!
