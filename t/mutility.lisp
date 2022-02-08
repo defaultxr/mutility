@@ -321,7 +321,10 @@ the other thing" :char-bag (list #\space #\newline)))
       "nth-wrap returns incorrect results for lists")
   (is (= 2
          (nth-wrap -2 (list 0 1 2 3)))
-      "nth-wrap returns incorrect results for negative indexes"))
+      "nth-wrap returns incorrect results for negative indexes")
+  (is (= 2
+         (nth-value 1 (nth-wrap 7 (list 0 1 2))))
+      "nth-wrap's second return value is incorrect"))
 
 (test elt-wrap
   "Test the `elt-wrap' function"
@@ -333,7 +336,10 @@ the other thing" :char-bag (list #\space #\newline)))
       "elt-wrap returns incorrect results for vectors")
   (is (= 2
          (elt-wrap (list 0 1 2 3) -2))
-      "elt-wrap returns incorrect results for negative indexes"))
+      "elt-wrap returns incorrect results for negative indexes")
+  (is (= 2
+         (nth-value 1 (elt-wrap (list 0 1 2) 7)))
+      "elt-wrap's second return value is incorrect"))
 
 (test getf+
   "Test the `getf+' function"

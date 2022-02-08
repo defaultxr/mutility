@@ -781,24 +781,26 @@ See also: `list-length>=', `alexandria:length='"
   (list-length>= list (1+ n)))
 
 (defun nth-wrap (n list)
-  "Get the Nth item in LIST, wrapping the index if necessary.
+  "Get the Nth item in LIST, wrapping the index if out of range. Returns the number of times \"wrapped\" as a second value.
 
 Much like `nth', this function can only be used on lists. Use `elt-wrap' to index into any kind of sequence. However, keep in mind that `elt-wrap' may be slower when used on large lists.
 
 See also: `elt-wrap'"
-  (declare (type number n)
+  (declare (type integer n)
            (type cons list))
-  (nth (mod n (list-length list)) list))
+  (multiple-value-bind (wraps mod) (floor n (list-length list))
+    (values (nth mod list) wraps)))
 
 (defun elt-wrap (sequence n)
-  "Get the Nth item in SEQUENCE, wrapping the index if necessary.
+  "Get the Nth item in SEQUENCE, wrapping the index if out of range. Returns the number of times \"wrapped\" as a second value.
 
 Much like `elt', this function can be used on any sequence. However, because this function calls `length' to determine the wrapped index, it may be slow when used on large lists. Consider using `nth-wrap' in those cases instead.
 
 See also: `nth-wrap'"
-  (declare (type number n)
+  (declare (type integer n)
            (type sequence sequence))
-  (elt sequence (mod n (length sequence))))
+  (multiple-value-bind (wraps mod) (floor n (length sequence))
+    (values (elt sequence mod) wraps)))
 
 (defun find-if* (predicate sequence) ;; FIX: need to implement `find-if''s other arguments
   "Like `find-if', but return the index of the found item as a second value.
