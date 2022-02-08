@@ -16,7 +16,7 @@ See also: `cl:mapcar', `dolist*'"
     (apply #'mapcar (lambda (&rest args)
                       (incf index)
                       (apply function (append args (list index))))
-           (append (list list) more-lists))))
+           list more-lists)))
 
 ;; FIX:
 ;; (defun mapplist (function list &rest more-lists)
