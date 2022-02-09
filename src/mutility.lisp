@@ -364,16 +364,19 @@ See also: `all-" name-string "s', `" name-string "-names'")
                                 names))
                names)))
        ,@(when has-name
-           `((defun ,(upcase-intern (concat name '-names) *package*) (name &key (dictionary ,dict-symbol)) ;; FIX: add include-aliases argument
+           `((defun ,(upcase-intern (concat name '-names) *package*) (name &key (include-aliases t) (dictionary ,dict-symbol))
                ,(concat "Get a list of all the names in DICTIONARY that point to NAME.
 
 See also: `all-" name-string "-names', `all-" name-string "s'")
                (when-let* ((object (,find-symbol name))
-                           (real-name (slot-value object ',(closer-mop:slot-definition-name has-name))))
+                           (object-name (slot-value object ',(closer-mop:slot-definition-name has-name))))
                  (loop :for key :being :the hash-keys :of dictionary
                          :using (hash-value value)
                        :if (or (eq value object)
-                               (equalp value real-name))
+                               (and include-aliases
+                                    (or (equalp value object-name)
+                                        (when (typep value ',name-type)
+                                          (eq object (,find-symbol value))))))
                          :collect key)))))
        ,@(when (and class class-method-names)
            (mapcar (lambda (method)
