@@ -256,7 +256,7 @@ See also: `cl:with-accessors', `cl:with-slots'"
       (documentation 'no-dictionary-entry-dictionary 'function) "The dictionary object itself.")
 
 (defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t) (define-class-functions :if-class-exists) find-function-name)
-  "Define a \"dictionary\" named NAME that maps symbols to objects. Defines the *NAME-dictionary* hash table and several functions for access to said table and the associated objects. If NAME is also the name of a class and DEFINE-CLASS-METHODS is true, also defines methods for each of the class's accessor functions specializing 
+  "Define a \"dictionary\" named NAME that maps symbols to objects. Defines the *NAME-dictionary* hash table and several functions for access to said table and the associated objects.
 
 Functions defined:
 
@@ -316,19 +316,18 @@ See also: `find-" name-string "'")
          ,(concat "Get the object named NAME in the " name-string " dictionary. If ERRORP is true, signals an error when NAME isn't found in the dictionary. Returns t or nil as a second value showing whether the symbol was found.
 
 See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-names'")
-         (check-type name (and ,name-type (not null)))
+         (check-type name (and (or ,name ,name-type) (not null)))
          (if (,test-symbol name)
              name
-             (let ((res (gethash name dictionary)))
-               (if res
-                   (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
-                       (,find-symbol res ,@(when include-errorp (list :errorp 'errorp)) :dictionary dictionary)
-                       res)
-                   ,(if include-errorp
-                        `(when errorp
-                           (error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol))
-                        (when errorp-default
-                          `(error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol)))))))
+             (if-let ((res (gethash name dictionary)))
+               (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
+                   (,find-symbol res ,@(when include-errorp (list :errorp 'errorp)) :dictionary dictionary)
+                   res)
+               ,(if include-errorp
+                    `(when errorp
+                       (error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol))
+                    (when errorp-default
+                      `(error 'no-dictionary-entry :entry name :dictionary-name ',name-string :dictionary ,dict-symbol))))))
        (defun (setf ,find-symbol) (value name &key errorp (dictionary ,dict-symbol))
          (declare (ignore errorp))
          (setf (gethash name dictionary) value))
