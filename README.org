@@ -227,6 +227,7 @@ All source files are in the ~src/~ directory.
 - [[file:src/package.lisp][package.lisp]] - the package definition file.
 - [[file:src/mutility.lisp][mutility.lisp]] - mutility's "standard" functionality.
 - [[file:src/sugar.lisp][sugar.lisp]] - syntax shorteners and sweeteners.
+- [[file:src/ringbuffer.lisp][ringbuffer.lisp]] - ringbuffer implementation.
 - [[file:src/ranges.lisp][ranges.lisp]] - define and translate between different types of ranges.
 - [[file:src/test-helpers.lisp][test-helpers.lisp]] - a few introspection functions to make testing easier.
 - [[file:src/loopy.lisp][loopy.lisp]] - various looping primitives.

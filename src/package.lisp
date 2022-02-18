@@ -4,6 +4,7 @@
   (:use #:cl
         #:alexandria)
   (:export
+   ;; mutility.lisp
    #:a
    #:fn
    #:cut
@@ -79,4 +80,18 @@
    #:pathname-designator-p
    #:open-url
    #:generate-temporary-file-name
-   #:locate-dominating-file))
+   #:locate-dominating-file
+
+   ;; ringbuffer.lisp
+   #:ringbuffer
+   #:ringbuffer-size
+   #:ringbuffer-index
+   #:ringbuffer-length
+   #:ringbuffer-initial-element
+   #:ringbuffer-array
+   #:make-ringbuffer
+   #:ringbuffer-elt
+   #:ringbuffer-push
+   #:ringbuffer-pop
+   #:ringbuffer-get
+   #:do-ringbuffer))

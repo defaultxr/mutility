@@ -18,6 +18,7 @@
   :serial t
   :components ((:file "package")
                (:file "mutility")
+               (:file "ringbuffer")
                ;; emacs-extensions.lisp is conditionally loaded at the end of mutility.lisp
                )
   :in-order-to ((test-op (test-op "mutility/tests"))))
@@ -56,6 +57,7 @@
   :serial t
   :components ((:file "test")
                (:file "mutility")
+               (:file "ringbuffer")
                (:file "loopy"))
   :perform (test-op (op c)
                     (uiop:symbol-call :fiveam :run!
