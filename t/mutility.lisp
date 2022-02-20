@@ -150,23 +150,23 @@
   (is-false (string-designator-p (list 1 2)))
   (is-false (string-designator-p (lambda () "foo"))))
 
-(test split-string
-  "Test the `split-string' function"
+(test string-split
+  "Test the `string-split' function"
   (is (equal (list "" "")
-             (split-string "d" :char-bag (list #\d) :include-empty t))
-      "split-string is incorrect for strings consisting only of the divider and include-empty true")
-  (is (null (split-string "d" :char-bag (list #\d) :include-empty nil))
-      "split-string is incorrect for strings consisting only of the divider and include-empty false")
+             (string-split "d" :char-bag (list #\d) :include-empty t))
+      "string-split is incorrect for strings consisting only of the divider and include-empty true")
+  (is (null (string-split "d" :char-bag (list #\d) :include-empty nil))
+      "string-split is incorrect for strings consisting only of the divider and include-empty false")
   (is (equal (list "this" "that" "the" "other" "thing")
-             (split-string "this that
+             (string-split "this that
 the other thing" :char-bag (list #\space #\newline)))
-      "split-string char-bag argument does not work properly")
+      "string-split char-bag argument does not work properly")
   (is (equal (list "foo" "bar=baz")
-             (split-string "foo=bar=baz" :max-num 2 :char-bag #\=))
-      "split-string max-num argument does not work properly")
+             (string-split "foo=bar=baz" :max-num 2 :char-bag #\=))
+      "string-split max-num argument does not work properly")
   (is (equal (list "foo" "bar" "baz===qux=")
-             (split-string "foo=bar==baz===qux=" :max-num 3 :char-bag #\= :include-empty nil))
-      "split-string gives incorrect results when max-num and char-bag are provided and the string ends in a divider"))
+             (string-split "foo=bar==baz===qux=" :max-num 3 :char-bag #\= :include-empty nil))
+      "string-split gives incorrect results when max-num and char-bag are provided and the string ends in a divider"))
 
 (test replace-all
   ;; FIX

@@ -504,7 +504,12 @@ See also: `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standar
 See also: `alexandria:string-designator'"
   (typep object 'string-designator))
 
-(defun split-string (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
+(uiop:with-deprecation (:style-warning)
+  (defun split-string (&rest rest)
+    "Deprecated alias for `string-split'."
+    (apply #'string-split rest)))
+
+(defun string-split (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 
 Example:

@@ -62,7 +62,7 @@
         (when linked
           (dolist (link linked)
             (when link
-              (let* ((split (split-string link :char-bag (list #\:)))
+              (let* ((split (string-split link :char-bag (list #\:)))
                      (link-name (lastcar split))
                      (link-package-name (if (= 1 (length split))
                                             package

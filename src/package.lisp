@@ -32,6 +32,7 @@
    #:vowel-char-p
    #:string-designator-p
    #:split-string
+   #:string-split
    #:replace-all
    #:parse-boolean
    #:friendly-ratio-string
