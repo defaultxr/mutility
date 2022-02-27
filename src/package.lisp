@@ -39,6 +39,8 @@
    #:friendly-duration-string
    #:pretty-print-tree
 
+   #:approx=
+   #:near-zero-p
    #:wrap
    #:fold
    #:floor-by

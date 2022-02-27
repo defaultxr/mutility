@@ -623,6 +623,18 @@ See also: `friendly-ratio-string'"
 
 ;;; math
 
+(defun approx= (number1 number2 &optional (max-dist 0.0001))
+  "Test whether NUMBER1 and NUMBER2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
+
+See also: `near-zero-p'"
+  (>= max-dist (abs (- number1 number2))))
+
+(defun near-zero-p (number &optional (max-dist 0.0001))
+  "True if NUMBER is within MAX-DIST of zero. Helps guard against division by zero.
+
+See also: `approx='"
+  (<= (- max-dist) number max-dist))
+
 (defun wrap (number &optional (bottom 0) (top 1))
   "Wraps a number between BOTTOM and TOP, similar to `cl:mod'.
 

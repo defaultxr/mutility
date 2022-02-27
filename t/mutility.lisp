@@ -194,6 +194,18 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test approx=
+  "Test the `approx=' function"
+  (is-true (approx= 0 0.1 0.1))
+  (is-true (approx= 0 -0.1 0.1))
+  (is-false (approx= 0 0.1 0.01)))
+
+(test near-zero-p
+  "Test the `near-zero-p' function"
+  (is-true (near-zero-p 0.0001 0.0001))
+  (is-true (near-zero-p -0.0001 0.0001))
+  (is-true (near-zero-p 0.1 0.1)))
+
 (test wrap
   "Test the `wrap' function"
   (is (= 3
