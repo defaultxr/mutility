@@ -65,9 +65,10 @@
    #:flatten-1
    #:subseq*
    ;; #:repeat ;; conflicts with iterate
-   #:split-sequence
    #:left-trim
    #:affixnew
+   #:split-sequence
+   #:sequence-split
    #:insert-if
    #:insert-sorted
 
