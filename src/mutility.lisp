@@ -921,10 +921,28 @@ See also: `alexandria:appendf', `cl:pushnew'."
     (sequence-split sequence delimiter)))
 
 (defun sequence-split (sequence delimiter)
-  "Split SEQUENCE by DELIMITER."
+  "Split SEQUENCE by DELIMITER.
+
+See also: `sequence-replace'"
   (if-let ((pos (position delimiter sequence)))
     (cons (subseq sequence 0 pos) (sequence-split (subseq sequence (1+ pos)) delimiter))
     (cons sequence nil)))
+
+(defun sequence-replace (sequence target replacement &key (test #'eql) limit)
+  "Replace instances of TARGET with REPLACEMENT in SEQUENCE, optionally limiting to LIMIT replacements. Returns the number of replacements made as a second value.
+
+See also: `sequence-split'"
+  (let ((replacements 0))
+    (values (loop :for element :being :the :elements :of sequence
+                  :if (and (funcall test target element)
+                           (or (null limit)
+                               (< replacements limit)))
+                    :collect (progn
+                               (incf replacements)
+                               replacement)
+                  :else
+                    :collect element)
+            replacements)))
 
 (defun insert-if (function list item)
   "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX

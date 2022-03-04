@@ -404,6 +404,17 @@ the other thing" :char-bag (list #\space #\newline)))
              (sequence-split (list 1 2 :- 2 :- 3) :-))
       "sequence-split returns incorrect results"))
 
+(test sequence-replace
+  "Test the `sequence-replace' function"
+  (is (equal (list 0 1 :bar 2 3 :bar 4 5 :bar 6)
+             (sequence-replace (list 0 1 :foo 2 3 :foo 4 5 :foo 6) :foo :bar))
+      "sequence-replace returns incorrect results")
+  (is (equal (list :bar 2 3 :bar 4 5 :foo 6)
+             (sequence-replace (list :foo 2 3 :foo 4 5 :foo 6) :foo :bar :limit 2))
+      "sequence-replace returns incorrect results when LIMIT is provided")
+  (is (eql 3 (nth-value 1 (sequence-replace (list :foo 2 3 :foo 4 5 :foo 6) :foo :bar)))
+      "sequence-replace doesn't return the number of replacements as its second value"))
+
 (test insert-if
   "Test the `insert-if' function"
   (is (equal (list -2 -1 0 1 2)

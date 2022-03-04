@@ -69,6 +69,7 @@
    #:affixnew
    #:split-sequence
    #:sequence-split
+   #:sequence-replace
    #:insert-if
    #:insert-sorted
 
