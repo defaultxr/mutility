@@ -968,6 +968,16 @@ See also: `insert-sorted'"
 
 (defun insert-sorted (list number)
   "Destructively insert NUMBER into LIST in order.
+;;; functions
+
+(deftype function-designator ()
+  "An object that can be used to designate a function, i.e. a function, an `fboundp' symbol, or a funcallable object."
+  '(or function (satisfies funcallable-object-p) (and symbol (satisfies fboundp))))
+
+(defun function-designator-p (object)
+  "True if OBJECT is a `function-designator', i.e. a string or pathname."
+  (typep object 'function-designator))
+
 
 Example:
 

@@ -442,6 +442,14 @@ the other thing" :char-bag (list #\space #\newline)))
              (insert-sorted nil 0))
       "insert-sorted doesn't work if the input list is empty"))
 
+(test function-designator
+  "Test the `function-designator' type and `function-designator-p' function"
+  (is-false (function-designator-p 0))
+  (is-false (function-designator-p 'foo))
+  (is-true (function-designator-p '+))
+  (is-false (function-designator-p 'defmacro))
+  (is-true (function-designator-p (lambda () 3))))
+
 (test save-hash-table
   ;; FIX
   )
