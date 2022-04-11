@@ -976,12 +976,6 @@ See also: `insert-sorted'"
   "True if OBJECT is a `function-designator', i.e. a string or pathname."
   (typep object 'function-designator))
 
-
-Example:
-
-
-
-
 ;;; hash tables
 
 (defun save-hash-table (hash filename &key (if-exists :error))
