@@ -966,8 +966,6 @@ See also: `insert-sorted'"
         list)
       (list item)))
 
-(defun insert-sorted (list number)
-  "Destructively insert NUMBER into LIST in order.
 ;;; functions
 
 (deftype function-designator ()
@@ -981,11 +979,7 @@ See also: `insert-sorted'"
 
 Example:
 
-;; (insert-sorted (list 1 2 3 4) 2.5)
-;; ;; => (1 2 2.5 3 4)
 
-See also: `insert-if'"
-  (insert-if (fn (>= _ number)) list number))
 
 
 ;;; hash tables
