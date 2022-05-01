@@ -42,6 +42,16 @@ A sweeter way to write ~lambda~. Underscore (~_~) is treated as the argument of 
 (lambda (_) (+ 2 _))
 #+END_SRC
 
+*** ~cut~ macro
+
+Another sweet way to write ~lambda~. Notation for specializing parameters without currying, as described in [[https://srfi.schemers.org/srfi-26/srfi-26.html][SRFI 26]].
+
+#+begin_src lisp
+(cut '/ 1 <>) ;=> (lambda (x) (/ 1 x))
+(cut <> 1 2) ;=> (lambda (func) (funcall func 1 2))
+(cut '+ <> <>) ;=> (lambda (x y) (+ x y))
+#+end_src
+
 *** ~keys~ generic
 
 Get a list of the keys of hash tables, plists, and anything else that defines a method for it. For example, [[https://github.com/defaultxr/cl-patterns][cl-patterns]] defines a method for its ~event~ class.
