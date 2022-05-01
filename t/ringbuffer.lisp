@@ -1,8 +1,8 @@
+;;;; t/ringbuffer.lisp - tests for mutility ringbuffer implementation.
+
 (in-package #:mutility/tests)
 
 (in-suite mutility-tests)
-
-;;;; ringbuffer.lisp - tests for mutility ringbuffer implementation.
 
 (test ringbuffer
   "Test `ringbuffer' and associated functions"
