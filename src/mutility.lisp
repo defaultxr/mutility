@@ -1176,7 +1176,9 @@ Example:
 ;; => \"/tmp/lisp/foo.wav\"
 
 ;; (generate-temporary-file-name :directory \"/tmp/lisp/\" :extension :flac)
-;; => \"/tmp/lisp/2020-04-20-06-09-00.flac\""
+;; => \"/tmp/lisp/2020-04-20-06-09-00.flac\"
+
+See also: `uiop:tmpize-pathname', `uiop:temporary-directory'"
   (uiop:ensure-pathname directory :ensure-directories-exist t)
   (let* ((name (or name
                    (local-time:format-timestring nil (local-time:now) ;; FIX: make the local-time dependency optional?
