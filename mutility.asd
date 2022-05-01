@@ -34,6 +34,17 @@
   :serial t
   :components ((:file "loopy")))
 
+(asdf:defsystem #:mutility/files
+  :name "mutility: file utilities"
+  :description "modula's utilities: conveniences for working with files and directories"
+  :author "modula t."
+  :license "MIT"
+  :version "0.5"
+  :depends-on (#:mutility)
+  :pathname "src/"
+  :serial t
+  :components ((:file "files")))
+
 (asdf:defsystem #:mutility/test-helpers
   :description "modula's utilities: functions for assisting with writing tests"
   :author "modula t."
