@@ -579,7 +579,7 @@ See also: `alexandria:string-designator'"
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
 
-(defun string-split (string &key max-num (char-bag (list #\space #\tab #\newline)) include-empty)
+(defun string-split (string &key (char-bag (list #\space #\tab #\newline)) max-num include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 
 Example:
