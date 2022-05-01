@@ -72,7 +72,6 @@
    #:sequence-split
    #:sequence-replace
    #:insert-if
-   #:insert-sorted
 
 
    #:save-hash-table

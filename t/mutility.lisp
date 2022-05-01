@@ -429,24 +429,6 @@ the other thing" :char-bag (list #\space #\newline)))
              (insert-if #'plusp nil 0))
       "insert-if doesn't work if the input list is empty"))
 
-(test insert-sorted
-  "Test the `insert-sorted' function"
-  (is (equal (list 1 2 3 4)
-             (insert-sorted (list 1 3 4) 2))
-      "insert-sorted doesn't insert in the middle of the list")
-  (is (equal (list 1 2 3 4)
-             (insert-sorted (list 1 2 3) 4))
-      "insert-sorted doesn't insert to the end of the list")
-  (is (equal (list 1 2 3 4)
-             (insert-sorted (list 2 3 4) 1))
-      "insert-sorted doesn't insert to the beginning of the list")
-  (is (equal (list 1 2 2.5 3 4)
-             (insert-sorted (list 1 2 3 4) 2.5))
-      "insert-sorted doesn't insert floats correctly")
-  (is (equal (list 0)
-             (insert-sorted nil 0))
-      "insert-sorted doesn't work if the input list is empty"))
-
 (test function-designator
   "Test the `function-designator' type and `function-designator-p' function"
   (is-false (function-designator-p 0))
