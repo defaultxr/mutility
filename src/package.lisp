@@ -9,6 +9,7 @@
    #:fn
    #:cut
    #:with-access
+   #:defclass+
    #:no-dictionary-entry
    #:no-dictionary-entry-entry
    #:no-dictionary-entry-dictionary-name

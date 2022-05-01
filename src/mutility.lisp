@@ -240,6 +240,76 @@ See also: `cl:with-accessors', `cl:with-slots'"
                ,@slots-form)
             (car slots-form))))))
 
+(defclass funcallable-wrapper ()
+  ((funcall-function :initarg funcall-function :accessor funcallable-wrapper-funcall-function :type function :documentation "The function to call when this object is `funcall'ed."))
+  (:documentation "Simple wrapper class to apply funcallable object functionality to funcallable objects defined with `defclass+'.")
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defmethod initialize-instance :after ((object funcallable-wrapper) &key)
+  (closer-mop:set-funcallable-instance-function
+   object
+   (lambda (&rest args)
+     (apply (slot-value object 'funcall-function) object args))))
+
+;; FIX: any reader/writer/accessor method defined with defclass+ should have its documentation set to the slot's definition if it doesn't already have documentation.
+;; FIX: can we make it so that the instance is automatically available as the "this" variable in the funcallable-wrapper function?
+(defmacro defclass+ (name direct-superclasses &body body)
+  "`cl:defclass' convenience wrapper. Features a much more succinct syntax, additionally defining common functions for the class such as the predicate function.
+
+Adds the following features to `cl:defclass':
+
+- Docstring can be specified as the first element of BODY, similar to `cl:defun'.
+- Automatically defines a NAME-p (predicate) function.
+- Adds a :function option which can be used to specify what to call when the object is `cl:funcall'ed. The metaclass is also automatically set to `closer-mop:funcallable-standard-class'.
+
+Example:
+
+;; (defclass+ foo ()
+;;   \"Example class defined with defclass+\"
+;;   (a-slot :initarg :a-slot :initform 3)
+;;   (:function 'print))
+;;
+;; (funcall (make-instance 'foo)) ;; since print is the :function, this is the same as (print (make-instance 'foo))
+
+See also: `cl:defclass'"
+  (flet ((option-p (slot)
+           "True if SLOT is an \"option\" (i.e. its first element is a keyword)."
+           (keywordp (car slot)))
+         (option-value (option)
+           "Get the value of the option slot named OPTION."
+           (car (assoc-value body option))))
+    (let* ((name-string (string-downcase name))
+           (test-symbol (upcase-intern (concat name "-P") *package*))
+           (docstring (cond ((stringp (car body))
+                             (prog1
+                                 (car body)
+                               (setf body (cdr body))))
+                            ((option-value :documentation)
+                             (option-value :documentation))))
+           (direct-slots (remove-if #'option-p body))
+           (options (remove-if-not #'option-p body))
+           (function (option-value :function))
+           (funcallable (or function
+                            (find-if (fn (typep _ 'closer-mop:funcallable-standard-class))
+                                     (mapcar 'find-class direct-superclasses)))))
+      (dolist (option (list :function :documentation))
+        (deletef options option :key #'car))
+      (when docstring
+        (push `(:documentation ,docstring) options))
+      (when funcallable
+        (push `(:metaclass closer-mop:funcallable-standard-class) options)
+        (when function
+          (appendf direct-slots `((funcall-function :initform ,function))))
+        (appendf direct-superclasses (list 'funcallable-wrapper)))
+      `(eval-when (:compile-toplevel :load-toplevel :execute)
+         (prog1
+             (defclass ,name ,direct-superclasses
+               (,@direct-slots)
+               ,@options)
+           (defun ,test-symbol (object)
+             ,(concat "Test whether OBJECT is a" (when (vowel-char-p (char name-string 0)) "n") " `" name-string "'.")
+             (typep object ',name)))))))
+
 (define-condition no-dictionary-entry (error)
   ((entry :initarg :entry :reader no-dictionary-entry-entry :documentation "The name of the entry being looked up.")
    (dictionary-name :initarg :dictionary-name :reader no-dictionary-entry-dictionary-name :documentation "The name of the dictionary.")

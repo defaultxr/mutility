@@ -43,6 +43,11 @@
   (is-true (= 1 (funcall (cut '- 3 <> 0) 2)))
   (is-true (= 1 (funcall (cut <> 3 <>) '- 2))))
 
+(test defclass+
+  "Test the `defclass+' macro"
+  ;; FIX
+  )
+
 (test accumulating
   "Test the `accumulating' macro"
   (is (equal (list 1 2 3)
