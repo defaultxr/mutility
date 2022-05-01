@@ -80,6 +80,9 @@
    #:save-hash-table
    #:restore-hash-table
 
+   #:all-classes
+   #:subclasses-of
+
    #:current-seconds
    #:function-arglist
    #:lisp-connections

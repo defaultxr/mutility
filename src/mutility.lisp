@@ -1081,6 +1081,40 @@ See also: `save-hash-table'"
         (setf (gethash (car cell) hash) (cdr cell))))
     hash))
 
+;;; CLOS
+
+(defun all-classes (&optional package)
+  "Get a list of all defined classes in the Lisp image. With PACKAGE, only get classes belonging to that package.
+
+See also: `subclasses-of'"
+  (let ((package (if (or (null package)
+                         (eql package t))
+                     nil
+                     (or (find-package package)
+                         (error "Package ~S not found." package))))
+        (classes (subclasses-of t)))
+    (if package
+        (remove-if-not (fn (eql (symbol-package _) package))
+                       classes)
+        classes)))
+
+(defun subclasses-of (class &key recursive-p)
+  "Get a list of all direct subclasses of CLASS. If RECURSIVE-P is true, recursively get all subclasses.
+
+See also: `all-classes'"
+  (let ((class (etypecase class
+                 (class class)
+                 (symbol (find-class class)))))
+    (labels ((direct-subclasses-of (class)
+               (closer-mop:class-direct-subclasses class))
+             (subclasses-recursive (class)
+               (mappend (fn (list _ (subclasses-recursive _)))
+                        (direct-subclasses-of class))))
+      (remove-duplicates (flatten (funcall (if recursive-p
+                                               #'subclasses-recursive
+                                               #'direct-subclasses-of)
+                                           class))))))
+
 ;;; introspection
 
 (defun current-seconds ()

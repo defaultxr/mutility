@@ -445,6 +445,16 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test all-classes
+  "Test the `all-classes' function"
+  ;; FIX
+  )
+
+(test subclasses-of
+  "Test the `subclasses-of' function"
+  ;; FIX
+  )
+
 (test current-seconds
   ;; FIX
   )
