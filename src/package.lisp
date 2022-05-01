@@ -73,6 +73,9 @@
    #:sequence-replace
    #:insert-if
 
+   #:funcallable-object-p
+   #:function-designator
+   #:function-designator-p
 
    #:save-hash-table
    #:restore-hash-table

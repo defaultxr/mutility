@@ -1036,6 +1036,10 @@ Example:
 
 ;;; functions
 
+(defun funcallable-object-p (object)
+  "True if OBJECT is a funcallable object."
+  (closer-mop:subclassp (class-of (class-of object)) 'closer-mop:funcallable-standard-class))
+
 (deftype function-designator ()
   "An object that can be used to designate a function, i.e. a function, an `fboundp' symbol, or a funcallable object."
   '(or function (satisfies funcallable-object-p) (and symbol (satisfies fboundp))))
