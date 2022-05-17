@@ -89,6 +89,7 @@
    
    #:pathname-designator
    #:pathname-designator-p
+   #:join-pathnames
    #:open-url
    #:generate-temporary-file-name
    #:locate-dominating-file

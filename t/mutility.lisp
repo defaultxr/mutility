@@ -484,6 +484,12 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-false (pathname-designator-p '/home/blah.txt))
   (is-false (pathname-designator-p :foo)))
 
+(test join-pathnames
+  "Test the `join-pathnames' function"
+  (is-true (string= "foo/bar/baz.qux" (join-pathnames "foo" "/bar" "baz.qux")))
+  (is-true (string= "/home/user/foo/bar/baz.qux" (join-pathnames "/home/" "user" "foo" "/bar" "baz.qux")))
+  (is-true (string= "temp/foo/bar/" (join-pathnames "temp" "foo" "bar/"))))
+
 (test open-url
   ;; FIX
   )

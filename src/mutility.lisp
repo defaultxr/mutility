@@ -1160,6 +1160,29 @@ See also: `all-classes'"
   "True if OBJECT is a `pathname-designator', i.e. a string or pathname."
   (typep object 'pathname-designator))
 
+(defun join-pathnames (&rest pathname-components)
+  "Join PATHNAME-COMPONENTS together into a single string, ensuring each is separated by exactly one directory separator.
+
+Example:
+
+;; (join-pathnames \"foo\" \"/bar\" \"baz.qux) ;=> \"foo/bar/baz.qux\"
+
+See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
+  (let ((sep (uiop:directory-separator-for-host)))
+    (labels ((joiner (compo &optional first)
+               (concat (funcall (curry (if first
+                                           #'string-right-trim
+                                           (if (cdr compo)
+                                               #'string-trim
+                                               #'string-left-trim))
+                                       (list sep))
+                                (car compo))
+                       (when (cdr compo)
+                         sep)
+                       (when (cdr compo)
+                         (joiner (cdr compo))))))
+      (joiner pathname-components t))))
+
 (defun open-url (url)
   "Open a URL via the OS's default application."
   (uiop:launch-program (list #+linux "xdg-open"
