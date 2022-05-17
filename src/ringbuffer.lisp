@@ -88,7 +88,6 @@ See also: `ringbuffer-pop', `ringbuffer-elt', `ringbuffer-push', `ringbuffer-siz
 See also: `ringbuffer-elt', `ringbuffer-push', `ringbuffer-pop', `ringbuffer-size', `ringbuffer-index', `ringbuffer-length', `ringbuffer'"
   (with-gensyms (ringbuffer-sym idx-sym length-sym)
     `(let* ((,ringbuffer-sym ,ringbuffer)
-            (,idx-sym (ringbuffer-index ,ringbuffer-sym))
             (,length-sym (ringbuffer-length ,ringbuffer-sym)))
        (dotimes (idx ,length-sym ,result-form)
          (let ((,var (ringbuffer-elt ,ringbuffer-sym (- idx ,length-sym))))
