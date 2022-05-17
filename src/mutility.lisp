@@ -6,7 +6,7 @@
 
 (defun split-by-! (string)
   "Split STRING up by exclamation points."
-  (remove-if #'emptyp (split-sequence string #\!)))
+  (remove-if #'emptyp (sequence-split string #\!)))
 
 (defun repeat-by (object repeats &optional add-list)
   "Returns a list of object repeated REPEATS times. If REPEATS is a list of multiple numbers, recursively repeat the generated lists.
@@ -590,7 +590,7 @@ Example:
 ;; (split-string \"  foo  bar baz  qux  \" :max-num 2)
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
-See also: `split-sequence', `str:split', `split-sequence:split-sequence'"
+See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
   (declare (type string string))
   (let ((char-bag (ensure-list char-bag)))
     (labels ((divider-p (char)
