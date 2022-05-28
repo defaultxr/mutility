@@ -64,6 +64,7 @@
    #:find-any
    #:most
    #:flatten-1
+   #:flop
    #:subseq*
    ;; #:repeat ;; conflicts with iterate
    #:left-trim

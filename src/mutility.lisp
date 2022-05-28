@@ -945,6 +945,23 @@ Example:
 See also: `alexandria:flatten'"
   (apply #'append (mapcar #'ensure-list list)))
 
+(defun flop (lists)
+  "Given LISTS, a list of lists, swap rows for columns.
+
+Example:
+
+;; (flop '((0 1 2)
+;;         (2 0 1)
+;;         (1 2 0)))
+;; ;=> ((0 2 1)
+;;      (1 0 2)
+;;      (2 1 0))"
+  (loop :repeat (reduce #'max lists :key #'length)
+        :for i :from 0
+        :collect (mapcar (lambda (list)
+                           (nth-wrap i list))
+                         lists)))
+
 (defun subseq* (sequence start &optional end) ;; FIX: name conflicts with alexandria-2:subseq*
   "Like subseq, but allows start and end to be negative."
   (let ((length (length sequence)))

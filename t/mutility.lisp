@@ -391,6 +391,12 @@ the other thing" :char-bag (list #\space #\newline)))
              (flatten-1 (list 1 (list 2 (list 3 4) 5))))
       "flatten-1 returns incorrect results"))
 
+(test flop
+  "Test the `flop' function"
+  (is (equal '((0 2 1) (1 0 2) (2 1 0))
+             (flop '((0 1 2) (2 0 1) (1 2 0))))
+      "flop returns incorrect results"))
+
 (test subseq*
   ;; FIX
   )
