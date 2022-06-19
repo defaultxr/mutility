@@ -9,6 +9,17 @@
   ;; FIX
   )
 
+(test mapplist
+  "Test the `mapplist' macro"
+  (is (equal (list :foo 2 :bar 3)
+             (mapplist (lambda (k v) (list k (1+ v))) '(:foo 1 :bar 2)))
+      "mapplist returns incorrect results for one four-element list")
+  (is (equal (list :foo 2 :baz 5 :bar 3 :qux 6)
+             (mapplist (lambda (w x y z) (list w (1+ x) y (+ 2 z)))
+                       '(:FOO 1 :BAR 2)
+                       '(:BAZ 3 :QUX 4)))
+      "mapplist returns incorrect results for two four-element lists"))
+
 (test dorange
   "Test the `dorange' macro"
   (is (equal (list 5 4 3 2 1 0)

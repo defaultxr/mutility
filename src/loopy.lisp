@@ -18,16 +18,32 @@ See also: `cl:mapcar', `dolist*'"
                       (apply function (append args (list index))))
            list more-lists)))
 
-;; FIX:
-;; (defun mapplist (function list &rest more-lists)
-;;   (mapcar ))
+(defun mapplist (function &rest lists)
+  "Like `mapcar', but for property lists; FUNCTION is applied to successive pairs of elements at the head of each listin LISTS. The return value is the appended list of each result of calling FUNCTION. Mapplist returns as soon as the shortest list ends.
 
-;; (defmacro mapplist (function &rest lists)
-;;   (with-gensyms (key value)
-;;     `(loop ,@(loop :for list :in lists
-;;                    :append (list :for (,key ,value) :on ,list :by #'cddr
-;;                                  ))))
-;;   (mapcar ))
+Example:
+
+;; (mapplist (lambda (k v) (list k (1+ v)))
+;;           '(:foo 1 :bar 2))
+;; ;=> (:FOO 2 :BAR 3)
+;;
+;; (mapplist (lambda (w x y z) (list w (1+ x) y (+ 2 z)))
+;;           '(:foo 1 :bar 2)
+;;           '(:baz 3 :qux 4))
+;; ;=> (:FOO 2 :BAZ 5 :BAR 3 :QUX 6)
+
+See also: `cl:mapcar', `mapcar*', `doplist'"
+  (uiop:while-collecting (results)
+    (tagbody
+     mapplist-loop
+       (dolist (i (apply function (mapcan (lambda (x) (subseq x 0 2)) lists)))
+         (results i))
+       (setf lists (mapcar (lambda (list)
+                             (or (cddr list)
+                                 (go mapplist-exit)))
+                           lists))
+       (go mapplist-loop)
+     mapplist-exit)))
 
 (import '(trivial-do:dolist* trivial-do:doalist trivial-do:dohash trivial-do:doseq trivial-do:doseq*))
 
@@ -139,6 +155,7 @@ See also: `uiop:while-collecting'."
          (cdr ,res-sym)))))
 
 (export (list 'mapcar*
+              'mapplist
               'trivial-do:doalist
               'trivial-do:dohash
               'trivial-do:dolist*
