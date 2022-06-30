@@ -830,44 +830,52 @@ See also: `random-range', `exponential-random-range', `alexandria:gaussian-rando
 
 ;;; lists and sequences
 
-(defun list-length-upto (list &optional (max 10))
-  "Get the length of LIST, not counting above MAX.
+(uiop:with-deprecation (:style-warning)
+  (defun length-upto (sequence &optional (max 10))
+    "Deprecated function; use `alexandria:length=' instead.
+
+Get the length of SEQUENCE, not counting above MAX.
 
 Example:
 
 ;; (length-upto (make-list 200) 20) ;=> 20
 
 See also: `alexandria:length='"
-  (let ((res 0))
-    (loop :for i :in list
-          :repeat max
-          :do (incf res))
-    res))
+    (let ((res 0))
+      (loop :for i :being :the :elements :of sequence
+            :repeat max
+            :do (incf res))
+      res))
 
-(uiop:with-deprecation (:style-warning)
-  (defun length-upto (list &optional (max 10))
-    "Deprecated and renamed to `list-length-upto'."
-    (apply #'list-length-upto list (list max))))
+  (defun list-length-upto (list &optional (max 10))
+    "Deprecated funciton; use `alexandria:length=' instead.
 
-(defun list-length>= (list n)
-  "True if LIST is at least N in length. Probably more efficient than doing something like (>= (length list) n).
+Alias for `length-upto'."
+    (length-upto list max))
+
+  (defun list-length>= (list n)
+    "Deprecated in favor of `serapeum:length>='.
+
+True if LIST is at least N in length. Probably more efficient than doing something like (>= (length list) n).
 
 Example:
 
 ;; (list-length>= (make-list 300) 10) ;=> T
 
 See also: `list-length>', `list-length-upto', `alexandria:length='"
-  (let ((current 0))
-    (dolist (item list nil)
-      (incf current)
-      (when (>= current n)
-        (return-from list-length>= t)))))
+    (let ((current 0))
+      (dolist (item list nil)
+        (incf current)
+        (when (>= current n)
+          (return-from list-length>= t)))))
 
-(defun list-length> (list n)
-  "True if LIST is more than N in length.
+  (defun list-length> (list n)
+    "Deprecated in favor of `serapeum:length>'
+
+True if LIST is more than N in length.
 
 See also: `list-length>=', `alexandria:length='"
-  (list-length>= list (1+ n)))
+    (list-length>= list (1+ n))))
 
 (defun nth-wrap (n list)
   "Get the Nth item in LIST, wrapping the index if out of range. Returns the number of times \"wrapped\" as a second value.

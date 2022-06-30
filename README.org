@@ -125,14 +125,6 @@ Round, floor, or ceiling to the nearest multiple of a given number with ~round-b
 
 ** Sequences
 
-*** ~length-upto~
-
-Count the number of items in a list, not counting beyond a specified number.
-
-#+BEGIN_SRC lisp
-(length-upto (make-list 2000) 20) ;=> 20
-#+END_SRC
-
 *** ~most~
 
 Get the most X item in a list, where X can be any comparison function. Similar to the standard ~reduce~ function, except that the ~key~ argument is only used for comparison, and the actual item from the list is still returned.
