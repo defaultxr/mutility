@@ -36,6 +36,7 @@
    #:string-split
    #:replace-all
    #:parse-boolean
+   #:url-p
    #:friendly-ratio-string
    #:friendly-duration-string
    #:pretty-print-tree

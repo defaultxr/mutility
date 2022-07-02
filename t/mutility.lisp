@@ -184,6 +184,16 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-false (position t (mapcar #'parse-boolean (list "n" "N" "off" "0" "d" "f"))))
   (is-false (position nil (mapcar #'parse-boolean (list "y" "Y" "on" "1" "e" "t")))))
 
+(test url-p
+  "Test the `url-p' function"
+  (is-true (url-p "http://w.struct.ws"))
+  (is-true (url-p "https://struct.ws"))
+  (is-true (url-p "http:/struct.ws"))
+  (is-true (url-p "http://///w.struct.ws"))
+  (is-false (url-p "http:w.struct.ws"))
+  (is-false (url-p "www.struct.ws"))
+  (is-false (url-p "struct.ws/")))
+
 (test friendly-ratio-string
   "Test the `friendly-ratio-string' function"
   (is (string-equal "1 1/4" (friendly-ratio-string 5/4)))

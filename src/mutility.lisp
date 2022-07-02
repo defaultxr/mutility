@@ -635,6 +635,12 @@ See also: `cl-ppcre:regex-replace-all'"
     ((member string (list "nil" "0" "f" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
+(defun url-p (string)
+  "Determines whether a string is a URL."
+  (let ((split-up (string-split string :char-bag '(#\/))))
+    (and (member (first split-up) (list "http:" "https:") :test #'string=)
+         (cdr split-up))))
+
 (defun friendly-ratio-string (ratio &optional (separator " ")) ;; FIX: negative numbers are weird
   "Format a ratio as a more human-readable string.
 
