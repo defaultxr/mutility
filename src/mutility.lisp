@@ -154,23 +154,54 @@ See also: `repeat-by-!', `expand-ranges'"
   (expand-ranges (repeat-by-! args t)))
 
 (defmacro fn (&body body)
-  "Syntax sugar for making `lambda's. BODY is the function body. Underscores in the body can be used to represent the argument to the function.
+  "Syntax sugar for `lambda'. BODY is the function body. Symbols consisting of an underscore and a number are treated as the lambda's argument at that index. For example, _1 is the second argument of the lambda. A single underscore is treated the same as _.
 
-See also: `cut'"
-  (let ((args (list)))
-    (labels ((parse (list)
+Examples:
+
+;; (funcall (fn (list _1 _0)) :foo :bar) ;=> (:BAR :FOO)
+
+;; (funcall (fn (/ 3 _1)) :foo 2) ;=> 3/2
+
+See also: `cut', `a'"
+  (let ((args (list))
+        (max -1))
+    (labels ((fn-sym-p (thing)
+               (when (and (symbolp thing)
+                          (not (string= "" thing))
+                          (char= #\_ (char (string thing) 0)))
+                 (let* ((str (string thing))
+                        (maybe-num (subseq str 1)))
+                   (when (emptyp maybe-num)
+                     (setf max 0)
+                     (let ((res (intern "_0")))
+                       (pushnew res args)
+                       (return-from fn-sym-p res)))
+                   (when (digit-char-p (char maybe-num 0))
+                     (let ((pos-not (position-if-not #'digit-char-p maybe-num)))
+                       (if pos-not
+                           (return-from fn-sym-p nil) ; FIX: support ".." notation for "this arg and rest"?
+                           (progn
+                             (setf max (max max (parse-integer maybe-num)))
+                             (pushnew thing args)
+                             (return-from fn-sym-p thing))))))))
+             (parse (list)
                (mapcar (lambda (i)
                          (typecase i
                            (list (parse i))
-                           (symbol (if (string= '_ i)
-                                       (progn
-                                         (pushnew i args)
-                                         i)
+                           (symbol (or (fn-sym-p i)
                                        i))
                            (t i)))
                        list)))
-      (let ((body (parse body)))
-        `(lambda (,@args) ,@body)))))
+      (let ((body (parse body))
+            (unused (list)))
+        `(lambda (,@(loop :for num :from 0 :upto max
+                          :for var := (intern (format nil "_~D" num))
+                          :collect var
+                          :unless (member var args :test #'string=)
+                            :do (pushnew var unused)))
+           ,@(when unused
+               (list (list 'declare (list* 'ignore unused))))
+           ,@body)))))
 
 (defmacro cut (func &rest args)
   "The cut macro; notation for specializing parameters without currying, as described in SRFI 26.

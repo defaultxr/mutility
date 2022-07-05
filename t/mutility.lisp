@@ -36,7 +36,10 @@
 
 (test fn
   "Test the `fn' macro"
-  (is-true (eql 2 (funcall (fn (+ _ 2)) 0))))
+  (is-true (eql 2 (funcall (fn (+ _ 2)) 0)))
+  (is-true (eql 1/2 (funcall (fn (/ _0 _1)) 1 2)))
+  (is-true (string= "howya" (funcall (fn (concat _1 _3)) "hey" "how" "are" "ya")))
+  (is-true (string= "hihi2hihi" (funcall (fn (concat _ _0 "2" _0 _)) "hi"))))
 
 (test cut
   "Test the `cut' macro"
