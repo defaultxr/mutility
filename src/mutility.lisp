@@ -637,10 +637,12 @@ See also: `cl:parse-integer', `url-p'"
     ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
-(defun url-p (string)
-  "Determines whether a string is a URL."
+(defun url-p (string &key case-sensitive)
+  "True if STRING looks like a valid URL. If CASE-SENSITIVE, the protocol must be lowercase for the URL to be valid.
+
+See also: `open-url', `pathname-designator-p', `parse-boolean'"
   (let ((split-up (string-split string :char-bag '(#\/))))
-    (and (member (first split-up) (list "http:" "https:") :test #'string=)
+    (and (member (first split-up) (list "http:" "https:") :test (if case-sensitive #'string= #'string-equal))
          (cdr split-up))))
 
 (defun friendly-ratio-string (ratio &optional (separator " ")) ;; FIX: negative numbers are weird
