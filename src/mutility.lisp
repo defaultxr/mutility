@@ -628,11 +628,13 @@ See also: `cl-ppcre:regex-replace-all'"
             :while pos)))
 
 (defun parse-boolean (string &optional default)
-  "Parse STRING as a boolean, returning either t or nil, or DEFAULT if it is not a known boolean string."
+  "Parse STRING as a boolean, returning either t or nil, or DEFAULT if it is not a known boolean string.
+
+See also: `cl:parse-integer', `url-p'"
   (cond
     ((null string) default)
     ((member string (list "t" "1" "true" "y" "yes" "e" "enable" "enabled" "on") :test #'string-equal) t)
-    ((member string (list "nil" "0" "f" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
+    ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
 (defun url-p (string)

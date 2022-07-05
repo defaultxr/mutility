@@ -182,7 +182,9 @@ the other thing" :char-bag (list #\space #\newline)))
 (test parse-boolean
   "Test the `parse-boolean' function"
   (is-false (position t (mapcar #'parse-boolean (list "n" "N" "off" "0" "d" "f"))))
-  (is-false (position nil (mapcar #'parse-boolean (list "y" "Y" "on" "1" "e" "t")))))
+  (is-false (position nil (mapcar #'parse-boolean (list "y" "Y" "on" "1" "e" "t"))))
+  (is-true (parse-boolean "blah" t))
+  (is-false (parse-boolean "2" nil)))
 
 (test url-p
   "Test the `url-p' function"
