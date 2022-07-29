@@ -1074,17 +1074,18 @@ See also: `sequence-replace'"
   "Replace instances of TARGET with REPLACEMENT in SEQUENCE, optionally limiting to LIMIT replacements. Returns the number of replacements made as a second value.
 
 See also: `sequence-split'"
-  (let ((replacements 0))
-    (values (loop :for element :being :the :elements :of sequence
-                  :if (and (funcall test target element)
-                           (or (null limit)
-                               (< replacements limit)))
-                    :collect (progn
-                               (incf replacements)
-                               replacement)
-                  :else
-                    :collect element)
-            replacements)))
+  (loop :with replacements := 0
+        :for element :being :the :elements :of sequence
+        :if (and (funcall test target element)
+                 (or (null limit)
+                     (< replacements limit)))
+          :collect (progn
+                     (incf replacements)
+                     replacement)
+            :into replaced
+        :else
+          :collect element :into replaced
+        :finally (return (values replaced replacements))))
 
 (defun insert-if (function list item)
   "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
