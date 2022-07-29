@@ -66,7 +66,7 @@
   (uiop:native-namestring file))
 
 (defmethod file-path ((file pathname))
-  (uiop:native-namestring (namestring file)))
+  (file-path (namestring file)))
 
 (defgeneric file-path-no-extension (file)
   (:documentation "Get FILE's path, excluding its extension.
