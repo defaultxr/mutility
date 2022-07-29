@@ -73,6 +73,7 @@
    #:split-sequence
    #:sequence-split
    #:sequence-replace
+   #:balanced-subsequences
    #:insert-if
 
    #:funcallable-object-p

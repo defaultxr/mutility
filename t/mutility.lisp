@@ -4,6 +4,13 @@
 
 (in-suite mutility-tests)
 
+(test expand-ranges
+  "Test the `mutility::expand-ranges' function"
+  (is (equal (list 0 1 2 3 4 5 -2 -1 0 1 2)
+             (mutility::expand-ranges '(0..5 -2..2))))
+  (is (equal (list 1 2 3 4 -9 -10 -11)
+             (mutility::expand-ranges '(1..4 -9..-11)))))
+
 (test a
   "Test the `a' macro and its helper functions"
   (is (equal (m::repeat-by-! '(1))
@@ -452,6 +459,11 @@ the other thing" :char-bag (list #\space #\newline)))
       "sequence-replace returns incorrect results when LIMIT is provided")
   (is (eql 3 (nth-value 1 (sequence-replace (list :foo 2 3 :foo 4 5 :foo 6) :foo :bar)))
       "sequence-replace doesn't return the number of replacements as its second value"))
+
+(test balanced-subsequences
+  "Test the `balanced-subsequences' function"
+  (is (equal (list "bar" "qux [this]")
+             (balanced-subsequences "foo [bar] baz [qux [this]] that" :open #\[ :close #\] :test #'char=))))
 
 (test insert-if
   "Test the `insert-if' function"

@@ -122,17 +122,22 @@ Example:
 
 ;; (expand-ranges '(0..5 -2..2))
 ;; => (0 1 2 3 4 5 -2 -1 0 1 2)"
-  (loop :for i :in list
-        :append (typecase i
-                  (symbol
-                   (let* ((sname (symbol-name i))
-                          (pos (search ".." sname)))
-                     (if pos
-                         (let ((first (parse-integer (subseq sname 0 pos)))
-                               (last (parse-integer (subseq sname (+ 2 pos)))))
-                           (loop :for n :from first :to last :collect n))
-                         (list i))))
-                  (t (list i)))))
+  (mapcan (lambda (i)
+            (typecase i
+              (symbol
+               (let* ((sname (symbol-name i))
+                      (pos (search ".." sname)))
+                 (if pos
+                     (let ((first (parse-integer (subseq sname 0 pos)))
+                           (last (parse-integer (subseq sname (+ 2 pos)))))
+                       (loop :with dir := (signum (- last first))
+                             :with n := first
+                             :collect n
+                             :until (= n last)
+                             :do (incf n dir)))
+                     (list i))))
+              (t (list i))))
+          list))
 
 (defmacro a (&rest args)
   "Quickly and conveniently generate lists. Use ! to denote repetition of the previous element, or .. to denote a range.
@@ -1064,7 +1069,7 @@ Example:
 ;; (sequence-split \"foo - bar - baz\" \" - \" :test 'search)
 ;; ;=> (\"foo\" \"bar\" \"baz\")
 
-See also: `sequence-replace'"
+See also: `sequence-replace', `balanced-subsequences'"
   (if-let ((pos (funcall test delimiter sequence)))
     (cons (subseq sequence 0 pos)
           (sequence-split (subseq sequence (+ offset pos)) delimiter :test test :offset offset))
@@ -1086,6 +1091,32 @@ See also: `sequence-split'"
         :else
           :collect element :into replaced
         :finally (return (values replaced replacements))))
+
+;; FIX: remove the requirement that OPEN and CLOSE differ, and add an ESCAPE argument to denote a character used for escaping OPEN/CLOSE
+(defun balanced-subsequences (sequence &key (open #\[) (close #\]) (test #'char=))
+  "Get a list of subsequences of SEQUENCE enclosed between a balanced pairs of OPEN and CLOSE.
+
+Example:
+
+;; (balanced-subsequences \"foo [bar] baz [qux [this]] that\" :open #\[ :close #\] :test #'char=)
+;; ;=> (\"bar\" \"qux [this]\")
+
+See also: `sequence-split', `cl:read'"
+  (assert (not (funcall test open close)) (open close test) "OPEN and CLOSE may not be equal according to TEST.")
+  (loop :with start
+        :with balance := 0
+        :for idx :from 0
+        :for char :being :the :elements :of sequence
+        :for open-p := (funcall test char open)
+        :for close-p := (funcall test char close)
+        :if open-p
+          :do (when (zerop balance)
+                (setf start idx))
+              (setf balance (1+ balance))
+        :if close-p
+          :do (decf balance)
+        :if (and close-p (zerop balance))
+          :collect (subseq sequence (1+ start) idx)))
 
 (uiop:with-deprecation (:style-warning)
   (defun insert-if (function list item) ;; FIX: remove. this is only used cl-patterns' eseq class functionality
