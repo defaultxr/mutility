@@ -1248,7 +1248,7 @@ See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
                                                #'string-trim
                                                #'string-left-trim))
                                        (list sep))
-                                (car compo))
+                                (namestring (car compo)))
                        (when (cdr compo)
                          sep)
                        (when (cdr compo)
