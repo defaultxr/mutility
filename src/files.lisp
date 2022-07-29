@@ -76,8 +76,11 @@
 See also: `file-path', `file-name', `file-name-no-extension', `file-extension'"))
 
 (defmethod file-path-no-extension (file)
-  (let ((path (file-path file)))
-    (coerce (butlast (coerce path 'list) (1+ (length (file-extension file)))) 'string)))
+  (let* ((path (file-path file))
+         (ext-pos (position +file-extension-separator+ path :from-end t)))
+    (if ext-pos
+        (subseq path 0 ext-pos)
+        path)))
 
 (defgeneric file-name (file)
   (:documentation "Get FILE's name, excluding the directory containing it.
