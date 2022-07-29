@@ -431,7 +431,16 @@ the other thing" :char-bag (list #\space #\newline)))
   "Test the `sequence-split' function"
   (is (equal (list (list 1 2) (list 2) (list 3))
              (sequence-split (list 1 2 :- 2 :- 3) :-))
-      "sequence-split returns incorrect results"))
+      "sequence-split returns incorrect results")
+  (is (equal (list "foo" "ar" "az")
+             (sequence-split "foo bar baz" #\space :offset 2))
+      "sequence-split with OFFSET argument returns incorrect results")
+  (is (equal (list "foo" "ar" "az qux")
+             (sequence-split "foo bar baz qux" " b" :test #'search))
+      "sequence-split with TEST argument returns incorrect results")
+  (is (equal (list "foo" "bar" "baz")
+             (sequence-split "foo - bar - baz" " - " :test #'search))
+      "sequence-split with TEST argument returns incorrect results"))
 
 (test sequence-replace
   "Test the `sequence-replace' function"

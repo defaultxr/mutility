@@ -1056,12 +1056,18 @@ See also: `alexandria:appendf', `cl:pushnew'."
     "Deprecated alias for `sequence-split'."
     (sequence-split sequence delimiter)))
 
-(defun sequence-split (sequence delimiter)
-  "Split SEQUENCE by DELIMITER.
+(defun sequence-split (sequence delimiter &key (test #'position) (offset (if (typep delimiter 'sequence) (length delimiter) 1)))
+  "Split SEQUENCE by searching for instances of DELIMITER using TEST. After finding a match for DELIMITER, the next search is run on the subsequence of SEQUENCE OFFSET from the location of the match.
+
+Example:
+
+;; (sequence-split \"foo - bar - baz\" \" - \" :test 'search)
+;; ;=> (\"foo\" \"bar\" \"baz\")
 
 See also: `sequence-replace'"
-  (if-let ((pos (position delimiter sequence)))
-    (cons (subseq sequence 0 pos) (sequence-split (subseq sequence (1+ pos)) delimiter))
+  (if-let ((pos (funcall test delimiter sequence)))
+    (cons (subseq sequence 0 pos)
+          (sequence-split (subseq sequence (+ offset pos)) delimiter :test test :offset offset))
     (cons sequence nil)))
 
 (defun sequence-replace (sequence target replacement &key (test #'eql) limit)
