@@ -1021,7 +1021,7 @@ Example:
                 (+ length end)
                 end))))
 
-(defun repeat (item num)
+(defun repeat (item num) ; FIX: rename to `make-list+' ?
   "Get a list containing NUM ITEMs. If ITEM is a function, return a list of NUM of the result of that function.
 
 Example:
@@ -1029,7 +1029,7 @@ Example:
 ;; (repeat (lambda () (random 10)) 10)
 ;; ;=> (7 0 6 6 7 9 8 1 9 8)"
   (declare (integer num))
-  (assert (typep num '(integer 0)) (num) "NUM must be a positive integer; got ~s instead." num)
+  (assert (typep num '(integer 0)) (num) "NUM must be a non-negative integer; got ~S instead." num)
   (the list
        (when (plusp num)
          (cons (if (typep item 'function)
