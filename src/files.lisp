@@ -58,14 +58,23 @@
          (,name (make-file (string ,(car lambda-list))))))))
 
 (define-file-method file-path (file)
-  "Get the full, unabbreviated path to FILE."
+  "Get the full unabbreviated path to FILE as a string."
   )
 
 (defgeneric file-path (file)
-  (:documentation "Get the full, unabbreviated path to FILE."))
+  (:documentation "Get the full unabbreviated path to FILE as a string."))
 
 (defmethod file-path ((file string))
-  (uiop:native-namestring file))
+  (uiop:native-namestring
+   (uiop:ensure-pathname (if (char= #\~ (char file 0))
+                             (concat (namestring (user-homedir-pathname))
+                                     (subseq file 2))
+                             file)
+                         :defaults (uiop:get-pathname-defaults)
+                         :dot-dot :up
+                         :want-non-wild t
+                         :ensure-absolute t
+                         :truenamize t)))
 
 (defmethod file-path ((file pathname))
   (file-path (namestring file)))
