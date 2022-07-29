@@ -43,11 +43,10 @@
 
 (defmacro define-file-method (name lambda-list &body body)
   "Define the generic function named NAME, as well as the methods specializing its first parameter on file, string, and pathname. The string and pathname methods effectively forward to the file method."
-  (let* ((has-docstring (stringp (car body)))
-         (body (if has-docstring (cdr body) body)))
+  (multiple-value-bind (body decls documentation) (parse-body body :documentation t)
     `(progn
        (defgeneric ,name ,lambda-list
-         ,@(when has-docstring `((:documentation (car body)))))
+         ,@(when documentation `((:documentation ,documentation))))
        (defmethod ,name ((,(car lambda-list) file) ,@(cdr lambda-list))
          ,@body)
        (defmethod ,name ((,(car lambda-list) string) ,@(cdr lambda-list))
