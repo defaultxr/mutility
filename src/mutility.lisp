@@ -1232,12 +1232,12 @@ See also: `all-classes'"
   "True if OBJECT is a `pathname-designator', i.e. a string or pathname."
   (typep object 'pathname-designator))
 
-(defun join-pathnames (&rest pathname-components)
-  "Join PATHNAME-COMPONENTS together into a single string, ensuring each is separated by exactly one directory separator.
+(defun join-path-components (&rest path-components)
+  "Join PATH-COMPONENTS together into a single string, ensuring each is separated by exactly one directory separator.
 
 Example:
 
-;; (join-pathnames \"foo\" \"/bar\" \"baz.qux) ;=> \"foo/bar/baz.qux\"
+;; (join-path-components \"foo\" \"/bar\" \"baz.qux) ;=> \"foo/bar/baz.qux\"
 
 See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
   (let ((sep (uiop:directory-separator-for-host)))
@@ -1253,7 +1253,12 @@ See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
                          sep)
                        (when (cdr compo)
                          (joiner (cdr compo))))))
-      (joiner pathname-components t))))
+      (joiner path-components t))))
+
+(uiop:with-deprecation (:style-warning)
+  (defun join-pathnames (&rest filenames)
+    "Deprecated alias for `join-path-components'."
+    (apply 'join-path-components filenames)))
 
 (defun open-url (url)
   "Open a URL via the OS's default application."

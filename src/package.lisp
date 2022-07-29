@@ -91,6 +91,7 @@
    
    #:pathname-designator
    #:pathname-designator-p
+   #:join-path-components
    #:join-pathnames
    #:open-url
    #:generate-temporary-file-name
