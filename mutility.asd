@@ -60,8 +60,7 @@
   :author "modula t."
   :description "FiveAM-based test suite for mutility"
   :license "MIT"
-  :depends-on (#:mutility
-               #:mutility/loopy
+  :depends-on (#:mutility/most
                #:mutility/test-helpers
                #:fiveam)
   :pathname "t/"
@@ -69,7 +68,8 @@
   :components ((:file "test")
                (:file "mutility")
                (:file "ringbuffer")
-               (:file "loopy"))
+               (:file "loopy")
+               (:file "files"))
   :perform (test-op (op c)
                     (uiop:symbol-call :fiveam :run!
                                       (uiop:find-symbol* '#:mutility-tests
