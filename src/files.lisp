@@ -118,8 +118,10 @@ See also: `file-type'"))
   '((:audio :aac :aif :aiff :flac :m4a :mp3 :ogg :opus :wav :wma)
     (:image :bmp :gif :jpeg :jpg :png :webp)
     (:video :avi :flv :m2t :m4v :mkv :mov :mp4 :ogv :webm :wmv)
-    (:archive :7z :bz2 :gz :rar :tar :zip))
-  "Alist mapping generalized file types to extensions that comprise that type.")
+    (:archive :7z :bz2 :gz :xz :rar :tar :zip))
+  "Alist mapping generalized file types to extensions that comprise that type.
+
+See also: `file-type'")
 
 (defgeneric file-type (file)
   (:documentation "Get a generalized \"file type\" for FILE, i.e. image, video, etc."))
