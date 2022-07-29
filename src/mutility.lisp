@@ -1087,25 +1087,26 @@ See also: `sequence-split'"
           :collect element :into replaced
         :finally (return (values replaced replacements))))
 
-(defun insert-if (function list item)
-  "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
+(uiop:with-deprecation (:style-warning)
+  (defun insert-if (function list item) ;; FIX: remove. this is only used cl-patterns' eseq class functionality
+    "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
 
 Example:
 
 ;; (insert-if #'plusp (list -2 -1 1 2) 0)
 ;; ;; => (-2 -1 0 1 2)"
-  (if list
-      (progn
-        (loop :for i :on list
-              :if (funcall function (car i))
-                :do (setf (cdr i) (cons (car i) (cdr i))
-                          (car i) item)
-                    (loop-finish)
-              :when (null (cdr i))
-                :do (setf (cdr i) (cons item nil))
-                    (loop-finish))
-        list)
-      (list item)))
+    (if list
+        (progn
+          (loop :for i :on list
+                :if (funcall function (car i))
+                  :do (setf (cdr i) (cons (car i) (cdr i))
+                            (car i) item)
+                      (loop-finish)
+                :when (null (cdr i))
+                  :do (setf (cdr i) (cons item nil))
+                      (loop-finish))
+          list)
+        (list item))))
 
 ;;; functions
 
