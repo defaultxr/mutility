@@ -18,6 +18,9 @@
 (defmethod ensure-directory-trailing-slash ((path pathname))
   (uiop:parse-native-namestring (ensure-directory-trailing-slash (uiop:native-namestring path))))
 
+(defconstant +file-extension-separator+ #\.
+  "The character separating the file's name from its extension.")
+
 ;;; class
 
 (defclass file ()
@@ -107,7 +110,7 @@ See also: `file-name'"))
 See also: `file-type'"))
 
 (defmethod file-extension ((file string))
-  (when-let* ((pos (position #\. file :from-end t)))
+  (when-let* ((pos (position +file-extension-separator+ file :from-end t)))
     (subseq file (1+ pos))))
 
 (defmethod file-extension ((file pathname))
