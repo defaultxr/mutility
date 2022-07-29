@@ -62,14 +62,18 @@
   :license "MIT"
   :depends-on (#:mutility/most
                #:mutility/test-helpers
-               #:fiveam)
+               #:fiveam
+               ;; systems we check for symbol conflicts with:
+               #:alexandria
+               #:cl-patterns)
   :pathname "t/"
   :serial t
   :components ((:file "test")
                (:file "mutility")
                (:file "ringbuffer")
                (:file "loopy")
-               (:file "files"))
+               (:file "files")
+               (:file "test-helpers"))
   :perform (test-op (op c)
                     (uiop:symbol-call :fiveam :run!
                                       (uiop:find-symbol* '#:mutility-tests
