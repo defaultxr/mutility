@@ -45,6 +45,16 @@
   :serial t
   :components ((:file "files")))
 
+(asdf:defsystem #:mutility/most
+  :name "mutility plus common subsystems"
+  :description "modula's utilities plus the most common additional subsystems"
+  :author "modula t."
+  :license "MIT"
+  :version "0.5"
+  :depends-on (#:mutility
+               #:mutility/loopy
+               #:mutility/files))
+
 (asdf:defsystem #:mutility/test-helpers
   :description "modula's utilities: functions for assisting with writing tests"
   :author "modula t."
