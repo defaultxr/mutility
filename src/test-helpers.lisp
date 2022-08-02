@@ -119,7 +119,11 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
 
   (defun all-docstrings (symbol)
     "Deprecated alias for `symbol-all-docstrings'."
-    (symbol-all-docstrings symbol)))
+    (symbol-all-docstrings symbol))
+
+  (defun docstrings-with-broken-links (package &key scan-external-packages)
+    "Deprecated alias for `package-docstrings-with-broken-links'."
+    (package-docstrings-with-broken-links package :scan-external-packages scan-external-packages)))
 
 (export '(docstring-linked-symbol-names
           symbol-all-docstrings
@@ -133,4 +137,5 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
 
           ;; deprecated
           undocumented-symbols
-          all-docstrings))
+          all-docstrings
+          docstrings-with-broken-links))
