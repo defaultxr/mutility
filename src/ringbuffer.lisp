@@ -1,7 +1,7 @@
-(in-package #:mutility)
-
 ;;;; ringbuffer.lisp - ringbuffer implementation.
 ;;; https://en.wikipedia.org/wiki/Circular_buffer
+
+(in-package #:mutility)
 
 (defstruct (ringbuffer (:constructor %make-ringbuffer))
   "A ringbuffer, also known as a circular buffer. Items can be pushed onto it and popped from it just like a regular stack, except that has a finite size. After SIZE elements are pushed to it, the next push overwrites the least recent element."
@@ -40,9 +40,22 @@ See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `
                     :array (make-array size :initial-element initial-element)))
 
 (defun ringbuffer-elt (ringbuffer &optional (index -1))
-  "Get the element at INDEX in RINGBUFFER. Defaults to the most recent element pushed.
+  "Get the element at INDEX in RINGBUFFER. Negative indexes are from the most recently-pushed elements, while zero or positive are from the oldest. So -1 is the most recently-pushed item, and -2 is the second most. 0 is the oldest item in the ringbuffer, and 1 is the second oldest.
 
-See also: `ringbuffer-get', `ringbuffer-push', `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `ringbuffer'"
+Examples:
+
+;; (defparameter rb (make-ringbuffer 3))
+;; (ringbuffer-push rb 0)
+;; (ringbuffer-push rb 1)
+;; (ringbuffer-push rb 2)
+;; ;; Get the most recently-pushed element:
+;; (ringbuffer-elt rb -1) ;=> 2
+;; ;; Get the oldest element:
+;; (ringbuffer-elt rb 0) ;=> 0
+;; ;; Get the second oldest element:
+;; (ringbuffer-elt rb 1) ;=> 1
+
+See also: `ringbuffer-get', `ringbuffer-newest', `ringbuffer-oldest', `ringbuffer-push', `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `ringbuffer'"
   (aref (ringbuffer-array ringbuffer) (mod (+ (ringbuffer-index ringbuffer)
                                               index)
                                            (ringbuffer-size ringbuffer))))
