@@ -82,6 +82,20 @@ See also: `ringbuffer-pop', `ringbuffer-elt', `ringbuffer-push', `ringbuffer-siz
       (setf (ringbuffer-elt ringbuffer oldest-index) (ringbuffer-initial-element ringbuffer)
             (ringbuffer-length ringbuffer) (max 0 (1- length))))))
 
+(defun ringbuffer-newest (ringbuffer &optional n)
+  "Get a list of the last N items pushed to RINGBUFFER, from most to least recent.
+
+See also: `ringbuffer-oldest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
+  (loop :for idx :from -1 :downto (- (or n (ringbuffer-length ringbuffer)))
+        :collect (ringbuffer-elt ringbuffer idx)))
+
+(defun ringbuffer-oldest (ringbuffer &optional n)
+  "Get a list of the oldest N items pushed to RINGBUFFER, from least to most recent.
+
+See also: `ringbuffer-newest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
+  (loop :for idx :from 0 :below (or n (ringbuffer-length ringbuffer))
+        :collect (ringbuffer-elt ringbuffer idx)))
+
 (defmacro do-ringbuffer ((var ringbuffer &optional result-form) &body body)
   "Execute BODY once for each element in RINGBUFFER from least to most recent, with VAR bound to the element, returning RESULT-FORM.
 

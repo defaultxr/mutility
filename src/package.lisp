@@ -110,4 +110,6 @@
    #:ringbuffer-push
    #:ringbuffer-pop
    #:ringbuffer-get
+   #:ringbuffer-newest
+   #:ringbuffer-oldest
    #:do-ringbuffer))
