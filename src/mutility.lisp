@@ -147,17 +147,18 @@ Inspired by similar functionality in SuperCollider.
 Examples:
 
 ;; (a 3!3)
-;; => (3 3 3)
-;;
-;; (a -5 (random 3)!5 9 10)
-;; => (-5 0 2 2 1 2 9 10)
-;;
-;; (a 2..9)
-;; => (2 3 4 5 6 7 8 9)
+;; ;=> (3 3 3)
 
-See also: `repeat-by-!', `expand-ranges'"
+;; (a -5 (random 3)!5 9 10)
+;; ;=> (-5 0 2 2 1 2 9 10)
+
+;; (a 2..9)
+;; ;=> (2 3 4 5 6 7 8 9)
+
+See also: `fn', `repeat-by-!', `expand-ranges'"
   (expand-ranges (repeat-by-! args t)))
 
+;; see also f-underscore; https://gitlab.common-lisp.net/bpm/f-underscore/-/blob/master/f-underscore.lisp
 (defmacro fn (&body body)
   "Syntax sugar for `lambda'. BODY is the function body. Symbols consisting of an underscore and a number are treated as the lambda's argument at that index. For example, _1 is the second argument of the lambda. A single underscore is treated the same as _.
 
