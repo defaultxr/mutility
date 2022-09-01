@@ -24,7 +24,8 @@
   :in-order-to ((test-op (test-op "mutility/tests"))))
 
 (asdf:defsystem #:mutility/loopy
-  :description "modula's utilities: various looping constructs"
+  :name "mutility: loopy"
+  :description "modula's utilities: various additional looping constructs"
   :author "modula t."
   :license "MIT"
   :version "0.5"
@@ -56,7 +57,8 @@
                #:mutility/files))
 
 (asdf:defsystem #:mutility/test-helpers
-  :description "modula's utilities: functions for assisting with writing tests"
+  :name "mutility: test helpers"
+  :description "modula's utilities: helper functions useful when writing tests"
   :author "modula t."
   :license "MIT"
   :version "0.5"
@@ -66,14 +68,14 @@
   :components ((:file "test-helpers")))
 
 (asdf:defsystem #:mutility/tests
-  :name "mutility tests"
+  :name "mutility test suite"
   :author "modula t."
   :description "FiveAM-based test suite for mutility"
   :license "MIT"
   :depends-on (#:mutility/most
                #:mutility/test-helpers
                #:fiveam
-               ;; systems we check for symbol conflicts with:
+               ;; systems we check for symbol conflicts with
                #:alexandria
                #:cl-patterns)
   :pathname "t/"
