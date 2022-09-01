@@ -8,7 +8,7 @@
    #:a
    #:fn
    #:cut
-   #:with-access
+   #:with-access ; deprecated
    #:defclass+
    #:no-dictionary-entry
    #:no-dictionary-entry-entry
@@ -21,6 +21,8 @@
    #:keys
 
    #:upcase-intern
+
+   ;; deprecated
    #:my-intern
    #:reintern
    #:un-intern
@@ -48,17 +50,19 @@
    #:floor-by
    #:ceiling-by
    #:round-by
-   #:round-by-direction
+   #:round-by-direction ; deprecated
 
    #:random-coin
    #:random-range
    #:exponential-random-range
    #:random-gauss
 
+   ;; deprecated
    #:length-upto
    #:list-length-upto
    #:list-length>=
    #:list-length>
+
    #:nth-wrap
    #:elt-wrap
    #:find-if*
@@ -69,12 +73,12 @@
    #:subseq*
    ;; #:repeat ;; conflicts with iterate
    #:left-trim
-   #:affixnew
-   #:split-sequence
+   #:affixnew ; deprecated
+   #:split-sequence ; deprecated
    #:sequence-split
    #:sequence-replace
    #:balanced-subsequences
-   #:insert-if
+   #:insert-if ; deprecated
 
    #:funcallable-object-p
    #:function-designator
@@ -93,7 +97,7 @@
    #:pathname-designator
    #:pathname-designator-p
    #:join-path-components
-   #:join-pathnames
+   #:join-pathnames ; deprecated
    #:open-url
    #:generate-temporary-file-name
    #:locate-dominating-file

@@ -238,7 +238,7 @@ See also: `fn'"
               arg-symbols))
       `(lambda (,@(nreverse gensyms)) (funcall ,@(nreverse arg-symbols))))))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defmacro with-access (slots instance &body body)
     "Deprecated; recommended to use metabang-bind's \"bind\" macro instead.
 
@@ -536,7 +536,7 @@ Example:
 See also: `alexandria:ensure-symbol', `string-downcase'"
   (intern (string-upcase string) package))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun my-intern (string &optional (package *package*))
     "Deprecated alias for `upcase-intern'."
     (upcase-intern string package))
@@ -611,7 +611,7 @@ See also: `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standar
 See also: `alexandria:string-designator'"
   (typep object 'string-designator))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun split-string (&rest rest)
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
@@ -812,7 +812,7 @@ Examples:
 See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun round-by-direction (number &optional (by 1))
     "Deprecated; use either `floor-by', `ceiling-by', or `round-by' instead."
     (if (zerop (mod number by))
@@ -892,16 +892,16 @@ See also: `alexandria:length='"
       (loop :for i :being :the :elements :of sequence
             :repeat max
             :do (incf res))
-      res))
+      res)))
 
+(uiop:with-deprecation (:warning)
   (defun list-length-upto (list &optional (max 10))
-    "Deprecated funciton; use `alexandria:length=' instead.
+    "Deprecated function; use `alexandria:length=' instead."
+    (length-upto list max)))
 
-Alias for `length-upto'."
-    (length-upto list max))
-
+(uiop:with-deprecation (:style-warning)
   (defun list-length>= (list n)
-    "Deprecated in favor of `serapeum:length>='.
+    "Deprecated function; use `serapeum:length>=' or `alexandria:length=' instead.
 
 True if LIST is at least N in length. Probably more efficient than doing something like (>= (length list) n).
 
@@ -909,7 +909,7 @@ Example:
 
 ;; (list-length>= (make-list 300) 10) ;=> T
 
-See also: `list-length>', `list-length-upto', `alexandria:length='"
+See also: `serapeum:length>=', `alexandria:length='"
     (let ((current 0))
       (dolist (item list nil)
         (incf current)
@@ -917,11 +917,11 @@ See also: `list-length>', `list-length-upto', `alexandria:length='"
           (return-from list-length>= t)))))
 
   (defun list-length> (list n)
-    "Deprecated in favor of `serapeum:length>'
+    "Deprecated function; use `serapeum:length>' or `alexandria:length=' instead.
 
 True if LIST is more than N in length.
 
-See also: `list-length>=', `alexandria:length='"
+See also: `serapeum:length>', `alexandria:length='"
     (list-length>= list (1+ n))))
 
 (defun nth-wrap (n list)
@@ -1049,7 +1049,7 @@ Example:
 See also: `cl:string-left-trim'"
   (member-if-not (lambda (x) (position x (ensure-list bag) :test test)) list))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defmacro affixnew (place thing)
     "Affix THING to the end of PLACE if it's not already a member.
 
@@ -1289,7 +1289,7 @@ See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
                          (joiner (cdr compo))))))
       (joiner path-components t))))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun join-pathnames (&rest filenames)
     "Deprecated alias for `join-path-components'."
     (apply 'join-path-components filenames)))
