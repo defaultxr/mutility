@@ -888,11 +888,11 @@ Example:
 ;; (length-upto (make-list 200) 20) ;=> 20
 
 See also: `alexandria:length='"
-    (let ((res 0))
-      (loop :for i :being :the :elements :of sequence
-            :repeat max
-            :do (incf res))
-      res)))
+    (loop :with res := 0
+          :for i :being :the :elements :of sequence
+          :repeat max
+          :do (incf res)
+          :finally (return res))))
 
 (uiop:with-deprecation (:warning)
   (defun list-length-upto (list &optional (max 10))
