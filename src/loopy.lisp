@@ -36,7 +36,7 @@ See also: `cl:mapcar', `mapcar*', `doplist'"
   (uiop:while-collecting (results)
     (tagbody
      mapplist-loop
-       (dolist (i (apply function (mapcan (lambda (x) (subseq x 0 2)) lists)))
+       (dolist (i (ensure-list (apply function (mapcan (lambda (x) (subseq x 0 2)) lists))))
          (results i))
        (setf lists (mapcar (lambda (list)
                              (or (cddr list)

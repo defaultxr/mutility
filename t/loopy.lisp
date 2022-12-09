@@ -12,13 +12,20 @@
 (test mapplist
   "Test the `mapplist' macro"
   (is (equal (list :foo 2 :bar 3)
-             (mapplist (lambda (k v) (list k (1+ v))) '(:foo 1 :bar 2)))
+             (mapplist (lambda (k v)
+                         (list k (1+ v)))
+                       (list :foo 1 :bar 2)))
       "mapplist returns incorrect results for one four-element list")
   (is (equal (list :foo 2 :baz 5 :bar 3 :qux 6)
-             (mapplist (lambda (w x y z) (list w (1+ x) y (+ 2 z)))
-                       '(:FOO 1 :BAR 2)
-                       '(:BAZ 3 :QUX 4)))
-      "mapplist returns incorrect results for two four-element lists"))
+             (mapplist (lambda (w x y z)
+                         (list w (1+ x) y (+ 2 z)))
+                       (list :foo 1 :bar 2)
+                       (list :baz 3 :qux 4)))
+      "mapplist returns incorrect results for two four-element lists")
+  (is (equal (list 3 7)
+             (mapplist (lambda (k v)
+                         (+ k v))
+                       (list 1 2 3 4)))))
 
 (test dorange
   "Test the `dorange' macro"
