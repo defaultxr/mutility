@@ -148,7 +148,7 @@ See also: `file-type'")
   (:documentation "True if FILE names a file or directory that exists."))
 
 (defmethod file-exists-p (file)
-  (probe-file (file-path file)))
+  (probe-file (uiop:ensure-pathname file :want-non-wild t)))
 
 (defgeneric file-file-p (file)
   (:documentation "True if FILE is a file (i.e. it exists and is not a directory)."))
