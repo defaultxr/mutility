@@ -362,6 +362,10 @@ See also: `cl:defclass'"
       (documentation 'no-dictionary-entry-dictionary-name 'function) "The name of the dictionary."
       (documentation 'no-dictionary-entry-dictionary 'function) "The dictionary object itself.")
 
+;; FIX: check usecases in bdef, cyxnxdx, kyndlr, etc and ensure that this will work for them too.
+;; FIX: auto-detect NAME-TYPE by default by looking at the :type of the NAME class slot.
+;; FIX: should we use a mixin class for this instead? https://lisp.substack.com/p/mixins-in-common-lisp
+;; FIX: should we provide an :after method for (setf name) ?
 (defmacro define-dictionary (name &key (name-type 'symbol) (include-errorp t) (errorp-default t) (define-class-functions :if-class-exists) find-function-name)
   "Define a \"dictionary\" named NAME that maps symbols to objects. Defines the *NAME-dictionary* hash table and several functions for access to said table and the associated objects.
 
@@ -585,7 +589,7 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
 
 ;;; strings
 
-(defun concat (&rest objects)
+(defun concat (&rest objects) ; FIX: conflicts with `serapeum:concat', which differs in that it doesn't concatenate symbols.
   "Concatenate all non-nil OBJECTS together into a string.
 
 See also: `cl:concatenate', `uiop:strcat'"
@@ -648,7 +652,7 @@ See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
-(defun replace-all (string part replacement &key (test #'char=))
+(defun replace-all (string part replacement &key (test #'char=)) ; FIX: rename to something else? string-replace-all is already taken in serapeum, but serapeum's implementation doesn't allow you to specify the character test function and/or case-sensitivity
   "Get a new string in which all the occurences of the part is replaced with replacement.
 
 See also: `cl-ppcre:regex-replace-all'"
@@ -682,7 +686,7 @@ See also: `open-url', `pathname-designator-p', `parse-boolean'"
     (and (member (first split-up) (list "http:" "https:") :test (if case-sensitive #'string= #'string-equal))
          (cdr split-up))))
 
-(defun friendly-ratio-string (ratio &optional (separator " ")) ;; FIX: negative numbers are weird
+(defun friendly-ratio-string (ratio &optional (separator " ")) ; FIX: negative numbers are weird
   "Format a ratio as a more human-readable string.
 
 Example:
@@ -762,9 +766,7 @@ Examples:
 ;; (wrap 15 0 10) ;; => 4
 
 See also: `fold', `cl:mod', `alexandria:clamp'"
-  (declare (type number number)
-           (type number bottom)
-           (type number top))
+  (declare (type number number bottom top))
   (+ (mod (- number bottom) (- top bottom)) bottom))
 
 (defun fold (number &optional (bottom 0) (top 1))
@@ -777,9 +779,7 @@ Examples:
 ;; (fold 8 0 7) ;=> 6
 
 See also: `wrap', `cl:mod', `alexandria:clamp'"
-  (declare (type number number)
-           (type number bottom)
-           (type number top))
+  (declare (type number number bottom top))
   (if (>= top number bottom)
       number
       (let* ((range (- top bottom))
@@ -1228,7 +1228,7 @@ See also: `all-classes'"
   (/ (get-internal-real-time) internal-time-units-per-second))
 
 ;; swiped from https://stackoverflow.com/questions/15465138/find-functions-arity-in-common-lisp
-(defun function-arglist (function)
+(defun function-arglist (function) ; FIX: maybe just use trivial-arguments instead? ; FIX: rename to function-lambda-list for consistency with alexandria?
   "Get the signature of FUNCTION."
   #+allegro (excl:arglist function)
   #+clisp (sys::arglist function)

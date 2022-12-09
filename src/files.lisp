@@ -145,7 +145,7 @@ See also: `file-type'")
     (car (find-if (fn (position ext (cdr _))) *file-extensions-type-map*))))
 
 (defgeneric file-exists-p (file)
-  (:documentation "True if FILE refers to a file or directory that exists."))
+  (:documentation "True if FILE names a file or directory that exists."))
 
 (defmethod file-exists-p (file)
   (probe-file (file-path file)))
