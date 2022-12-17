@@ -1,6 +1,8 @@
+;;;; loopy.lisp - mutility looping constructs
+
 (in-package #:mutility)
 
-(defun mapcar* (function list &rest more-lists)
+(defun mapcar* (function list &rest more-lists) ; FIX: this can be simplified/improved probably; also needs tests.
   "Like `mapcar', but provides the index of the current element as an additional final element to FUNCTION.
 
 Example:

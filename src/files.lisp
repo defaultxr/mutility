@@ -224,23 +224,18 @@ See also: `file-type'")
    (bitrate :initarg :bitrate :initform nil :documentation "")
    (sample-rate :initarg :sample-rate :initform nil :documentation "")))
 
-
-
 ;;; image
 
 ;;; video
 
-
-
 ;;; traversal
 
 (defun locate-dominating-file (directory name)
-  "Starting at DIRECTORY, look for a file named NAME in the current directory and successive parents, returning the first one found or nil if none.
+  "Check for a file named NAME in DIRECTORY. If no such file is found, search again in the parent directory. Continue traversing up the directory tree until either finding the file, or hitting the filesystem root. Returns the full path to the file if found, or nil if no such file was found.
 
-Similar to the Emacs function \"locate-dominating-file\"."
+This is equivalent to the Emacs function of the same name."
   (labels ((try-next (directory)
              (let ((check (uiop:merge-pathnames* name directory)))
-               (print check)
                (if (file-exists-p check)
                    check
                    (let ((next (file-parent-directory directory)))
@@ -257,8 +252,7 @@ Similar to the Emacs function \"locate-dominating-file\"."
   "Find files in the filesystem matching the given predicates."
   ;; FIX: make this user-extensible (maybe it should just forward all unknown keyword args to a function of the same name if one exists (or allow functions to be specified directly))
   ;; FIX: make aliases of keyword arguments for their unix "find" equivalent
-  nil
-  )
+  (error "~S is not implemented yet." 'file-finder))
 
 (export '(ensure-directory-trailing-slash
           

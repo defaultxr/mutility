@@ -1139,8 +1139,8 @@ See also: `sequence-split', `cl:read'"
           :collect (subseq sequence (1+ start) idx)))
 
 (uiop:with-deprecation (:style-warning)
-  (defun insert-if (function list item) ;; FIX: remove. this is only used cl-patterns' eseq class functionality
-    "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the result is returned ;; FIX
+  (defun insert-if (function list item) ; FIX: remove. this is only used cl-patterns' eseq class functionality.
+    "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the input list is destructively modified.
 
 Example:
 

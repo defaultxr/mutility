@@ -96,14 +96,14 @@ See also: `ringbuffer-pop', `ringbuffer-elt', `ringbuffer-push', `ringbuffer-siz
             (ringbuffer-length ringbuffer) (max 0 (1- length))))))
 
 (defun ringbuffer-newest (ringbuffer &optional n)
-  "Get a list of the last N items pushed to RINGBUFFER, from most to least recent.
+  "Get a list of the last N items in RINGBUFFER, from most to least recent.
 
 See also: `ringbuffer-oldest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
   (loop :for idx :from -1 :downto (- (or n (ringbuffer-length ringbuffer)))
         :collect (ringbuffer-elt ringbuffer idx)))
 
 (defun ringbuffer-oldest (ringbuffer &optional n)
-  "Get a list of the oldest N items pushed to RINGBUFFER, from least to most recent.
+  "Get a list of the oldest N items in RINGBUFFER, from least to most recent.
 
 See also: `ringbuffer-newest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
   (loop :for idx :from 0 :below (or n (ringbuffer-length ringbuffer))
