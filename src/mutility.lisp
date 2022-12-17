@@ -650,6 +650,25 @@ See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
                     (string-left-trim char-bag string))
                 max-num char-bag))))
 
+(defun string-join* (strings &optional separator)
+  "Join all non-nil elements of STRINGS together, separated by SEPARATOR.
+
+Similar to `serapeum:string-join', but ignores nils in STRINGS.
+
+Examples:
+
+;; (string-join* (list \"foo\" \"bar\" \"baz\") \"-\") ;=> \"foo-bar-baz\"
+
+;; (string-join* (list \"foo\" nil \"baz\") \"-\") ;=> \"foo-baz\"
+
+See also: `concat', `serapeum:string-join'"
+  (apply #'concatenate 'string
+         (loop :for (item next) :on strings
+               :if item
+                 :collect item
+               :if next
+                 :collect separator)))
+
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
 (defun replace-all (string part replacement &key (test #'char=)) ; FIX: rename to something else? string-replace-all is already taken in serapeum, but serapeum's implementation doesn't allow you to specify the character test function and/or case-sensitivity

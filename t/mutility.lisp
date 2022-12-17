@@ -185,6 +185,15 @@ the other thing" :char-bag (list #\space #\newline)))
              (string-split "foo=bar==baz===qux=" :max-num 3 :char-bag #\= :include-empty nil))
       "string-split gives incorrect results when max-num and char-bag are provided and the string ends in a divider"))
 
+(test string-join*
+  "Test the `string-join*' function"
+  (is (string= (string-join* (list "foo" "bar" "baz") "-")
+               "foo-bar-baz"))
+  (is (string= (string-join* (list "foo" nil "baz") "-")
+               "foo-baz"))
+  (is (string= (string-join* (list "foo" nil "baz" nil nil "qux" nil) "$")
+               "foo$baz$qux")))
+
 (test replace-all
   ;; FIX
   )

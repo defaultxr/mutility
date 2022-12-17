@@ -36,6 +36,7 @@
    #:string-designator-p
    #:split-string
    #:string-split
+   #:string-join*
    #:replace-all
    #:parse-boolean
    #:url-p
