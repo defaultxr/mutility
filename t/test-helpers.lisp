@@ -4,6 +4,47 @@
 
 (in-suite mutility-tests)
 
+(test org-header-line-p
+  (is (equal (multiple-value-list (org-header-line-p "* cool header"))
+             (list "cool header" 1)))
+  (is (equal (multiple-value-list (org-header-line-p "*** bar baz"))
+             (list "bar baz" 3))))
+
+(test org-list-line-p
+  (is (equal (multiple-value-list (org-list-line-p "- foo"))
+             (list "foo" 1)))
+  (is (equal (multiple-value-list (org-list-line-p "  - bar baz"))
+             (list "bar baz" 3))))
+
+(test stream-extract-org-headers
+  (is (equal (stream-extract-org-headers (make-string-input-stream "* foo
+** bar
+*** baz
+- this
+that
+the other thing
+** qux"))
+             (list "foo" "bar" "baz" "qux"))))
+
+(test stream-extract-org-lists
+  (is (equal (stream-extract-org-lists (make-string-input-stream "* foo
+** bar
+*** baz
+- this
+  - that
+    - the other thing
+-not this
+-not that
+** qux"))
+             (list "this" "that" "the other thing"))))
+
+(test stream-extract-org-links
+  (is (equal (stream-extract-org-links (make-string-input-stream "[link 1] [link 2]
+* [[address][title]]
+** [[another address][another title]]
+- [[link 3]]"))
+             (list "link 1" "link 2" "[address][title]" "[another address][another title]" "[link 3]"))))
+
 (test docstring-linked-symbol-names
   (is (equalp (list "bar" "baz:qux")
               (docstring-linked-symbol-names "foo `bar' barb `baz:qux' temp"))))

@@ -2,6 +2,102 @@
 
 (in-package #:mutility)
 
+;;; org-mode
+
+(defun org-header-line-p (line)
+  "True if LINE is an org header line (i.e. starts with at least one asterisk and a space). Returns two values: the header text, and the header level (number of asterisks).
+
+Examples:
+
+;; (org-header-line-p \"* cool header\")
+;; ;=> \"cool header\"
+;; ;=> 1
+
+;; (org-header-line-p \"*** bar baz\")
+;; ;=> \"bar baz\"
+;; ;=> 3
+
+See also: `org-list-line-p', `stream-extract-org-headers', `file-extract-org-headers'"
+  (let ((split (string-split line :char-bag (list #\space) :max-num 2)))
+    (and (length= 2 split)
+         (every (lambda (char)
+                  (char= #\* char))
+                (first split))
+         (values (second split)
+                 (length (first split))))))
+
+(defun org-list-line-p (line)
+  "True if LINE is an org list line (i.e. starts with zero or more spaces, a dash, and a space). Returns two values: the text, and the list level (one plus the number of leading spaces).
+
+Examples:
+
+;; (org-list-line-p \"- foo\")
+;; ;=> \"foo\"
+;; ;=> 1
+
+;; (org-list-line-p \"  - bar baz\")
+;; ;=> \"bar baz\"
+;; ;=> 3
+
+See also: `org-header-line-p', `stream-extract-org-lists', `file-extract-org-lists'"
+  (let ((num-spaces (position-if-not (lambda (char) (char= #\space char)) line)))
+    (and (string= "- " (subseq line num-spaces (+ 2 num-spaces)))
+         (values (subseq line (+ 2 num-spaces))
+                 (1+ num-spaces)))))
+
+(defun stream-extract-org-headers (stream)
+  "Get a list of the text of all header lines in STREAM.
+
+See also: `file-extract-org-headers', `org-header-line-p'"
+  (loop :for line := (read-line stream nil nil)
+        :for header := (when line (org-header-line-p line))
+        :if (and line header)
+          :collect header
+        :unless line
+          :do (loop-finish)))
+
+(defun file-extract-org-headers (file)
+  "Get all the Org-Mode-formatted headers in FILE.
+
+See also: `stream-extract-org-headers', `org-header-line-p'"
+  (with-open-file (stream file :if-does-not-exist :error)
+    (stream-extract-org-headers stream)))
+
+(defun stream-extract-org-lists (stream)
+  "Get a list of the text of all header lines in STREAM.
+
+See also: `file-extract-org-lists', `org-list-line-p'"
+  (loop :for line := (read-line stream nil nil)
+        :for list-item := (when line (org-list-line-p line))
+        :if (and line list-item)
+          :collect list-item
+        :unless line
+          :do (loop-finish)))
+
+(defun file-extract-org-lists (file)
+  "Get all the Org-Mode-formatted headers in FILE.
+
+See also: `stream-extract-org-lists', `org-list-line-p'"
+  (with-open-file (stream file :if-does-not-exist :error)
+    (stream-extract-org-lists stream)))
+
+(defun stream-extract-org-links (stream)
+  "Get a list of substrings in STREAM enclosed between OPEN-CHAR and CLOSE-CHAR. Note that substrings spanning multiple lines are not 
+
+See also: `file-extract-org-links', `balanced-subsequences'"
+  (loop :for line := (read-line stream nil nil)
+        :if line
+          :append (balanced-subsequences line :open #\[ :close #\] :test #'char=)
+        :else
+          :do (loop-finish)))
+
+(defun file-extract-org-links (file)
+  "Get all the Org-Mode-formatted links in FILE.
+
+See also: `stream-extract-org-links'"
+  (with-open-file (stream file :if-does-not-exist :error)
+    (stream-extract-org-links stream)))
+
 ;;; docstrings
 
 (defun docstring-linked-symbol-names (string)
@@ -125,7 +221,16 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
     "Deprecated alias for `package-docstrings-with-broken-links'."
     (package-docstrings-with-broken-links package :scan-external-packages scan-external-packages)))
 
-(export '(docstring-linked-symbol-names
+(export '(org-header-line-p
+          org-list-line-p
+          stream-extract-org-headers
+          file-extract-org-headers
+          stream-extract-org-lists
+          file-extract-org-lists
+          stream-extract-org-links
+          file-extract-org-links
+
+          docstring-linked-symbol-names
           symbol-all-docstrings
           docstring-broken-links
 
