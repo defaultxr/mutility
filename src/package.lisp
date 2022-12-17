@@ -101,7 +101,6 @@
    #:join-pathnames ; deprecated
    #:open-url
    #:generate-temporary-file-name
-   #:locate-dominating-file
 
    ;; ringbuffer.lisp
    #:ringbuffer
