@@ -41,7 +41,8 @@ Examples:
 
 See also: `org-header-line-p', `stream-extract-org-lists', `file-extract-org-lists'"
   (let ((num-spaces (position-if-not (lambda (char) (char= #\space char)) line)))
-    (and (string= "- " (subseq line num-spaces (+ 2 num-spaces)))
+    (and num-spaces
+         (string= "- " (subseq line num-spaces (+ 2 num-spaces)))
          (values (subseq line (+ 2 num-spaces))
                  (1+ num-spaces)))))
 

@@ -14,7 +14,8 @@
   (is (equal (multiple-value-list (org-list-line-p "- foo"))
              (list "foo" 1)))
   (is (equal (multiple-value-list (org-list-line-p "  - bar baz"))
-             (list "bar baz" 3))))
+             (list "bar baz" 3)))
+  (is-false (org-list-line-p "")))
 
 (test stream-extract-org-headers
   (is (equal (stream-extract-org-headers (make-string-input-stream "* foo
