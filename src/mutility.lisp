@@ -1095,15 +1095,15 @@ See also: `sequence-replace', `balanced-subsequences'"
           (sequence-split (subseq sequence (+ offset pos)) delimiter :test test :offset offset))
     (cons sequence nil)))
 
-(defun sequence-replace (sequence target replacement &key (test #'eql) limit)
-  "Replace instances of TARGET with REPLACEMENT in SEQUENCE, optionally limiting to LIMIT replacements. Returns the number of replacements made as a second value.
+(defun sequence-replace (sequence target replacement &key (test #'eql) count (key #'identity))
+  "Replace instances of TARGET with REPLACEMENT in SEQUENCE, optionally limiting to COUNT replacements. Returns the number of replacements made as a second value.
 
 See also: `sequence-split'"
   (loop :with replacements := 0
         :for element :being :the :elements :of sequence
-        :if (and (funcall test target element)
-                 (or (null limit)
-                     (< replacements limit)))
+        :if (and (funcall test target (funcall key element))
+                 (or (null count)
+                     (< replacements count)))
           :collect (progn
                      (incf replacements)
                      replacement)
