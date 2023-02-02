@@ -179,11 +179,11 @@
 the other thing" :char-bag (list #\space #\newline)))
       "string-split char-bag argument does not work properly")
   (is (equal (list "foo" "bar=baz")
-             (string-split "foo=bar=baz" :max-num 2 :char-bag #\=))
-      "string-split max-num argument does not work properly")
+             (string-split "foo=bar=baz" :count 2 :char-bag #\=))
+      "string-split count argument does not work properly")
   (is (equal (list "foo" "bar" "baz===qux=")
-             (string-split "foo=bar==baz===qux=" :max-num 3 :char-bag #\= :include-empty nil))
-      "string-split gives incorrect results when max-num and char-bag are provided and the string ends in a divider"))
+             (string-split "foo=bar==baz===qux=" :count 3 :char-bag #\= :include-empty nil))
+      "string-split gives incorrect results when count and char-bag are provided and the string ends in a divider"))
 
 (test string-join*
   "Test the `string-join*' function"

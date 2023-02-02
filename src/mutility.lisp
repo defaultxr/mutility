@@ -620,19 +620,22 @@ See also: `alexandria:string-designator'"
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
 
-(defun string-split (string &key (char-bag (list #\space #\tab #\newline)) max-num include-empty)
-  "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size MAX-NUM. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
+(defun string-split (string &key (char-bag (list #\space #\tab #\newline)) count include-empty max-num)
+  "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 
 Example:
 
 ;; (split-string \"this that the other thing\")
 ;; ;=> (\"this\" \"that\" \"the\" \"other\" \"thing\")
 
-;; (split-string \"  foo  bar baz  qux  \" :max-num 2)
+;; (split-string \"  foo  bar baz  qux  \" :count 2)
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
 See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
   (declare (type string string))
+  (when max-num
+    ;; (warn "~S's ~S argument is deprecated; use ~S instead." 'string-split :max-num :count)
+    (setf count max-num))
   (let ((char-bag (ensure-list char-bag)))
     (labels ((divider-p (char)
                (position char char-bag))
@@ -648,7 +651,7 @@ See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
       (split-up (if include-empty
                     string
                     (string-left-trim char-bag string))
-                max-num char-bag))))
+                count char-bag))))
 
 (defun string-join* (strings &optional separator)
   "Join all non-nil elements of STRINGS together, separated by SEPARATOR.

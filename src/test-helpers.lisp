@@ -18,7 +18,7 @@ Examples:
 ;; ;=> 3
 
 See also: `org-list-line-p', `stream-extract-org-headers', `file-extract-org-headers'"
-  (let ((split (string-split line :char-bag (list #\space) :max-num 2)))
+  (let ((split (string-split line :char-bag (list #\space) :count 2)))
     (and (length= 2 split)
          (every (lambda (char)
                   (char= #\* char))
