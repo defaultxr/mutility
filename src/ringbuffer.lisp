@@ -31,6 +31,11 @@ See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-length'")
 
 See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-length', `ringbuffer-initial-element'")
 
+(defmethod print-object ((ringbuffer ringbuffer) stream)
+  (print-unreadable-object (ringbuffer stream :type t)
+    (with-slots (size index length initial-element) ringbuffer
+      (format stream "~S ~S ~S ~S ~S ~S ~S ~S" :size size :index index :length length :initial-element initial-element))))
+
 (defun make-ringbuffer (size &optional initial-element)
   "Make a `ringbuffer' object of the specified size and the specified initial element.
 
