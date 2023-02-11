@@ -1,4 +1,4 @@
-;;;; t/test-helpers.lisp - 
+;;;; t/test-helpers.lisp - tests for the test helpers.
 
 (in-package #:mutility/tests)
 

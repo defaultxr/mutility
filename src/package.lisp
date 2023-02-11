@@ -1,4 +1,4 @@
-;;;; package.lisp
+;;;; package.lisp - definition for the mutility package.
 
 (uiop:define-package #:mutility
   (:use #:cl
@@ -72,7 +72,7 @@
    #:flatten-1
    #:flop
    #:subseq*
-   ;; #:repeat ;; conflicts with iterate
+   ;; #:repeat ; conflicts with iterate
    #:left-trim
    #:affixnew ; deprecated
    #:split-sequence ; deprecated

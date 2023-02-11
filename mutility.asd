@@ -1,4 +1,4 @@
-;;;; mutility.asd
+;;;; mutility.asd - the mutility ASDF system definitions.
 
 (asdf:defsystem #:mutility
   :name "mutility"
@@ -13,7 +13,7 @@
   :depends-on (#:alexandria
                #:local-time
                #:closer-mop
-               (:feature :sbcl (:require :sb-introspect))) ;; for function-arglist
+               (:feature :sbcl (:require :sb-introspect))) ; for function-arglist
   :pathname "src/"
   :serial t
   :components ((:file "package")

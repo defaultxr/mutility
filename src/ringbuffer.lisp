@@ -23,7 +23,7 @@ See also: `ringbuffer-length', `ringbuffer-size', `ringbuffer-initial-element'")
 
 See also: `ringbuffer-index', `ringbuffer-size', `ringbuffer-initial-element'")
 
-(setf (documentation 'ringbuffer-initial-element 'function) "The initial element that each cell in the ringbuffer defaults to, and is set to when the cell is `ringbuffer-pop'ped or `ringbuffer-get'ed.
+(setf (documentation 'ringbuffer-initial-element 'function) "The initial element that each cell in the ringbuffer defaults to, and is set to when the cell is `ringbuffer-pop'ped or `ringbuffer-get'ted.
 
 See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-length'")
 

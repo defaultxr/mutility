@@ -1,4 +1,4 @@
-;;;; mutility.lisp
+;;;; mutility.lisp - the main mutility functionality.
 
 (in-package #:mutility)
 
@@ -73,7 +73,7 @@ See also: `repeat-by', `a'"
        (loop :until (>= i input-length)
              :for c := (elt list i)
              :for r := (list)
-             :for nxt := nil ;; nxt means next value should be added to repeats even if it doesn't have !
+             :for nxt := nil ; nxt means next value should be added to repeats even if it doesn't have !
              :append (progn
                        (when (symbolp c)
                          (when-let* ((sname (write-to-string c))
@@ -306,7 +306,7 @@ Example:
 ;;   (a-slot :initarg :a-slot :initform 3)
 ;;   (:function 'print))
 ;;
-;; (funcall (make-instance 'foo)) ;; since print is the :function, this is the same as (print (make-instance 'foo))
+;; (funcall (make-instance 'foo)) ; since print is the :function, this is the same as (print (make-instance 'foo))
 
 See also: `cl:defclass'"
   (flet ((option-p (slot)
@@ -431,7 +431,7 @@ See also: `" name-string "-p', `all-" name-string "s', `all-" name-string "-name
          (if (,test-symbol name)
              name
              (if-let ((res (gethash name dictionary)))
-               (if (typep res ',name-type) ;; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
+               (if (typep res ',name-type) ; values that are of type NAME-TYPE are considered aliases that point to the dictionary object of the specified name.
                    (,find-symbol res ,@(when include-errorp (list :errorp 'errorp)) :dictionary dictionary)
                    res)
                ,(if include-errorp
@@ -783,9 +783,9 @@ See also: `approx='"
 
 Examples:
 
-;; (wrap 2 0 1) ;; => 0
-;; (wrap 5 0 10) ;; => 5
-;; (wrap 15 0 10) ;; => 4
+;; (wrap 2 0 1) ; => 0
+;; (wrap 5 0 10) ; => 5
+;; (wrap 15 0 10) ; => 4
 
 See also: `fold', `cl:mod', `alexandria:clamp'"
   (declare (type number number bottom top))
@@ -827,9 +827,9 @@ See also: `cl:ceiling', `floor-by', `round-by'"
 
 Examples:
 
-;; (round-by 1 2) ;; => 0
-;; (round-by 1.1 0.5) ;; => 1.0
-;; (round-by 6 10) ;; => 10
+;; (round-by 1 2) ; => 0
+;; (round-by 1.1 0.5) ; => 1.0
+;; (round-by 6 10) ; => 10
 
 See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
@@ -861,7 +861,7 @@ See also: `exponential-random-range', `random-gauss'"
                        rval))))
       (random low)))
 
-(defun random-range.new (low &optional high) ;; version 2, with support for ratios - FIX
+(defun random-range.new (low &optional high) ; version 2, with support for ratios - FIX
   "Return a random number between LOW and HIGH, inclusive. If HIGH is not provided, act the same as (random LOW)."
   (flet ((rnd (number)
            (if (typep number 'ratio)
@@ -875,7 +875,7 @@ See also: `exponential-random-range', `random-gauss'"
                       rval))))
         (rnd low))))
 
-(defun exponential-random-range (low high) ;; adapted from supercollider/include/plugin_interface/SC_RGen.h
+(defun exponential-random-range (low high) ; adapted from supercollider/include/plugin_interface/SC_RGen.h
   "Generate a random number between LOW and HIGH, with exponential distribution.
 
 See also: `random-range', `random-gauss'"
@@ -968,7 +968,7 @@ See also: `nth-wrap'"
   (multiple-value-bind (wraps mod) (floor n (length sequence))
     (values (elt sequence mod) wraps)))
 
-(defun find-if* (predicate sequence) ;; FIX: need to implement `find-if''s other arguments
+(defun find-if* (predicate sequence) ; FIX: need to implement `find-if''s other arguments
   "Like `find-if', but return the index of the found item as a second value.
 
 See also: `find-any'"
@@ -993,7 +993,7 @@ See also: `find-if*'"
     (when (position item list :test test)
       (return-from find-any item))))
 
-(defun most (function list &key (key #'identity)) ;; from https://stackoverflow.com/questions/30273802/how-would-i-get-the-min-max-of-a-list-using-a-key
+(defun most (function list &key (key #'identity)) ; from https://stackoverflow.com/questions/30273802/how-would-i-get-the-min-max-of-a-list-using-a-key
   "Get the most FUNCTION item in LIST by comparing the KEY of each item with FUNCTION. Unlike `reduce', this function returns the whole item from LIST, even when KEY is provided.
 
 Example:
@@ -1039,7 +1039,7 @@ Example:
                            (nth-wrap i list))
                          lists)))
 
-(defun subseq* (sequence start &optional end) ;; FIX: name conflicts with alexandria-2:subseq*
+(defun subseq* (sequence start &optional end) ; FIX: name conflicts with alexandria-2:subseq*
   "Like subseq, but allows start and end to be negative."
   (let ((length (length sequence)))
     (subseq sequence (if (< start 0)
@@ -1080,7 +1080,7 @@ See also: `alexandria:appendf', `cl:pushnew'."
       `(unless (position ,thing ,place)
          (appendf ,place (list ,thing)))))
 
-  (defun split-sequence (sequence delimiter) ;; conflicts with `split-sequence:split-sequence' which is used by serapeum; use sequence-split instead.
+  (defun split-sequence (sequence delimiter) ; conflicts with `split-sequence:split-sequence' which is used by serapeum; use sequence-split instead.
     "Deprecated alias for `sequence-split'."
     (sequence-split sequence delimiter)))
 
@@ -1147,20 +1147,18 @@ See also: `sequence-split', `cl:read'"
 
 Example:
 
-;; (insert-if #'plusp (list -2 -1 1 2) 0)
-;; ;; => (-2 -1 0 1 2)"
-    (if list
-        (progn
-          (loop :for i :on list
-                :if (funcall function (car i))
-                  :do (setf (cdr i) (cons (car i) (cdr i))
-                            (car i) item)
-                      (loop-finish)
-                :when (null (cdr i))
-                  :do (setf (cdr i) (cons item nil))
-                      (loop-finish))
-          list)
-        (list item))))
+;; (insert-if #'plusp (list -2 -1 1 2) 0) ;=> (-2 -1 0 1 2)"
+    (unless list
+      (return-from insert-if (list item)))
+    (loop :for i :on list
+          :if (funcall function (car i))
+            :do (setf (cdr i) (cons (car i) (cdr i))
+                      (car i) item)
+                (loop-finish)
+          :unless (cdr i)
+            :do (setf (cdr i) (cons item nil))
+                (loop-finish)
+          :finally (return list))))
 
 ;;; functions
 
@@ -1337,7 +1335,7 @@ Example:
 See also: `uiop:tmpize-pathname', `uiop:temporary-directory'"
   (uiop:ensure-pathname directory :ensure-directories-exist t)
   (let* ((name (or name
-                   (local-time:format-timestring nil (local-time:now) ;; FIX: make the local-time dependency optional?
+                   (local-time:format-timestring nil (local-time:now) ; FIX: make the local-time dependency optional?
                                                  :format (list
                                                           (list :year 4) #\-
                                                           (list :month 2) #\-

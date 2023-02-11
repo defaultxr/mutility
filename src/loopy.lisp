@@ -1,4 +1,4 @@
-;;;; loopy.lisp - mutility looping constructs
+;;;; loopy.lisp - mutility looping constructs.
 
 (in-package #:mutility)
 
@@ -55,7 +55,7 @@ See also: `cl:mapcar', `mapcar*', `doplist'"
 Example:
 
 ;; (dorange (v 0 5 2 t)
-;;   (print v)) ;; prints 0, 2, and 4, then returns T
+;;   (print v)) ; prints 0, 2, and 4, then returns T
 
 See also: `cl:dotimes', `cl:loop', `cl:dolist'"
   (assert (not (eql 0 by)) (by) "BY argument cannot be zero.")

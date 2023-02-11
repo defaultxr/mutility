@@ -1,6 +1,6 @@
-(in-package #:mutility)
+;;;; files.lisp - file-related functionality.
 
-;;;; files.lisp
+(in-package #:mutility)
 
 ;;; utility
 
@@ -140,7 +140,7 @@ See also: `file-type'")
 (defgeneric file-type (file)
   (:documentation "Get a generalized \"file type\" for FILE, i.e. image, video, etc."))
 
-(defmethod file-type (file) ;; FIX
+(defmethod file-type (file) ; FIX
   (let ((ext (upcase-intern (file-extension file) :keyword)))
     (car (find-if (fn (position ext (cdr _))) *file-extensions-type-map*))))
 

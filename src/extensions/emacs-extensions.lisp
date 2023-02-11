@@ -1,3 +1,5 @@
+;;;; emacs-extensions.lisp - emacs-related extension functionality.
+
 (in-package #:mutility)
 
 (defun emacs-find-file (file)
