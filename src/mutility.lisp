@@ -1065,11 +1065,20 @@ Example:
                    item)
                (repeat item (- num 1))))))
 
-(defun left-trim (bag list &key (test #'eql))
+(defun left-trim (bag sequence &key (test #'eql))
+  "Trim anything from BAG from the start of SEQUENCE.
+
+See also: `list-left-trim', `cl:string-left-trim'"
+  (let* ((bag (if (typep bag 'sequence) bag (list bag)))
+         (pos (position-if-not (lambda (x) (find x bag :test test)) sequence)))
+    (subseq sequence (or pos (length sequence)))))
+
+(defun list-left-trim (bag list &key (test #'eql))
   "Trim anything from BAG from the start of LIST.
 
-See also: `cl:string-left-trim'"
-  (member-if-not (lambda (x) (position x (ensure-list bag) :test test)) list))
+ See also: `left-trim', `cl:string-left-trim'"
+  (let ((bag (ensure-list bag)))
+    (member-if-not (lambda (x) (position x bag :test test)) list)))
 
 (uiop:with-deprecation (:warning)
   (defmacro affixnew (place thing)

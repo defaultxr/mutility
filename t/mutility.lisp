@@ -424,7 +424,22 @@ the other thing" :char-bag (list #\space #\newline)))
   "Test the `left-trim' function"
   (is (equal (list 3 4 5)
              (left-trim (list 0 1 2) (list 2 1 0 3 4 5)))
-      "left-trim returns incorrect results"))
+      "left-trim returns incorrect results")
+  (is (equal (list 3 2 4 5)
+             (left-trim (list 0 1 2) (list 2 1 0 3 2 4 5)))
+      "left-trim returns incorrect results")
+  (is (equalp (vector 3 4 5)
+              (left-trim (vector 0 1 2) (vector 2 1 0 3 4 5)))
+      "left-trim doesn't work on vectors"))
+
+(test list-left-trim
+  "Test the `list-left-trim' function"
+  (is (equal (list 3 4 5)
+             (list-left-trim (list 0 1 2) (list 2 1 0 3 4 5)))
+      "list-left-trim returns incorrect results")
+  (is (equal (list 3 2 4 5)
+             (list-left-trim (list 0 1 2) (list 2 1 0 3 2 4 5)))
+      "list-left-trim returns incorrect results"))
 
 (test sequence-split
   "Test the `sequence-split' function"

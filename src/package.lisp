@@ -74,6 +74,7 @@
    #:subseq*
    ;; #:repeat ; conflicts with iterate
    #:left-trim
+   #:list-left-trim
    #:affixnew ; deprecated
    #:split-sequence ; deprecated
    #:sequence-split
