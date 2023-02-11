@@ -492,6 +492,35 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-false (function-designator-p 'jfkdsjkf))
   (is-true (function-designator-p (lambda () 3))))
 
+(test mapshort
+  "Test the `mapshort' function"
+  (is (equal (list 11 22 33)
+             (mapshort #'+ (list 10 20 30 40 50) (list 1 2 3)))))
+
+(test mapwrap
+  "Test the `mapwrap' function"
+  (is (equal (list 11 22 33 41 52)
+             (mapwrap #'+ (list 10 20 30 40 50) (list 1 2 3)))))
+
+(test mapfold
+  "Test the `mapfold' function"
+  (is (equal (list 11 22 33 42 51)
+             (mapfold #'+ (list 10 20 30 40 50) (list 1 2 3)))))
+
+(test maptable
+  "Test the `maptable' function"
+  (is (equal (list (list 11 12 13) (list 21 22 23) (list 31 32 33) (list 41 42 43) (list 51 52 53))
+             (maptable #'+ (list 10 20 30 40 50) (list 1 2 3)))))
+
+(test mapcross
+  "Test the `mapcross' function"
+  (is (equal (list 11 12 13 21 22 23 31 32 33 41 42 43 51 52 53)
+             (mapcross #'+ (list 10 20 30 40 50) (list 1 2 3))))
+  (is (equal (list 0 1 2 3 4 5 6 7)
+             (mapcross #'+ (list 0 4) (list 0 1 2 3))))
+  (is (equal (list 11 12 13 14 12 13 14 15 12 13 14 15 13 14 15 16 13 14 15 16 14 15 16 17)
+             (mapcross #'+ (list 1 2 3) (list 4 5) (list 6 7 8 9)))))
+
 (test save-hash-table
   ;; FIX
   )

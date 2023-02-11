@@ -86,6 +86,12 @@
    #:function-designator
    #:function-designator-p
 
+   #:mapshort
+   #:mapwrap
+   #:mapfold
+   #:maptable
+   #:mapcross
+
    #:save-hash-table
    #:restore-hash-table
 

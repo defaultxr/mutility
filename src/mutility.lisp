@@ -1183,6 +1183,107 @@ Example:
   "True if OBJECT is a `function-designator', i.e. a string or pathname."
   (typep object 'function-designator))
 
+;;; "operator adverbs"
+;; inspired by SuperCollider's concept of the same name; https://doc.sccode.org/Reference/Adverbs.html
+
+(declaim (inline mapshort))
+
+(defun mapshort (function &rest lists)
+  "\"Short\" operator adverb; apply FUNCTION to successive sets of elements from LISTS. Mostly here for completion sake, as this is effectively the same thing as regular `mapcar'.
+
+This function is inspired by and equivalent to SuperCollider's \".s\" operator adverb.
+
+Example:
+
+;; (mapshort #'+ (list 10 20 30 40 50) (list 1 2 3))
+;; => (11 22 33)
+
+See also: `mapwrap', `mapfold', `maptable', `mapcross'"
+  (apply #'mapcar function lists))
+
+(defun mapwrap (function &rest lists)
+  "\"Wrap\" operator adverb; apply FUNCTION to successive sets of elements from LISTS, producing a list that is the length of the longest list by \"wrapping\" indexes into the shorter lists.
+
+This is similar to `mapcar' but results in a list that is the length of the longest input list.
+
+This function is inspired by and equivalent to SuperCollider's \".w\" operator adverb.
+
+Example:
+
+;; (mapwrap #'+ (list 10 20 30 40 50) (list 1 2 3))
+;; => (11 22 33 41 52)
+
+See also: `mapshort', `mapfold', `maptable', `mapcross'"
+  (let (more-values)
+    (apply #'values
+           (loop :for i :from 0 :below (reduce #'max (mapcar #'length lists))
+                 :for res := (multiple-value-list
+                              (apply function (mapcar (lambda (list)
+                                                        (elt-wrap list i))
+                                                      lists)))
+                 :collect (car res)
+                 :do (setf more-values (cdr res)))
+           more-values)))
+
+(defun mapfold (function &rest lists)
+  "\"Fold\" operator adverb; apply FUNCTION to successive sets of elements from LISTS, producing a list that is the length of the longest list by \"folding\" indexes into the shorter lists.
+
+This is similar to `mapcar' but results in a list that is the length of the longest input list.
+
+This function is inspired by and equivalent to SuperCollider's \".f\" operator adverb.
+
+Example:
+
+;; (mapfold #'+ (list 10 20 30 40 50) (list 1 2 3))
+;; ;=> (11 22 33 42 51)
+
+See also: `mapshort', `mapwrap', `maptable', `mapcross'"
+  (let (more-values
+        (lengths (mapcar #'length lists)))
+    (apply #'values
+           (loop :for i :from 0 :below (reduce #'max lengths)
+                 :for res := (multiple-value-list
+                              (apply function (loop :for list :in lists
+                                                    :for length :in lengths
+                                                    :collect (elt list (fold i 0 (1- length))))))
+                 :collect (car res)
+                 :do (setf more-values (cdr res)))
+           more-values)))
+
+(defun maptable (function &rest lists)
+  "\"Table\" operator adverb; apply FUNCTION to each element of each list in LISTS, producing a list of lists for each.
+
+This function is inspired by and equivalent to SuperCollider's \".t\" operator adverb.
+
+Example:
+
+;; (maptable #'+ (list 10 20 30 40 50) (list 1 2 3))
+;; ;=> ((11 12 13) (21 22 23) (31 32 33) (41 42 43) (51 52 53))
+
+See also: `mapshort', `mapwrap', `mapfold', `mapcross'"
+  (let ((res (car lists)))
+    (dolist (list (cdr lists) res)
+      (setf res (mapcar (lambda (elem)
+                          (mapcar (curry function elem) list))
+                        res)))))
+
+(defun mapcross (function &rest lists)
+  "\"Cross\" operator adverb; similar to `maptable' but results in a flat list.
+
+This function is inspired by and equivalent to SuperCollider's \".x\" operator adverb.
+
+Example:
+
+;; (maptable #'+ (list 10 20 30 40 50) (list 1 2 3))
+;; ;=> (11 12 13 21 22 23 31 32 33 41 42 43 51 52 53)
+
+See also: `mapshort', `mapwrap', `mapfold', `maptable'"
+  (let ((res (car lists)))
+    (dolist (list (cdr lists) res)
+      (setf res (mapcan (lambda (elem)
+                          (mapcar (curry function elem) list))
+                        res)))))
+
 ;;; hash tables
 
 (defun save-hash-table (hash filename &key (if-exists :error))
