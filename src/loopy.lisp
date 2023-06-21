@@ -38,12 +38,11 @@ See also: `cl:mapcar', `mapcar*', `doplist'"
   (uiop:while-collecting (results)
     (tagbody
      mapplist-loop
+       (when (member nil lists)
+         (go mapplist-exit))
        (dolist (i (ensure-list (apply function (mapcan (lambda (x) (subseq x 0 2)) lists))))
          (results i))
-       (setf lists (mapcar (lambda (list)
-                             (or (cddr list)
-                                 (go mapplist-exit)))
-                           lists))
+       (setf lists (mapcar #'cddr lists))
        (go mapplist-loop)
      mapplist-exit)))
 

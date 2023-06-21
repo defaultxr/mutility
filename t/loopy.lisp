@@ -25,7 +25,11 @@
   (is (equal (list 3 7)
              (mapplist (lambda (k v)
                          (+ k v))
-                       (list 1 2 3 4)))))
+                       (list 1 2 3 4))))
+  (is (null (mapplist (lambda (k v)
+                        (+ k v))
+                      nil))
+      "mapplist does not handle zero-length lists"))
 
 (test dorange
   "Test the `dorange' macro"
