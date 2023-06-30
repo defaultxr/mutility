@@ -64,6 +64,39 @@ See also: `stream-extract-org-headers', `org-header-line-p'"
   (with-open-file (stream file :if-does-not-exist :error)
     (stream-extract-org-headers stream)))
 
+(defun stream-extract-org-header (stream header &key level)
+  "Get the org header matching HEADER in STREAM. LEVEL specifies how many asterisks the headline should have, or nil to match any headline. Returns the contents of the header as a second value.
+
+See also: `file-extract-org-header', `org-header-line-p'"
+  (destructuring-bind (header-text . contents)
+      (loop :with found-level := nil
+            :for line := (read-line stream nil nil)
+            :for (header-text header-level) := (when line
+                                                 (multiple-value-list (org-header-line-p line)))
+            :if (or (null line)
+                    (and found-level
+                         header-level
+                         (>= found-level header-level)))
+              :do (loop-finish)
+            :if found-level
+              :collect line
+            :if (and (not found-level)
+                     header-text
+                     (search header header-text :test #'char=)
+                     (if level
+                         (eql level header-level)
+                         t))
+              :collect (progn (setf found-level header-level)
+                              header-text))
+    (values header-text (string-join* contents #.(string #\newline)))))
+
+(defun file-extract-org-header (file header &key level)
+  "Get the org header matching HEADER in STREAM. If GET-CONTENTS is true, also return the contents of the header (i.e. the text between this header and the next one of the same level) as a second value.
+
+See also: `stream-extract-org-header', `org-header-line-p'"
+  (with-open-file (stream file :if-does-not-exist :error)
+    (stream-extract-org-header stream header :level level)))
+
 (defun stream-extract-org-lists (stream)
   "Get a list of the text of all header lines in STREAM.
 
@@ -226,6 +259,8 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
           org-list-line-p
           stream-extract-org-headers
           file-extract-org-headers
+          stream-extract-org-header
+          file-extract-org-header
           stream-extract-org-lists
           file-extract-org-lists
           stream-extract-org-links

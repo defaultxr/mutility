@@ -27,6 +27,27 @@ the other thing
 ** qux"))
              (list "foo" "bar" "baz" "qux"))))
 
+(test stream-extract-org-header
+  (is (equal (stream-extract-org-header (make-string-input-stream "* foo
+** bar
+*** baz
+- this
+that
+the other thing
+** qux") "ba")
+             "bar"))
+  (is (equalp (multiple-value-list (stream-extract-org-header (make-string-input-stream "* foo
+** bar
+*** baz
+- this
+that
+the other thing
+** qux") "baz"))
+              (list "baz"
+                    "- this
+that
+the other thing"))))
+
 (test stream-extract-org-lists
   (is (equal (stream-extract-org-lists (make-string-input-stream "* foo
 ** bar
