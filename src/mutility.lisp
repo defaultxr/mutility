@@ -1318,9 +1318,10 @@ Example:
 See also: `restore-hash-table'"
   (with-open-file (stream filename :direction :output :if-exists if-exists)
     (princ "(" stream)
-    (maphash (lambda (key value)
-               (print (cons key value) stream))
-             hash)
+    (let ((*print-readably* t))
+      (maphash (lambda (key value)
+                 (print (cons key value) stream))
+               hash))
     (fresh-line stream)
     (princ ")" stream)))
 
