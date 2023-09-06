@@ -401,10 +401,10 @@ the other thing" :char-bag (list #\space #\newline)))
   "Test the `find-if*' function"
   (is (equal (list 4 4)
              (multiple-value-list (find-if* (lambda (x) (> x 3)) (iota 5))))
-      "find-any returns incorrect results for lists")
+      "find-if* returns incorrect results for lists")
   (is (equal (list 4 4)
              (multiple-value-list (find-if* (lambda (x) (> x 3)) (coerce (iota 5) 'vector))))
-      "find-any returns incorrect results for vectors"))
+      "find-if* returns incorrect results for vectors"))
 
 (test find-any
   "Test the `find-any' function"
