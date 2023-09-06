@@ -221,7 +221,9 @@ the other thing" :char-bag (list #\space #\newline)))
   "Test the `friendly-ratio-string' function"
   (is (string-equal "1 1/4" (friendly-ratio-string 5/4)))
   (is (string-equal "1+2/7" (friendly-ratio-string 9/7 "+"))
-      "friendly-ratio-string doesn't use the separator argument correctly"))
+      "friendly-ratio-string doesn't use the separator argument correctly")
+  (is (string-equal "-1 1/4" (friendly-ratio-string -5/4))
+      "friendly-ratio-string doesn't handle negative ratios properly"))
 
 (test friendly-duration-string
   "Test the `friendly-duration-string' function"

@@ -708,7 +708,7 @@ See also: `open-url', `pathname-designator-p', `parse-boolean'"
     (and (member (first split-up) (list "http:" "https:") :test (if ignore-case #'string-equal #'string=))
          (cdr split-up))))
 
-(defun friendly-ratio-string (ratio &optional (separator " ")) ; FIX: negative numbers are weird
+(defun friendly-ratio-string (ratio &optional (separator " "))
   "Format a ratio as a more human-readable string.
 
 Example:
@@ -720,10 +720,10 @@ See also: `friendly-duration-string'"
   (etypecase ratio
     (ratio
      (if (> (abs ratio) 1)
-         (let* ((flr (floor ratio))
+         (let* ((flr (funcall (if (plusp ratio) #'floor #'ceiling) ratio))
                 (rem (- ratio flr)))
            (concat flr (unless (zerop rem)
-                         (concat separator rem))))
+                         (concat separator (abs rem)))))
          (let ((denom (denominator ratio)))
            (concat (numerator ratio) (unless (= 1 denom)
                                        (concat "/" denom))))))
