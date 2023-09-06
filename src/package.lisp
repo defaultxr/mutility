@@ -42,6 +42,8 @@
    #:url-p
    #:friendly-ratio-string
    #:friendly-duration-string
+   #:friendly-bytes
+   #:friendly-bytes-string
    #:pretty-print-tree
 
    #:approx=

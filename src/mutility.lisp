@@ -634,7 +634,7 @@ Example:
 See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
   (declare (type string string))
   (when max-num
-    ;; (warn "~S's ~S argument is deprecated; use ~S instead." 'string-split :max-num :count)
+    (warn "~S's ~S argument is deprecated; use ~S instead." 'string-split :max-num :count)
     (setf count max-num))
   (let ((char-bag (ensure-list char-bag)))
     (labels ((divider-p (char)
@@ -752,6 +752,28 @@ See also: `friendly-ratio-string'"
               (format nil ":~2,'0d" sec)
               (when include-ms
                 (format nil ".~3,'0d" (truncate (* 1000 frac))))))))
+
+(defun friendly-bytes (bytes &key short)
+  "Given BYTES, a number of bytes, convert to the most \"friendly\" unit and return a list containing the number and the unit.
+
+When SHORT is true, the unit is abbreviated.
+
+See also: `friendly-bytes-string'"
+  (let* ((idx (loop :for i :from 0 :upto 5
+                    :if (< bytes (expt 1024 (1+ i)))
+                      :return i))
+         (num (/ bytes (expt 1024 idx))))
+    (list num (concat (nth (+ (if short 0 6) idx)
+                           (list "B" "KB" "MB" "GB" "TB" "PB"
+                                 "Byte" "Kilobyte" "Megabyte" "Gigabyte" "Terabyte" "Petabyte"))
+                      (when (and (not short) (/= 1 num)) "s")))))
+
+(defun friendly-bytes-string (bytes &key short)
+  "Generate a string describing BYTES as a number of bytes, kilobytes, megabytes, etc. When SHORT is true, the unit is abbreviated.
+
+See also: `friendly-bytes'"
+  (let ((fb (friendly-bytes bytes :short short)))
+    (format nil "~$ ~A" (first fb) (second fb))))
 
 ;; FIX: ensure this works with Lisp's built-in indentation functionality?
 (defun pretty-print-tree (tree &optional (indent 0))

@@ -231,6 +231,20 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (string-equal "1:00:00" (friendly-duration-string 3600)))
   (is (string-equal "0:08" (friendly-duration-string 8))))
 
+(test friendly-bytes
+  "Test the `friendly-bytes' function"
+  (is (equal (list 1 "Kilobyte") (friendly-bytes 1024)))
+  (is (equal (list 375/128 "KB") (print (friendly-bytes 3000 :short t))))
+  (is (equal (list 78125/16384 "MB") (print (friendly-bytes 5000000 :short t))))
+  (is (equal (list 9765625/2097152 "GB") (print (friendly-bytes 5000000000 :short t))))
+  (is (equal (list 1220703125/268435456 "TB") (print (friendly-bytes 5000000000000 :short t))))
+  (is (equal (list 152587890625/34359738368 "PB") (print (friendly-bytes 5000000000000000 :short t)))))
+
+(test friendly-bytes-string
+  "Test the `friendly-bytes-string' function"
+  (is (string= "2.93 KB" (friendly-bytes-string 3000 :short t)))
+  (is (string= "19.53 KB" (friendly-bytes-string 20000 :short t))))
+
 (test pretty-print-tree
   "Test the `pretty-print-tree' function"
   ;; FIX
