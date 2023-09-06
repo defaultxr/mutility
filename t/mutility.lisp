@@ -406,10 +406,10 @@ the other thing" :char-bag (list #\space #\newline)))
              (multiple-value-list (find-if* (lambda (x) (> x 3)) (coerce (iota 5) 'vector))))
       "find-if* returns incorrect results for vectors"))
 
-(test find-any
-  "Test the `find-any' function"
-  ;; FIX
-  )
+(test find-member
+  "Test the `find-member' function"
+  (is (eql 3 (find-member (list 1 2 3) (list 3 4 5))))
+  (is-false (find-member (list 1 2 3) (list 4 5 6))))
 
 (test most
   "Test the `most' function"

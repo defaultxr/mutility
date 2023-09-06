@@ -993,7 +993,7 @@ See also: `nth-wrap'"
 (defun find-if* (predicate sequence) ; FIX: need to implement `find-if''s other arguments
   "Like `find-if', but return the index of the found item as a second value.
 
-See also: `find-any'"
+See also: `find-member'"
   (if (listp sequence)
       (let ((index 0))
         (dolist (item sequence)
@@ -1007,13 +1007,13 @@ See also: `find-any'"
             (when (funcall predicate item)
               (return-from find-if* (values item index))))))))
 
-(defun find-any (items list &key test)
-  "Returns the first item from ITEMS that is found in LIST, or nil if none.
+(defun find-member (items list &key test)
+  "Returns the first item from ITEMS that is a member of LIST, or nil if none are found.
 
 See also: `find-if*'"
   (dolist (item items)
     (when (position item list :test test)
-      (return-from find-any item))))
+      (return-from find-member item))))
 
 (defun most (function list &key (key #'identity)) ; from https://stackoverflow.com/questions/30273802/how-would-i-get-the-min-max-of-a-list-using-a-key
   "Get the most FUNCTION item in LIST by comparing the KEY of each item with FUNCTION. Unlike `reduce', this function returns the whole item from LIST, even when KEY is provided.

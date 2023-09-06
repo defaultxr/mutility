@@ -69,7 +69,7 @@
    #:nth-wrap
    #:elt-wrap
    #:find-if*
-   #:find-any
+   #:find-member
    #:most
    #:flatten-1
    #:flop
