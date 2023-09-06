@@ -214,7 +214,8 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-false (url-p "http:w.struct.ws"))
   (is-false (url-p "www.struct.ws"))
   (is-false (url-p "struct.ws/"))
-  (is-false (url-p "HTTPS://W.STRUCT.WS/" :case-sensitive t)))
+  (is-false (url-p "HTTPS://W.STRUCT.WS/"))
+  (is-true (url-p "HTTPS://W.STRUCT.WS/" :ignore-case t)))
 
 (test friendly-ratio-string
   "Test the `friendly-ratio-string' function"
