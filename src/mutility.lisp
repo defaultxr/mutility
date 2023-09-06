@@ -79,7 +79,7 @@ See also: `repeat-by', `a'"
                          (when-let* ((sname (write-to-string c))
                                      (excl-pos (position #\! sname)))
                            (if (zerop excl-pos)
-                               (error "Failed to parse arguments for this invocation of `repeat-by-!': (a ~s ~s)" list add-list)
+                               (error "Failed to parse arguments for this invocation of `repeat-by-!': (~S ~S ~S)" 'a list add-list)
                                (let ((split (split-by-! sname)))
                                  (setf c (read-from-string (car split)))
                                  (setf r (mapcar 'eval (mapcar 'read-from-string (cdr split))))
@@ -249,13 +249,13 @@ Example:
 If FOO is a function and BAR is not:
 
 ;; (with-access (foo bar) blah
-;;   (format t \"~s ~s~%\" foo bar))
+;;   (format t \"~S ~S~%\" foo bar))
 
 ...is the same as:
 
 ;; (with-accessors ((foo foo)) blah
 ;;   (with-slots (bar) blah
-;;     (format t \"~s ~s~%\" foo bar)))
+;;     (format t \"~S ~S~%\" foo bar)))
 
 See also: `cl:with-accessors', `cl:with-slots'"
     (multiple-value-bind (accessors slots)
@@ -410,9 +410,9 @@ See also: `make-hash-table', `find-class', `do-symbols'"
          (has-name (find 'name class-slots :key #'closer-mop:slot-definition-name :test #'string=)))
     (when (and (eql t define-class-functions)
                (not class))
-      (error "DEFINE-CLASS-FUNCTIONS is t, but no class named ~s could be found." name))
+      (error "DEFINE-CLASS-FUNCTIONS is t, but no class named ~S could be found." name))
     (when (and class define-class-functions (not has-name))
-      (warn "Found class ~s but it doesn't appear to have a NAME slot." class))
+      (warn "Found class ~S but it doesn't appear to have a NAME slot." class))
     `(progn
        (defvar ,dict-symbol (make-hash-table :test ',(if (string= 'symbol name-type) 'eql 'equal))
          ,(concatenate 'string "The " name-string " dictionary hash table.
@@ -512,7 +512,7 @@ Example:
        (fresh-line)
        (loop :for name :in ',args
              :for val :in ,results
-             :do (format t "~s: ~s; " name val)
+             :do (format t "~S: ~S; " name val)
              :finally (terpri)
                       (return val)))))
 
@@ -748,10 +748,10 @@ See also: `friendly-ratio-string'"
     (multiple-value-bind (sec frac) (truncate sec)
       (concat (when hourp
                 (concat hour ":"))
-              (format nil (if hourp "~2,'0d" "~d") min)
-              (format nil ":~2,'0d" sec)
+              (format nil (if hourp "~2,'0D" "~D") min)
+              (format nil ":~2,'0D" sec)
               (when include-ms
-                (format nil ".~3,'0d" (truncate (* 1000 frac))))))))
+                (format nil ".~3,'0D" (truncate (* 1000 frac))))))))
 
 (defun friendly-bytes (bytes &key short)
   "Given BYTES, a number of bytes, convert to the most \"friendly\" unit and return a list containing the number and the unit.
@@ -784,7 +784,7 @@ See also: `friendly-bytes'"
         (progn
           (dotimes (n indent)
             (princ "  "))
-          (format t "- ~s~%" e)))))
+          (format t "- ~S~%" e)))))
 
 ;;; math
 
@@ -1486,7 +1486,7 @@ See also: `uiop:tmpize-pathname', `uiop:temporary-directory'"
          (attempt 0))
     (flet ((gen-filename (attempt)
              (make-pathname :directory (pathname-directory directory)
-                            :name (format nil "~a~@[-~3,'0d~]" name (unless (zerop attempt) attempt))
+                            :name (format nil "~A~@[-~3,'0D~]" name (unless (zerop attempt) attempt))
                             :type type)))
       (loop :while (uiop:file-exists-p (gen-filename attempt))
             :do (incf attempt))

@@ -36,7 +36,7 @@
 
 (defmethod print-object ((file file) stream)
   (print-unreadable-object (file stream :type t)
-    (format stream ":PATH ~s" (file-path file))))
+    (format stream ":PATH ~S" (file-path file))))
 
 (defun make-file (path)
   (let ((path (uiop:native-namestring path)))

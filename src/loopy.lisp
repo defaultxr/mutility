@@ -9,7 +9,7 @@ Example:
 
 ;; (mapcar*
 ;;  (lambda (item index)
-;;    (format nil \"Item ~s is ~s!\" index item))
+;;    (format nil \"Item ~S is ~S!\" index item))
 ;;  (list 'this 'that 'the-other-thing))
 ;; ;=> (\"Item 0 is THIS!\" \"Item 1 is THAT!\" \"Item 2 is THE-OTHER-THING!\")
 
