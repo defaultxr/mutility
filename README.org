@@ -29,17 +29,22 @@ Quickly generate lists containing repeated items or numeric series.
 
 *** ~fn~ macro
 
-A sweeter way to write ~lambda~. Underscore (~_~) is treated as the argument of the lambda.
+A sweeter way to write ~lambda~. Underscore (~_~) is treated as the argument of the lambda. Multiple arguments can be specified with a number after the underscore (~_0~, ~_1~, etc).
 
 #+BEGIN_SRC lisp
-(fn (random 10))
-;; is the same as
-(lambda () (random 10))
+  (fn (random 10))
+  ;; is the same as
+  (lambda () (random 10))
 
-;; and
-(fn (+ 2 _))
-;; is the same as
-(lambda (_) (+ 2 _))
+  ;; and
+  (fn (+ 2 _))
+  ;; is the same as
+  (lambda (_) (+ 2 _))
+
+  ;; and
+  (fn (- _1 _0))
+  ;; is the same as
+  (lambda (_0 _1) (- _1 _0))
 #+END_SRC
 
 *** ~cut~ macro
@@ -141,6 +146,12 @@ Get the most X item in a list, where X can be any comparison function. Similar t
 
 Like ~alexandria:flatten~ but only flattens one layer.
 
+#+begin_src lisp
+  (flatten-1 '(1 2 (3 4 (5 6 7) 8) 9 10)) ; => (1 2 3 4 (5 6 7) 8 9 10)
+
+  (alexandria:flatten '(1 2 (3 4 (5 6 7) 8) 9 10)) ; => (1 2 3 4 5 6 7 8 9 10)
+#+end_src
+
 *** ~subseq*~
 
 Like the standard ~subseq~, but the START and END parameters can be negative to represent indexing from the end of the list.
@@ -160,8 +171,24 @@ Like ~string-left-trim~ but for lists instead of strings.
 ** Randomness
 
 *** ~random-coin~
+Flip a virtual coin, returning ~t~ on heads and ~nil~ on tails.
+
+#+begin_src lisp
+  (loop :repeat 10 :collect (random-coin)) ; => (T T NIL T T NIL NIL NIL T T)
+
+  ;; a probability of heads can also be specified:
+  (loop :repeat 10 :collect (random-coin 0.9)) ; => (T T NIL NIL T T T T T T)
+#+end_src
 
 *** ~random-range~
+Get a random number within a specified range.
+
+#+begin_src lisp
+  (loop :repeat 5 :collect (random-range -10 10)) ; => (-10 8 -1 -1 -9)
+
+  ;; also supports floats:
+  (loop :repeat 5 :collect (random-range -10.0 10.0)) ; => (-5.949123 7.214485 -0.6976509 2.68153 9.699009)
+#+end_src
 
 *** ~exponential-random-range~
 
@@ -174,6 +201,7 @@ Like ~string-left-trim~ but for lists instead of strings.
 ** Miscellaneous
 
 *** ~open-url~
+Open a URL using the operating system's default opener.
 
 *** ~generate-temporary-file-name~
 
@@ -218,6 +246,7 @@ Efficiently append to a list, which is then returned.
 * Sub-systems
 
 - ~mutility/loopy~ is a small collection of various looping constructs like ~dolist*~, ~while~, ~do-while~, etc.
+- ~mutility/files~ is a set of file-related functionality.
 - ~mutility/generic-cl~ defines a few extensions to the [[https://github.com/alex-gutev/generic-cl][generic-cl]] library.
 - ~mutility/test-helpers~ includes a few functions that are mostly useful for test suites.
 - ~mutility/tests~ is the FiveAM-based test suite for the library.
@@ -251,10 +280,6 @@ The test suite is located in ~t/~. To run the tests:
 Ideas, and things that need to be done.
 
 - Come up with a better name for the ~a~ macro.
-- Remove/rename ~accumulate~ to prevent clashes with generic-cl's ~accumulate~ function.
-- Write functions to parse docstrings (i.e. to extract example code from them so they can be treated as tests).
 - Write more tests for everything.
 - Test docstring examples with the docstring-parsing function once it's written.
 - Write a test to check for symbol clashes against various other libraries: ~alexandria~, ~serapeum~, ~cl-patterns~, ~thundersnow~, etc.
-- Maybe split out stuff into subsystems? i.e. ~sugar~, ~files~, etc.
-- Allow ~fn~ to accept more than one argument.
