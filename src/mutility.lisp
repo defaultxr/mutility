@@ -1374,6 +1374,45 @@ See also: `all-classes'"
                                                #'direct-subclasses-of)
                                            class))))))
 
+(deftype slot-definition-slot ()
+  "Slots of slot definitions. This is primarily used for `find-class-slot'.
+
+See also: `find-class-slot'"
+  '(member
+    :allocation :location
+    :name
+    :initarg :initargs
+    :initform
+    :initfunction
+    :accessor :accessors
+    :reader :readers
+    :writer :writers
+    :type
+    :documentation))
+
+(defun find-class-slot (class key value &key test)
+  "Find a slot in CLASS whose slot option KEY is true when TESTed against VALUE."
+  (check-type key slot-definition-slot)
+  (let* ((class (etypecase class
+                  (standard-class class)
+                  (symbol (find-class class))))
+         (slots (append (closer-mop:class-direct-slots class)
+                        (closer-mop:class-slots class)))
+         (accessor (case key
+                     (:documentation (lambda (slot) (documentation slot t)))
+                     (t (intern (concat "SLOT-DEFINITION-" (case key
+                                                             (:initarg :initargs)
+                                                             ((:accessor :accessors :reader) :readers)
+                                                             (:writer :writers)
+                                                             (t key)))
+                                'closer-mop)))))
+    (find value slots :key accessor
+                      :test (or test
+                                (case key
+                                  ((:initarg :accessor :reader :writer) #'find)
+                                  (:documentation #'string=)
+                                  (t #'eql))))))
+
 ;;; introspection
 
 (defun lisp-uptime ()

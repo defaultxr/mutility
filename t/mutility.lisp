@@ -556,6 +556,11 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test find-class-slot
+  "Test the `find-class-slot' function"
+  ;; FIX
+  )
+
 (test lisp-uptime
   "Test the `lisp-uptime' function"
   (is-true (plusp (lisp-uptime))

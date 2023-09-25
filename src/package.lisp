@@ -99,6 +99,7 @@
 
    #:all-classes
    #:subclasses-of
+   #:find-class-slot
 
    #:lisp-uptime
    #:current-seconds ; deprecated
