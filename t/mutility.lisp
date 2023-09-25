@@ -572,6 +572,10 @@ the other thing" :char-bag (list #\space #\newline)))
               (function-arglist 'concat))
       "function-arglist doesn't return correct results for `concat'"))
 
+(test systems-depending-on
+  "Test the `systems-depending-on' function"
+  (is-true (position 'mutility/tests (systems-depending-on 'mutility) :key #'asdf:component-name :test #'string-equal)))
+
 (test lisp-connections
   ;; FIX
   )

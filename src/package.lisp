@@ -103,6 +103,7 @@
    #:lisp-uptime
    #:current-seconds ; deprecated
    #:function-arglist
+   #:systems-depending-on
    #:lisp-connections
    
    #:pathname-designator

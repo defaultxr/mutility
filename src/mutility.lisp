@@ -1408,6 +1408,18 @@ See also: `all-classes'"
   #-(or allegro clisp cmu cormanlisp gcl lispworks lucid sbcl scl)
   (error 'not-implemented :proc (list 'arglist function)))
 
+(defun systems-depending-on (system)
+  "Get a list of systems in the current image that include SYSTEM in their :depends-on."
+  (let (systems)
+    (asdf:map-systems
+     (fn (when (position system (asdf:system-depends-on _)
+                         :test (lambda (x y)
+                                 (if (every #'string-designator-p (list x y))
+                                     (string-equal x y)
+                                     (equalp x y))))
+           (push _ systems))))
+    systems))
+
 (defun lisp-connections ()
   "Get a list of the current connections to this Lisp image."
   (when-let ((package (cond ((find-package 'slynk) 'slynk)

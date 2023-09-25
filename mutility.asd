@@ -72,7 +72,8 @@
   :author "modula t."
   :description "FiveAM-based test suite for mutility"
   :license "MIT"
-  :depends-on (#:mutility/most
+  :depends-on (#:mutility
+               #:mutility/most
                #:mutility/test-helpers
                #:fiveam
                ;; systems we check for symbol conflicts with
