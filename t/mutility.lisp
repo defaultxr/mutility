@@ -556,9 +556,10 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
-(test current-seconds
-  ;; FIX
-  )
+(test lisp-uptime
+  "Test the `lisp-uptime' function"
+  (is-true (plusp (lisp-uptime))
+           "lisp-uptime returned a value other than a positive number"))
 
 (test function-arglist
   (is (equalp (list '&optional (list 'm::probability 0.5))

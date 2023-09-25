@@ -100,7 +100,8 @@
    #:all-classes
    #:subclasses-of
 
-   #:current-seconds
+   #:lisp-uptime
+   #:current-seconds ; deprecated
    #:function-arglist
    #:lisp-connections
    

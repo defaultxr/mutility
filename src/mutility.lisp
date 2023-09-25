@@ -1376,9 +1376,14 @@ See also: `all-classes'"
 
 ;;; introspection
 
-(defun current-seconds ()
+(defun lisp-uptime ()
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
+
+(uiop:with-deprecation (:style-warning)
+  (defun current-seconds ()
+    "Deprecated alias for `lisp-uptime'."
+    (lisp-uptime)))
 
 ;; swiped from https://stackoverflow.com/questions/15465138/find-functions-arity-in-common-lisp
 (defun function-arglist (function) ; FIX: maybe just use trivial-arguments instead? ; FIX: rename to function-lambda-list for consistency with alexandria?
