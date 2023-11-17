@@ -106,7 +106,7 @@
    #:function-arglist
    #:systems-depending-on
    #:lisp-connections
-   
+
    #:pathname-designator
    #:pathname-designator-p
    #:join-path-components

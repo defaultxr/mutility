@@ -160,7 +160,7 @@ See also: `fn', `repeat-by-!', `expand-ranges'"
 
 ;; see also f-underscore; https://gitlab.common-lisp.net/bpm/f-underscore/-/blob/master/f-underscore.lisp
 (defmacro fn (&body body)
-  "Syntax sugar for `lambda'. BODY is the function body. Symbols consisting of an underscore and a number are treated as the lambda's argument at that index. For example, _1 is the second argument of the lambda. A single underscore is treated the same as _.
+  "Syntax sugar for `lambda'. BODY is the function body. Symbols consisting of an underscore and a number are treated as the lambda's argument at that index. For example, _1 is the second argument of the lambda. A single underscore is treated the same as _0.
 
 Examples:
 
@@ -1447,7 +1447,7 @@ See also: `find-class-slot'"
   #-(or allegro clisp cmu cormanlisp gcl lispworks lucid sbcl scl)
   (error 'not-implemented :proc (list 'arglist function)))
 
-(defun systems-depending-on (system)
+(defun systems-depending-on (system) ; see also: deptree; https://github.com/varjagg/deptree
   "Get a list of systems in the current image that include SYSTEM in their :depends-on."
   (let (systems)
     (asdf:map-systems

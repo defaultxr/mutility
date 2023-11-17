@@ -1,4 +1,7 @@
-;;;; files.lisp - file-related functionality.
+;;;; files.lisp - Various functions to ease file-related tasks.
+;;; NOTES:
+;;; - `cl:file-write-date' can be used to get the file modification time.
+;;; - `cl:file-author' can be used to get the file's owner.
 
 (in-package #:mutility)
 
@@ -166,7 +169,7 @@ See also: `file-type'")
   (uiop:directory-exists-p file))
 
 (defgeneric file-directory (file)
-  (:documentation "Return FILE's path if it is a directory, or return its directory path if it is a file."))
+  (:documentation "Get FILE's path if it is a directory, or the directory containing it if it is a file."))
 
 (defmethod file-directory ((file string))
   (ensure-directory-trailing-slash
@@ -180,7 +183,7 @@ See also: `file-type'")
        file
        (make-pathname :directory (pathname-directory file)))))
 
-#+nil
+#+(or)
 (defmethod file-directory ((file file))
   (file-directory (file-path file)))
 
@@ -255,22 +258,22 @@ This is equivalent to the Emacs function of the same name."
   (error "~S is not implemented yet." 'file-finder))
 
 (export '(ensure-directory-trailing-slash
-          
+
           file-path
           file-path-no-extension
           file-name
           file-name-no-extension
-          
+
           file-extension
           file-type
-          
+
           file-exists-p
           file-file-p
           file-directory-p
-          
+
           file-directory
           file-parent-directory
-          
+
           locate-dominating-file
           file-finder))
 
