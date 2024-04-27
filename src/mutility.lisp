@@ -1353,7 +1353,7 @@ See also: `subclasses-of'"
                          (error "Package ~S not found." package))))
         (classes (subclasses-of t)))
     (if package
-        (remove-if-not (fn (eql (symbol-package _) package))
+        (remove-if-not (fn (eql (symbol-package (class-name _)) package))
                        classes)
         classes)))
 

@@ -548,8 +548,11 @@ the other thing" :char-bag (list #\space #\newline)))
 
 (test all-classes
   "Test the `all-classes' function"
-  ;; FIX
-  )
+  (is (member (find-class 'cl:pathname) (all-classes 'cl)))
+  (is (member (find-class 'cl:array) (all-classes 'cl)))
+  (is (member (find-class 'cl:number) (all-classes 'cl)))
+  (is (member (find-class 'cl:symbol) (all-classes 'cl)))
+  (is (member (find-class 'cl:character) (all-classes 'cl))))
 
 (test subclasses-of
   "Test the `subclasses-of' function"
