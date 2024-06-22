@@ -19,6 +19,7 @@
   :components ((:file "package")
                (:file "mutility")
                (:file "ringbuffer")
+               (:file "queue")
                ;; emacs-extensions.lisp is conditionally loaded at the end of mutility.lisp
                )
   :in-order-to ((test-op (test-op "mutility/tests"))))
@@ -84,6 +85,7 @@
   :components ((:file "test")
                (:file "mutility")
                (:file "ringbuffer")
+               (:file "queue")
                (:file "loopy")
                (:file "files")
                (:file "test-helpers"))

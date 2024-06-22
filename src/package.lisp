@@ -128,4 +128,21 @@
    #:ringbuffer-get
    #:ringbuffer-newest
    #:ringbuffer-oldest
-   #:do-ringbuffer))
+   #:do-ringbuffer
+
+   ;; queue.lisp
+   #:queue
+   #:queue-length
+   #:make-queue
+   #:queue-size
+   #:queue-contents
+   #:queue-full
+   #:queue-full-p
+   #:queue-enqueue
+   #:queue-empty
+   #:queue-empty-p
+   #:queue-dequeue
+   #:queue-peek
+   #:queue-index-out-of-range
+   #:queue-elt
+   #:do-queue))
