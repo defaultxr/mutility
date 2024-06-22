@@ -59,11 +59,3 @@
                  (do-queue (item q (nreverse res))
                    (push item res))))
         "do-queue doesn't iterate against a queue correctly")))
-
-;; (test queue-sequence
-;;   "Test `queue''s sequence functionality"
-;;   (if (not (find-package "SEQUENCE"))
-;;       (skip "Sequence functionality is not supported on this implementation")
-;;       (let ((rb (make-queue 5)))
-;;         (is (= 5 (length rb))
-;;             "queue's length result is incorrect"))))

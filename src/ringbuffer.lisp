@@ -57,7 +57,7 @@ Examples:
 ;; (ringbuffer-elt rb -1) ;=> 2
 ;; ;; Get the oldest element:
 ;; (ringbuffer-elt rb 0) ;=> 0
-;; ;; Get the second oldest element:
+;; ;; Get the second-oldest element:
 ;; (ringbuffer-elt rb 1) ;=> 1
 
 See also: `ringbuffer-get', `ringbuffer-newest', `ringbuffer-oldest', `ringbuffer-push', `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `ringbuffer'"
@@ -115,7 +115,7 @@ See also: `ringbuffer-newest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
         :collect (ringbuffer-elt ringbuffer idx)))
 
 (defmacro do-ringbuffer ((var ringbuffer &optional result-form) &body body)
-  "Execute BODY once for each element in RINGBUFFER from least to most recent, with VAR bound to the element, returning RESULT-FORM.
+  "Execute BODY once for each element in RINGBUFFER from oldest to newest, with VAR bound to the element, then return RESULT-FORM.
 
 See also: `ringbuffer-elt', `ringbuffer-push', `ringbuffer-pop', `ringbuffer-size', `ringbuffer-index', `ringbuffer-length', `ringbuffer'"
   (with-gensyms (ringbuffer-sym idx-sym length-sym)
