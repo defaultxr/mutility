@@ -96,7 +96,7 @@ See also: `ringbuffer-get', `ringbuffer-elt', `ringbuffer-push', `ringbuffer-siz
 See also: `ringbuffer-pop', `ringbuffer-elt', `ringbuffer-push', `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `ringbuffer'"
   (let* ((length (ringbuffer-length ringbuffer))
          (oldest-index (mod (- (ringbuffer-index ringbuffer) length) (ringbuffer-size ringbuffer))))
-    (prog1 (ringbuffer-elt ringbuffer oldest-index)
+    (prog1 (aref (ringbuffer-array ringbuffer) oldest-index)
       (setf (ringbuffer-elt ringbuffer oldest-index) (ringbuffer-initial-element ringbuffer)
             (ringbuffer-length ringbuffer) (max 0 (1- length))))))
 
