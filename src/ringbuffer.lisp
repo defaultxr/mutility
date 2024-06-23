@@ -44,7 +44,7 @@ See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `
                     :initial-element initial-element
                     :array (make-array size :initial-element initial-element)))
 
-(defun ringbuffer-elt (ringbuffer &optional (index -1))
+(defun ringbuffer-elt (ringbuffer index)
   "Get the element at INDEX in RINGBUFFER. Negative indexes are from the most recently-pushed elements, while zero or positive are from the oldest. So -1 is the most recently-pushed item, and -2 is the second most. 0 is the oldest item in the ringbuffer, and 1 is the second oldest.
 
 Examples:
@@ -65,13 +65,13 @@ See also: `ringbuffer-get', `ringbuffer-newest', `ringbuffer-oldest', `ringbuffe
                                               index)
                                            (ringbuffer-size ringbuffer))))
 
-(defun (setf ringbuffer-elt) (value ringbuffer &optional (index -1))
+(defun (setf ringbuffer-elt) (value ringbuffer index)
   (setf (aref (ringbuffer-array ringbuffer) (mod (+ (ringbuffer-index ringbuffer)
                                                     index)
                                                  (ringbuffer-size ringbuffer)))
         value))
 
-(defun ringbuffer-push (ringbuffer &optional (object (ringbuffer-initial-element ringbuffer)))
+(defun ringbuffer-push (ringbuffer object)
   "Add OBJECT to RINGBUFFER.
 
 See also: `ringbuffer-pop', `ringbuffer-get', `ringbuffer-elt', `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `ringbuffer'"
