@@ -1093,20 +1093,20 @@ Example:
                 (+ length end)
                 end))))
 
-(defun repeat (item num) ; FIX: rename to `make-list+' ?
-  "Get a list containing NUM ITEMs. If ITEM is a function, return a list of NUM of the result of that function.
+(defun repeat (item repeats) ; FIX: rename to `make-list+' ?
+  "Get a list containing REPEATS ITEMs. If ITEM is a function, return a list of REPEATS of the result of that function.
 
 Example:
 
 ;; (repeat (lambda () (random 10)) 10)
 ;; ;=> (7 0 6 6 7 9 8 1 9 8)"
-  (check-type num (integer 0))
+  (check-type repeats (integer 0))
   (the list
-       (when (plusp num)
+       (when (plusp repeats)
          (cons (if (typep item 'function)
                    (funcall item)
                    item)
-               (repeat item (- num 1))))))
+               (repeat item (- repeats 1))))))
 
 (defun left-trim (bag sequence &key (test #'eql))
   "Trim anything from BAG from the start of SEQUENCE.
