@@ -195,6 +195,7 @@ the other thing" :char-bag (list #\space #\newline)))
                "foo$baz$qux")))
 
 (test replace-all
+  "Test the `replace-all' function"
   ;; FIX
   )
 
@@ -375,10 +376,12 @@ the other thing" :char-bag (list #\space #\newline)))
   )
 
 (test random-gauss
+  "Test the `random-gauss' function"
   ;; FIX
   )
 
 (test nth-wrap
+  "Test the `nth-wrap' function"
   (is (= 3
          (nth-wrap 7 (list 0 1 2 3)))
       "nth-wrap returns incorrect results for lists")
@@ -442,10 +445,12 @@ the other thing" :char-bag (list #\space #\newline)))
       "flop returns incorrect results"))
 
 (test subseq*
+  "Test the `subseq*' function"
   ;; FIX
   )
 
 (test repeat
+  "Test the `repeat' function"
   ;; FIX
   )
 
@@ -551,10 +556,12 @@ the other thing" :char-bag (list #\space #\newline)))
              (mapcross #'+ (list 1 2 3) (list 4 5) (list 6 7 8 9)))))
 
 (test save-hash-table
+  "Test the `save-hash-table' function"
   ;; FIX
   )
 
 (test restore-hash-table
+  "Test the `restore-hash-table' function"
   ;; FIX
   )
 
@@ -582,6 +589,7 @@ the other thing" :char-bag (list #\space #\newline)))
            "lisp-uptime returned a value other than a positive number"))
 
 (test function-arglist
+  "Test the `function-arglist' function"
   (is (equalp (list '&optional (list 'm::probability 0.5))
               (function-arglist 'random-coin))
       "function-arglist doesn't return correct results for `random-coin'")
@@ -597,6 +605,7 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (position 'mutility/tests (systems-depending-on 'mutility) :key #'asdf:component-name :test #'string-equal)))
 
 (test lisp-connections
+  "Test the `lisp-connections' function"
   ;; FIX
   )
 
@@ -615,13 +624,16 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (string= "temp/foo/bar/" (join-path-components "temp" "foo" "bar/"))))
 
 (test open-url
+  "Test the `open-url' function"
   ;; FIX
   )
 
 (test generate-temporary-file-name
+  "Test the `generate-temporary-file-name' function"
   ;; FIX
   )
 
 (test locate-dominating-file
+  "Test the `locate-dominating-file' function"
   ;; FIX
   )
