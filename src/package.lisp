@@ -39,6 +39,8 @@
    #:string-join*
    #:replace-all
    #:parse-boolean
+   #:ip-vector-string
+   #:ip-string-vector
    #:url-p
    #:friendly-ratio-string
    #:friendly-duration-string

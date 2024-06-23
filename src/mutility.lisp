@@ -700,6 +700,22 @@ See also: `cl:parse-integer', `url-p'"
     ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
+(defun ip-vector-string (ip-vector)
+  "Convert an IP specified as a 4-element sequence to an IP specified as a string.
+
+See also: `ip-string-vector'"
+  (when (stringp ip-vector)
+    (return-from ip-vector-string ip-vector))
+  (string-join* (mapcar #'write-to-string (coerce ip-vector 'list)) "."))
+
+(defun ip-string-vector (ip-string)
+  "Convert an IP specified as a string to an IP specified as a 4-element vector.
+
+See also: `ip-vector-string'"
+  (when (simple-vector-p ip-string)
+    (return-from ip-string-vector ip-string))
+  (coerce (mapcar #'parse-integer (string-split ip-string :char-bag #\.)) 'vector))
+
 (defun url-p (string &key ignore-case)
   "True if STRING looks like a valid URL. If CASE-SENSITIVE, the protocol must be lowercase for the URL to be valid.
 

@@ -205,6 +205,18 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (parse-boolean "blah" t))
   (is-false (parse-boolean "2" nil)))
 
+(test ip-vector-string
+  "Test the `ip-vector-string' function"
+  (is (equal "127.0.0.1" (ip-vector-string #(127 0 0 1))))
+  (is (equal "64.28.92.255" (ip-vector-string #(64 28 92 255))))
+  (is (equal "99.98.97.96" (ip-vector-string "99.98.97.96"))))
+
+(test ip-string-vector
+  "Test the `ip-string-vector' function"
+  (is (equalp #(127 0 0 1) (ip-string-vector "127.0.0.1")))
+  (is (equalp #(64 28 92 255) (ip-string-vector "64.28.92.255")))
+  (is (equalp #(99 98 97 96) (ip-string-vector #(99 98 97 96)))))
+
 (test url-p
   "Test the `url-p' function"
   (is-true (url-p "http://w.struct.ws"))
