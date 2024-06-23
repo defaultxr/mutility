@@ -632,7 +632,9 @@ Example:
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
 See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
-  (declare (type string string))
+  (check-type string string)
+  (check-type char-bag (or character list))
+  (check-type count (or null (integer 1)))
   (when max-num
     (warn "~S's ~S argument is deprecated; use ~S instead." 'string-split :max-num :count)
     (setf count max-num))
@@ -826,7 +828,9 @@ Examples:
 ;; (wrap 15 0 10) ; => 4
 
 See also: `fold', `cl:mod', `alexandria:clamp'"
-  (declare (type number number bottom top))
+  (check-type number number)
+  (check-type bottom number)
+  (check-type top number)
   (+ (mod (- number bottom) (- top bottom)) bottom))
 
 (defun fold (number &optional (bottom 0) (top 1))
@@ -839,7 +843,9 @@ Examples:
 ;; (fold 8 0 7) ;=> 6
 
 See also: `wrap', `cl:mod', `alexandria:clamp'"
-  (declare (type number number bottom top))
+  (check-type number number)
+  (check-type bottom number)
+  (check-type top number)
   (if (>= top number bottom)
       number
       (let* ((range (- top bottom))
@@ -990,8 +996,8 @@ See also: `serapeum:length>', `alexandria:length='"
 Much like `nth', this function can only be used on lists. Use `elt-wrap' to index into any kind of sequence. However, keep in mind that `elt-wrap' may be slower when used on large lists.
 
 See also: `elt-wrap'"
-  (declare (type integer n)
-           (type cons list))
+  (check-type n integer)
+  (check-type list list)
   (multiple-value-bind (wraps mod) (floor n (list-length list))
     (values (nth mod list) wraps)))
 
@@ -1001,8 +1007,8 @@ See also: `elt-wrap'"
 Much like `elt', this function can be used on any sequence. However, because this function calls `length' to determine the wrapped index, it may be slow when used on large lists. Consider using `nth-wrap' in those cases instead.
 
 See also: `nth-wrap'"
-  (declare (type integer n)
-           (type sequence sequence))
+  (check-type n integer)
+  (check-type sequence sequence)
   (multiple-value-bind (wraps mod) (floor n (length sequence))
     (values (elt sequence mod) wraps)))
 
@@ -1094,8 +1100,7 @@ Example:
 
 ;; (repeat (lambda () (random 10)) 10)
 ;; ;=> (7 0 6 6 7 9 8 1 9 8)"
-  (declare (integer num))
-  (assert (typep num '(integer 0)) (num) "NUM must be a non-negative integer; got ~S instead." num)
+  (check-type num (integer 0))
   (the list
        (when (plusp num)
          (cons (if (typep item 'function)
