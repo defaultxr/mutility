@@ -534,7 +534,13 @@ the other thing" :char-bag (list #\space #\newline)))
 (test mapwrap
   "Test the `mapwrap' function"
   (is (equal (list 11 22 33 41 52)
-             (mapwrap #'+ (list 10 20 30 40 50) (list 1 2 3)))))
+             (mapwrap #'+ (list 10 20 30 40 50) (list 1 2 3))))
+  (is (equal (list 1 3 3)
+             (mapwrap #'+ (list 0 1) (list 1) (list 0 1 2)))
+      "mapwrap returns incorrect results")
+  (is (equal (list 0 2 2 4 4 6)
+             (mapwrap #'+ (list 0 1) (list 0 1 2 3 4 5)))
+      "mapwrap doesn't wrap indexes of the shorter lists correctly"))
 
 (test mapfold
   "Test the `mapfold' function"
