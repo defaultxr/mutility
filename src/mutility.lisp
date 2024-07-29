@@ -625,10 +625,10 @@ See also: `alexandria:string-designator'"
 
 Example:
 
-;; (split-string \"this that the other thing\")
+;; (string-split \"this that the other thing\")
 ;; ;=> (\"this\" \"that\" \"the\" \"other\" \"thing\")
 
-;; (split-string \"  foo  bar baz  qux  \" :count 2)
+;; (string-split \"  foo  bar baz  qux  \" :count 2)
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
 See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
