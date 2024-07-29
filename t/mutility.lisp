@@ -185,6 +185,24 @@ the other thing" :char-bag (list #\space #\newline)))
              (string-split "foo=bar==baz===qux=" :count 3 :char-bag #\= :include-empty nil))
       "string-split gives incorrect results when count and char-bag are provided and the string ends in a divider"))
 
+(test string-split-by-string
+  "Test the `string-split-by-string' function"
+  (is (equal (list "this" "that" "the-other thing")
+             (string-split-by-string "this - that - the-other thing" " - "))
+      "string-split-by-string returns incorrect results")
+  (is (equal (list "this" "that" "the-other thing - the other other thing")
+             (string-split-by-string "this - that - the-other thing - the other other thing" " - " :count 3))
+      "string-split-by-string with the count argument returns incorrect results")
+  (is (equal (list "this" "that" "the" "" "other thing")
+             (string-split-by-string "this - that - the -  - other thing" " - " :include-empty t))
+      "string-split-by-string with the include-empty argument returns incorrect results")
+  (is (equal (list "this" "that" "the" " - other thing")
+             (string-split-by-string "this - that - the -  - other thing" " - " :count 4 :include-empty t))
+      "string-split-by-string with the count and include-empty arguments returns incorrect results")
+  (is (equal (list "foo" "bar" "baz")
+             (string-split-by-string "foodDbarDdbaz" "dd" :char-comparison #'char-equal))
+      "string-split-by-string with 'char-equal as its char-comparison argument does not split case-insensitively"))
+
 (test string-join*
   "Test the `string-join*' function"
   (is (string= (string-join* (list "foo" "bar" "baz") "-")

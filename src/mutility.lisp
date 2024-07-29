@@ -631,7 +631,7 @@ Example:
 ;; (string-split \"  foo  bar baz  qux  \" :count 2)
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
-See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
+See also: `string-split-by-string', `sequence-split', `str:split', `split-sequence:split-sequence'"
   (check-type string string)
   (check-type char-bag (or character list))
   (check-type count (or null (integer 1)))
@@ -654,6 +654,33 @@ See also: `sequence-split', `str:split', `split-sequence:split-sequence'"
                     string
                     (string-left-trim char-bag string))
                 count char-bag))))
+
+(defun string-split-by-string (string split-by &key count include-empty (char-comparison #'char=))
+  "Split STRING into a list of substrings by partitioning by the string SPLIT-BY, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them. CHAR-COMPARISON is the function to use to compare characters; typically this is either `char=' (the default) for case-sensitive comparison or `char-equal' for case-insensitive comparison.
+
+Example:
+
+;; (string-split-by-string \"this - that - the-other thing\" \" - \")
+;; ;=> (\"this\" \"that\" \"the-other thing\")
+
+See also: `string-split', `sequence-split', `str:split', `split-sequence:split-sequence'"
+  (check-type string string)
+  (check-type split-by string)
+  (check-type count (or null (integer 1)))
+  (let ((split-by-length (length split-by)))
+    (labels ((divider-pos (string)
+               (search split-by string :test char-comparison))
+             (split-up (string num)
+               (when (and string
+                          (or include-empty
+                              (not (emptyp string))))
+                 (if (or (eql num 1)
+                         (not (divider-pos string)))
+                     (cons string nil)
+                     (cons (subseq string 0 (divider-pos string))
+                           (split-up (subseq string (+ split-by-length (divider-pos string)))
+                                     (when num (1- num))))))))
+      (split-up string count))))
 
 (defun string-join* (strings &optional separator)
   "Join all non-nil elements of STRINGS together, separated by SEPARATOR.
