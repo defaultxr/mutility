@@ -49,7 +49,8 @@
 
 (defmacro define-file-method (name lambda-list &body body)
   "Define the generic function named NAME, as well as the methods specializing its first parameter on file, string, and pathname. The string and pathname methods effectively forward to the file method."
-  (multiple-value-bind (body decls documentation) (parse-body body :documentation t)
+  (multiple-value-bind (body declarations documentation) (parse-body body :documentation t)
+    (declare (ignore declarations)) ; FIX: use declarations?
     `(progn
        (defgeneric ,name ,lambda-list
          ,@(when documentation `((:documentation ,documentation))))
@@ -57,8 +58,8 @@
          ,@body)
        (defmethod ,name ((,(car lambda-list) string) ,@(cdr lambda-list))
          (,name (make-file ,(car lambda-list))))
-       (defmethod ,name ((,(car lambda-list) string) ,@(cdr lambda-list))
-         (,name (make-file (string ,(car lambda-list))))))))
+       (defmethod ,name ((,(car lambda-list) pathname) ,@(cdr lambda-list))
+         (,name (make-file ,(car lambda-list)))))))
 
 (define-file-method file-path (file)
   "Get the full unabbreviated path to FILE as a string."
@@ -198,21 +199,7 @@ See also: `file-type'")
 
 ;;; file "types"
 
-(defmacro define-file-method (name &body body)
-  "Define methods for the file class, string, pathname, etc."
-  (multiple-value-bind (body declarations docstring) (parse-body body :documentation t)
-    `(progn
-       (defgeneric ,name (file)
-         ,@(when docstring
-             `((:documentation ,docstring))))
-       (defmethod ,name ((file string))
-         )
-       (defmethod ,name ((file pathname))
-         )
-       (defmethod ,name ((file file))
-         ))))
-
-;;; audio
+;; audio
 
 (defclass audio-file (file)
   ((artist :initarg :artist :initform nil :documentation "")
@@ -227,9 +214,9 @@ See also: `file-type'")
    (bitrate :initarg :bitrate :initform nil :documentation "")
    (sample-rate :initarg :sample-rate :initform nil :documentation "")))
 
-;;; image
+;; image
 
-;;; video
+;; video
 
 ;;; traversal
 
@@ -276,4 +263,3 @@ This is equivalent to the Emacs function of the same name."
 
           locate-dominating-file
           file-finder))
-
