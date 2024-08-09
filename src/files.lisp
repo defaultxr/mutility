@@ -21,8 +21,9 @@
 (defmethod ensure-directory-trailing-slash ((path pathname))
   (uiop:parse-native-namestring (ensure-directory-trailing-slash (uiop:native-namestring path))))
 
-(defconstant +file-extension-separator+ #\.
-  "The character separating the file's name from its extension.")
+(define-constant +file-extension-separator+ #\.
+  :test #'char=
+  :documentation "The character separating the file's name from its extension.")
 
 ;;; class
 
