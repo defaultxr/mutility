@@ -155,6 +155,13 @@
                (with-output-to-string (*standard-output*)
                  (output "foo" "bar" nil)))))
 
+(test numeric-char-p
+  "Test the `numeric-char-p' function"
+  (dolist (c (list #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9 #\.))
+    (is-true (numeric-char-p c)))
+  (is-true (numeric-char-p #\- :allow-minus t))
+  (is-true (numeric-char-p #\/ :allow-ratio t)))
+
 (test vowel-char-p
   "Test the `vowel-char-p' function"
   (dolist (c (list #\a #\e #\i #\o #\u #\A #\E #\I #\O #\U))

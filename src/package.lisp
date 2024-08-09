@@ -33,6 +33,7 @@
    #:+whitespace-chars+
    #:concat
    #:output
+   #:numeric-char-p
    #:vowel-char-p
    #:string-designator-p
    #:split-string

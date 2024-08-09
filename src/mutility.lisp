@@ -607,10 +607,20 @@ See also: `concat'"
   (finish-output)
   (lastcar objects))
 
+(defun numeric-char-p (char &key allow-minus allow-ratio)
+  "True if CHAR is a character that can be part of a floating point number.
+
+See also: `vowel-char-p', `cl:digit-char-p', `cl:alpha-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
+  (or (digit-char-p char)
+      (member char (append (list #\.)
+                           (when allow-minus (list #\-))
+                           (when allow-ratio (list #\/)))
+              :test #'char=)))
+
 (defun vowel-char-p (char &key include-y include-w)
   "True if CHAR is a vowel character (i.e. a, e, i, o, or u, and sometimes y and/or w).
 
-See also: `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
+See also: `numeric-char-p', `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
   (member char (append (list #\a #\e #\i #\o #\u)
                        (when include-y (list #\y))
                        (when include-w (list #\w)))
