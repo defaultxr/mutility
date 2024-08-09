@@ -158,7 +158,9 @@
 (test vowel-char-p
   "Test the `vowel-char-p' function"
   (dolist (c (list #\a #\e #\i #\o #\u #\A #\E #\I #\O #\U))
-    (is-true (vowel-char-p c))))
+    (is-true (vowel-char-p c)))
+  (is-true (vowel-char-p #\y :include-y t))
+  (is-true (vowel-char-p #\w :include-w t)))
 
 (test string-designator-p
   "Test the `string-designator-p' function"

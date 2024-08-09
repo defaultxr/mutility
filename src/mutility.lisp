@@ -607,11 +607,14 @@ See also: `concat'"
   (finish-output)
   (lastcar objects))
 
-(defun vowel-char-p (char)
-  "True if CHAR is a vowel character (i.e. a, e, i, o, or u). Y and w are not tested.
+(defun vowel-char-p (char &key include-y include-w)
+  "True if CHAR is a vowel character (i.e. a, e, i, o, or u, and sometimes y and/or w).
 
 See also: `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
-  (member char (list #\a #\e #\i #\o #\u) :test #'char-equal))
+  (member char (append (list #\a #\e #\i #\o #\u)
+                       (when include-y (list #\y))
+                       (when include-w (list #\w)))
+          :test #'char-equal))
 
 (defun string-designator-p (object)
   "True if OBJECT is a string-designator, i.e. a string or symbol.
