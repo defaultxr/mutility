@@ -589,6 +589,10 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
 
 ;;; strings
 
+(define-constant +whitespace-chars+ (list #\space #\tab #\newline)
+  :test #'equal
+  :documentation "List of characters that represent whitespace like space and tab.")
+
 (defun concat (&rest objects) ; FIX: conflicts with `serapeum:concat', which differs in that it doesn't concatenate symbols.
   "Concatenate all non-nil OBJECTS together into a string.
 
@@ -620,7 +624,7 @@ See also: `alexandria:string-designator'"
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
 
-(defun string-split (string &key (char-bag (list #\space #\tab #\newline)) count include-empty max-num)
+(defun string-split (string &key (char-bag +whitespace-chars+) count include-empty max-num)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 
 Example:

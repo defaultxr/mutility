@@ -30,6 +30,7 @@
    #:friendly-string
    #:friendly-symbol
 
+   #:+whitespace-chars+
    #:concat
    #:output
    #:vowel-char-p

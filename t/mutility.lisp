@@ -130,6 +130,10 @@
   (is (eql :foos-bar-baz-and-qux
            (friendly-symbol "foo's bar, baz, and qux"))))
 
+(test +whitespace-chars+
+  "Test the `+whitespace-chars+' constant"
+  (is (member #\space +whitespace-chars+ :test #'char=)))
+
 (test concat
   "Test the `concat' function"
   (is (string= "FOOBAR"
