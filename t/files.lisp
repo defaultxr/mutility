@@ -35,7 +35,8 @@
 
 (test file-extension
   "Test the `file-extension' function"
-  (is (string= "blah" (file-extension "foo.blah"))))
+  (is (string= "blah" (file-extension "foo.blah")))
+  (is (string= "BlAh" (file-extension "foo.BlAh"))))
 
 (test file-type
   "Test the `file-type' function"
@@ -46,22 +47,25 @@
 
 (test file-exists-p
   "Test the `file-exists-p' function"
-  (let ((filename "mutility-files-test-temp-file.txt"))
-    (with-fixture with-temporary-file (filename)
-      (is-true (file-exists-p filename))
-      (is-true (file-exists-p (pathname filename))))))
+  (uiop:with-temporary-file (:pathname filename)
+    (is-true (file-exists-p filename))
+    (is-true (file-exists-p (pathname filename)))))
 
 (test file-file-p
   "Test the `file-file-p' function"
-  )
+  (uiop:with-temporary-file (:pathname temp-file)
+    (is-true (file-file-p temp-file))))
 
 (test file-directory-p
   "Test the `file-directory-p' function"
-  #+unix (is-true (file-directory-p "/tmp")))
+  #+unix (is-true (file-directory-p "/tmp"))
+  (is-true (file-directory-p (uiop:temporary-directory))))
 
 (test file-directory
   "Test the `file-directory' function"
-  )
+  (let ((temp-dir (uiop:temporary-directory)))
+    (is-true (string= (namestring temp-dir)
+                      (namestring (file-directory temp-dir))))))
 
 (test file-parent-directory
   "Test the `file-parent-directory' function"

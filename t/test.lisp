@@ -16,16 +16,6 @@
 
 (in-suite mutility-tests)
 
-(def-fixture with-temporary-file (filename)
-  "Make a temporary file at FILENAME for the duration of the body, deleting it afterward."
-  (let ((filename (if (uiop:absolute-pathname-p filename)
-                      filename
-                      (concat (uiop:temporary-directory) filename))))
-    (with-open-file (temporary-file-stream filename
-                                           :direction :output :if-exists :rename)
-      (&body)
-      (delete-file temporary-file-stream))))
-
 (test system-attributes
   "Check that the system has all the standard attributes"
   (let ((missing (system-missing-attributes :mutility)))
