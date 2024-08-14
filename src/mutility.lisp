@@ -720,7 +720,8 @@ See also: `concat', `serapeum:string-join'"
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
-(defun replace-all (string part replacement &key (test #'char=)) ; FIX: rename to something else? string-replace-all is already taken in serapeum, but serapeum's implementation doesn't allow you to specify the character test function and/or case-sensitivity
+;; differs from `serapeum:string-replace-all' in that it supports a TEST argument
+(defun string-replace-all* (string part replacement &key (test #'char=))
   "Get a new string in which all the occurences of the part is replaced with replacement.
 
 See also: `cl-ppcre:regex-replace-all'"
@@ -735,6 +736,11 @@ See also: `cl-ppcre:regex-replace-all'"
                             :end (or pos (length string)))
           :when pos :do (write-string replacement out)
             :while pos)))
+
+(uiop:with-deprecation (:style-warning)
+  (defun replace-all (string part replacement &key (test #'char=))
+    "Deprecated alias for `string-replace-all*'."
+    (string-replace-all* string part replacement :test test)))
 
 (defun parse-boolean (string &optional default)
   "Parse STRING as a boolean, returning either t or nil, or DEFAULT if it is not a known boolean string.

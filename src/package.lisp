@@ -40,6 +40,7 @@
    #:string-split
    #:string-split-by-string
    #:string-join*
+   #:string-replace-all*
    #:replace-all
    #:parse-boolean
    #:ip-vector-string

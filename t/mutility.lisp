@@ -225,10 +225,11 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (string= (string-join* (list "foo" nil "baz" nil nil "qux" nil) "$")
                "foo$baz$qux")))
 
-(test replace-all
-  "Test the `replace-all' function"
-  ;; FIX
-  )
+(test string-replace-all*
+  "Test the `string-replace-all*' function"
+  (is (string= "foofoo" (string-replace-all* "foobar" "bar" "foo")))
+  (is (string= "barbarbar" (string-replace-all* "foobarfoo" "foo" "bar")))
+  (is (string= "qux quxium qux" (string-replace-all* "foo FOOium FOO" "foo" "qux" :test #'char-equal))))
 
 (test parse-boolean
   "Test the `parse-boolean' function"
