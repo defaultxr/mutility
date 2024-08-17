@@ -238,6 +238,27 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (parse-boolean "blah" t))
   (is-false (parse-boolean "2" nil)))
 
+(test read-as-tokens
+  "Test the `read-as-tokens' function"
+  (is (equalp (list "foo" "bar's baz")
+              (read-as-tokens (make-string-input-stream "foo \"bar's baz\""))))
+  (is (equalp (list "foo" "barf baz")
+              (read-as-tokens (make-string-input-stream "foo 'barf baz'"))))
+  (is (equalp (list "foo" "\"bar's" "baz\"" "foo bar")
+              (read-as-tokens (make-string-input-stream "foo \"bar's baz\" 'foo bar'") :quotes (list #\APOSTROPHE))))
+  (is (equalp (list "foo" "bar's baz")
+              (read-as-tokens (make-string-input-stream "foo \"bar's baz\""))))
+  (is (equalp (list "foo" "bar baz")
+              (read-as-tokens (make-string-input-stream "foo bar baz") :count 2)))
+  (is (equalp (list "foo" "ar")
+              (read-as-tokens (make-string-input-stream "foobar") :separators (list #\b))))
+  (is (equalp (list "")
+              (read-as-tokens (make-string-input-stream "''") :quotes (list #\APOSTROPHE))))
+  (is (equalp (list "foo" "" "bar")
+              (read-as-tokens (make-string-input-stream "foo \"\" bar"))))
+  (is (equalp (list "foof" "barf")
+              (read-as-tokens (make-string-input-stream "foof barf bazf quxf") :count 2 :slurp-rest nil))))
+
 (test ip-vector-string
   "Test the `ip-vector-string' function"
   (is (equal "127.0.0.1" (ip-vector-string #(127 0 0 1))))

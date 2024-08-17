@@ -593,6 +593,10 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
   :test #'equal
   :documentation "List of characters that represent whitespace like space and tab.")
 
+(define-constant +quote-chars+ (list #\QUOTATION_MARK #\APOSTROPHE #\MODIFIER_LETTER_TURNED_COMMA #\MODIFIER_LETTER_APOSTROPHE #\LEFT_SINGLE_QUOTATION_MARK #\RIGHT_SINGLE_QUOTATION_MARK #\SINGLE_LOW-9_QUOTATION_MARK #\SINGLE_HIGH-REVERSED-9_QUOTATION_MARK #\LEFT_DOUBLE_QUOTATION_MARK #\RIGHT_DOUBLE_QUOTATION_MARK #\DOUBLE_LOW-9_QUOTATION_MARK #\DOUBLE_HIGH-REVERSED-9_QUOTATION_MARK #\REVERSED_DOUBLE_PRIME_QUOTATION_MARK #\DOUBLE_PRIME_QUOTATION_MARK #\LOW_DOUBLE_PRIME_QUOTATION_MARK)
+  :test #'equal
+  :documentation "List of characters that represent quotation marks like QUOTATION_MARK and APOSTROPHE.")
+
 (defun concat (&rest objects) ; FIX: conflicts with `serapeum:concat', which differs in that it doesn't concatenate symbols.
   "Concatenate all non-nil OBJECTS together into a string.
 
@@ -751,6 +755,51 @@ See also: `cl:parse-integer', `url-p'"
     ((member string (list "t" "1" "true" "y" "yes" "e" "enable" "enabled" "on") :test #'string-equal) t)
     ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
+
+(defun read-as-token (&optional (stream *standard-input*) (quotes +quote-chars+) (separators +whitespace-chars+))
+  "Read a \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) string from STREAM. Note that only the start and end of potential tokens (i.e. adjacent to any of SEPARATORS) are checked for QUOTES.
+
+See also: `read-as-tokens'"
+  (unless (peek-char t stream nil nil)
+    (return-from read-as-token nil))
+  (let* ((first (peek-char t stream nil nil))
+         (is-quoted (find first quotes :test #'char=)))
+    (when is-quoted
+      (read-char stream))
+    (let ((res (loop :for curr := (read-char stream nil nil)
+                     :unless curr
+                       :do (loop-finish)
+                     :when (and is-quoted (char= curr is-quoted))
+                       :do (loop-finish)
+                     :when (and (not is-quoted)
+                                (find curr separators :test #'char=))
+                       :do (unread-char curr stream)
+                           (loop-finish)
+                     :collect curr)))
+      (coerce res 'string))))
+
+(defun read-as-tokens (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t))
+  "Read \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STREAM, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS."
+  (check-type count (or null number))
+  (labels ((eat-separators (stream)
+             "Gobble up the separators at the start of STREAM."
+             (loop :while (member (peek-char t stream nil nil) separators :test #'eql)
+                   :do (read-char stream nil nil))
+             stream))
+    (append (loop :with count := (when count (if slurp-rest (1- count) count))
+                  :for num :from 0
+                  :while (and (or (null count)
+                                  (< num count))
+                              (peek-char t (eat-separators stream) nil nil))
+                  :for str := (read-as-token stream quotes separators)
+                  :if str
+                    :collect str
+                  :else
+                    :do (loop-finish))
+            (when (and slurp-rest
+                       (not (or (null count)
+                                (eql 0 count))))
+              (list (string-trim separators (read-stream-content-into-string stream)))))))
 
 (defun ip-vector-string (ip-vector)
   "Convert an IP specified as a 4-element sequence to an IP specified as a string.
