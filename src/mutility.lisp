@@ -1436,7 +1436,7 @@ Example:
 ;; (save-hash-table *my-hash* \"/home/user/blah.hash\" :if-exists :rename)
 
 See also: `restore-hash-table'"
-  (with-open-file (stream filename :direction :output :if-exists if-exists)
+  (with-open-file (stream filename :direction :output :if-exists if-exists :if-does-not-exist :create)
     (princ "(" stream)
     (let ((*print-readably* t))
       (maphash (lambda (key value)
