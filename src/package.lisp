@@ -52,6 +52,7 @@
    #:friendly-bytes
    #:friendly-bytes-string
    #:pretty-print-tree
+   #:rot13
 
    #:approx=
    #:near-zero-p

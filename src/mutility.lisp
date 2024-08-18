@@ -903,6 +903,20 @@ See also: `friendly-bytes'"
             (princ "  "))
           (format t "- ~S~%" e)))))
 
+(defparameter +alphabet+ "abcdefghijklmnopqrstuvwxyz")
+
+(defun rot13 (string &optional (n 13))
+  "Rotate the characters of STRING alphabetically by N letters."
+  (flet ((wrap-char (char)
+           (let ((code (char-code char)))
+             (unless (or (<= 65 code 90)
+                         (<= 97 code 122))
+               (return-from wrap-char char))
+             (code-char (if (<= 65 code 90)
+                            (wrap (+ n code) 65 91)
+                            (wrap (+ n code) 97 123))))))
+    (map 'string #'wrap-char (copy-array string))))
+
 ;;; math
 
 (defun approx= (number1 number2 &optional (max-dist 0.0001))

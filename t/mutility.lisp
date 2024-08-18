@@ -316,6 +316,13 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test rot13
+  "Test the `rot13' function"
+  (is (string= "foo" (rot13 (rot13 "foo"))))
+  (is (string= "sbb" (rot13 "foo" -13)))
+  (is (string= "Gur dhvpx oebja sbk whzcf bire gur ynml qbt."
+               (rot13 "The quick brown fox jumps over the lazy dog."))))
+
 (test approx=
   "Test the `approx=' function"
   (is-true (approx= 0 0.1 0.1))
