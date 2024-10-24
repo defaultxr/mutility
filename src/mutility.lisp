@@ -593,7 +593,23 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
   :test #'equal
   :documentation "List of characters that represent whitespace like space and tab.")
 
-(define-constant +quote-chars+ (list #\QUOTATION_MARK #\APOSTROPHE #\MODIFIER_LETTER_TURNED_COMMA #\MODIFIER_LETTER_APOSTROPHE #\LEFT_SINGLE_QUOTATION_MARK #\RIGHT_SINGLE_QUOTATION_MARK #\SINGLE_LOW-9_QUOTATION_MARK #\SINGLE_HIGH-REVERSED-9_QUOTATION_MARK #\LEFT_DOUBLE_QUOTATION_MARK #\RIGHT_DOUBLE_QUOTATION_MARK #\DOUBLE_LOW-9_QUOTATION_MARK #\DOUBLE_HIGH-REVERSED-9_QUOTATION_MARK #\REVERSED_DOUBLE_PRIME_QUOTATION_MARK #\DOUBLE_PRIME_QUOTATION_MARK #\LOW_DOUBLE_PRIME_QUOTATION_MARK)
+;; unfortunately it's not possible to specify characters using #\UNICODE_NAME syntax in a portable way; see https://github.com/defaultxr/mutility/issues/9
+(define-constant +quote-chars+ (mapcar #'code-char (list 34 ; #\QUOTATION_MARK
+                                                         39 ; #\APOSTROPHE
+                                                         699 ; #\MODIFIER_LETTER_TURNED_COMMA
+                                                         700 ; #\MODIFIER_LETTER_APOSTROPHE
+                                                         8216 ; #\LEFT_SINGLE_QUOTATION_MARK
+                                                         8217 ; #\RIGHT_SINGLE_QUOTATION_MARK
+                                                         8218 ; #\SINGLE_LOW-9_QUOTATION_MARK
+                                                         8219 ; #\SINGLE_HIGH-REVERSED-9_QUOTATION_MARK
+                                                         8220 ; #\LEFT_DOUBLE_QUOTATION_MARK
+                                                         8221 ; #\RIGHT_DOUBLE_QUOTATION_MARK
+                                                         8222 ; #\DOUBLE_LOW-9_QUOTATION_MARK
+                                                         8223 ; #\DOUBLE_HIGH-REVERSED-9_QUOTATION_MARK
+                                                         12317 ; #\REVERSED_DOUBLE_PRIME_QUOTATION_MARK
+                                                         12318 ; #\DOUBLE_PRIME_QUOTATION_MARK
+                                                         12319 ; #\LOW_DOUBLE_PRIME_QUOTATION_MARK
+                                                         ))
   :test #'equal
   :documentation "List of characters that represent quotation marks like QUOTATION_MARK and APOSTROPHE.")
 
