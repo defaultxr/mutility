@@ -84,17 +84,19 @@
 (defmethod file-path ((file pathname))
   (file-path (namestring file)))
 
+(defun file-no-extension (string)
+  "Get STRING, without the file extension."
+  (if-let ((ext-pos (position +file-extension-separator+ string :from-end t)))
+    (subseq string 0 ext-pos)
+    string))
+
 (defgeneric file-path-no-extension (file)
   (:documentation "Get FILE's path, excluding its extension.
 
 See also: `file-path', `file-name', `file-name-no-extension', `file-extension'"))
 
 (defmethod file-path-no-extension (file)
-  (let* ((path (file-path file))
-         (ext-pos (position +file-extension-separator+ path :from-end t)))
-    (if ext-pos
-        (subseq path 0 ext-pos)
-        path)))
+  (file-no-extension (file-path file)))
 
 (defgeneric file-name (file)
   (:documentation "Get FILE's name, excluding the directory containing it.
@@ -118,8 +120,7 @@ See also: `file-directory', `file-name-no-extension'"))
 See also: `file-name'"))
 
 (defmethod file-name-no-extension (file)
-  (let ((name (file-name file)))
-    (coerce (butlast (coerce name 'list) (1+ (length (file-extension file)))) 'string)))
+  (file-no-extension (file-name file)))
 
 (defgeneric file-extension (file)
   (:documentation "The file's extension, i.e. the string following the last period in the filename.
@@ -248,6 +249,7 @@ This is equivalent to the Emacs function of the same name."
 (export '(ensure-directory-trailing-slash
 
           file-path
+          file-no-extension
           file-path-no-extension
           file-name
           file-name-no-extension
