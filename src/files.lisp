@@ -160,10 +160,10 @@ See also: `file-type'")
   (:documentation "True if FILE is a file (i.e. it exists and is not a directory)."))
 
 (defmethod file-file-p ((file string))
-  (uiop:native-namestring (file-file-p file)))
+  (uiop:file-exists-p file))
 
 (defmethod file-file-p ((file pathname))
-  (uiop:file-exists-p file))
+  (file-file-p (uiop:native-namestring file)))
 
 (defgeneric file-directory-p (file)
   (:documentation "True if FILE refers to a directory that exists."))
