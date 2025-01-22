@@ -199,6 +199,15 @@ See also: `file-type'")
 (defmethod file-parent-directory ((file pathname))
   (make-pathname :directory (butlast (pathname-directory file))))
 
+(defgeneric directory-contents (directory)
+  (:documentation "Get a list of the items in DIRECTORY."))
+
+(defmethod directory-contents ((directory string))
+  (mapcar #'file-path (uiop:directory* (concat (string-right-trim (list #\slash) directory) "/*.*"))))
+
+(defmethod directory-contents ((directory pathname))
+  (directory-contents (namestring directory)))
+
 ;;; file "types"
 
 ;; audio
@@ -263,6 +272,8 @@ This is equivalent to the Emacs function of the same name."
 
           file-directory
           file-parent-directory
+
+          directory-contents
 
           locate-dominating-file
           file-finder))
