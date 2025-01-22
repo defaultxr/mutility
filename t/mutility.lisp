@@ -649,6 +649,11 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test set-accessor-documentation-from-slots
+  "Test the `set-accessor-documentation-from-slots' function"
+  ;; FIX
+  )
+
 (test lisp-uptime
   "Test the `lisp-uptime' function"
   (is-true (plusp (lisp-uptime))

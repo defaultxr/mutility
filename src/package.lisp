@@ -108,6 +108,7 @@
    #:all-classes
    #:subclasses-of
    #:find-class-slot
+   #:set-accessor-documentation-from-slots
 
    #:lisp-uptime
    #:current-seconds ; deprecated

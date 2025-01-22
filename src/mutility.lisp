@@ -1492,6 +1492,12 @@ See also: `save-hash-table'"
 
 ;;; CLOS
 
+(defun ensure-class (class)
+  "If CLASS is a class, return it, otherwise attempt to find the class whose name is CLASS."
+  (etypecase class
+    (standard-class class)
+    (symbol (find-class class))))
+
 (defun all-classes (&optional package)
   "Get a list of all defined classes in the Lisp image. With PACKAGE, only get classes belonging to that package.
 
@@ -1511,9 +1517,7 @@ See also: `subclasses-of'"
   "Get a list of all direct subclasses of CLASS. If RECURSIVE-P is true, recursively get all subclasses.
 
 See also: `all-classes'"
-  (let ((class (etypecase class
-                 (class class)
-                 (symbol (find-class class)))))
+  (let ((class (ensure-class class)))
     (labels ((direct-subclasses-of (class)
                (closer-mop:class-direct-subclasses class))
              (subclasses-recursive (class)
@@ -1543,9 +1547,7 @@ See also: `find-class-slot'"
 (defun find-class-slot (class key value &key test)
   "Find a slot in CLASS whose slot option KEY is true when TESTed against VALUE."
   (check-type key slot-definition-slot)
-  (let* ((class (etypecase class
-                  (standard-class class)
-                  (symbol (find-class class))))
+  (let* ((class (ensure-class class))
          (slots (append (closer-mop:class-direct-slots class)
                         (closer-mop:class-slots class)))
          (accessor (case key
@@ -1562,6 +1564,17 @@ See also: `find-class-slot'"
                                   ((:initarg :accessor :reader :writer) #'find)
                                   (:documentation #'string=)
                                   (t #'eql))))))
+
+(defun set-accessor-documentation-from-slots (class &rest slots)
+  "Copy the documentation from SLOTS in CLASS to their reader, writer, and/or accessor methods."
+  (eval-when (:compile-toplevel :load-toplevel :execute)
+    (closer-mop:ensure-finalized (ensure-class class))) ; classes have to be finalized before calling `closer-mop:class-slots'
+  (dolist (sym slots)
+    (let* ((slot (find-class-slot class :name sym))
+           (readers (closer-mop:slot-definition-readers slot))
+           (writers (closer-mop:slot-definition-writers slot)))
+      (dolist (accessor (append readers writers))
+        (setf (documentation accessor 'function) (documentation slot t))))))
 
 ;;; introspection
 
