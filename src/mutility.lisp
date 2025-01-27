@@ -772,6 +772,47 @@ See also: `cl:parse-integer', `url-p'"
     ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
     (t default)))
 
+(defun parse-number-and-string (input)
+  "Get a list consisting of the input number and any string that comes after it (excluding spaces).
+
+WARNING: This function should not be used on untrusted input."
+  (etypecase input
+    (number (list input ""))
+    (symbol (parse-number-and-string (string input)))
+    (string
+     (let* ((numeric-pos (position-if #'numeric-char-p input))
+            (rest-pos (position-if-not #'numeric-char-p input :start numeric-pos)))
+       (list (read-from-string (subseq input numeric-pos rest-pos))
+             (string-trim +whitespace-chars+ (subseq input rest-pos)))))))
+
+(define-constant +byte-units+ (list (list "B" "Byte") (list "KB" "Kilobyte") (list "MB" "Megabyte") ; FIX: use this in the friendly-bytes functions
+                                    (list "GB" "Gigabyte") (list "TB" "Terabyte") (list "PB" "Petabyte"))
+  :test #'equalp
+  :documentation "List of byte units, from byte to petabyte, each element being a list in the form (abbreviation full-unit-name).")
+
+(define-condition friendly-bytes-parse-failure (error)
+  ((input :initarg :input :reader friendly-bytes-parse-failure-input :documentation "The full input string.")
+   (unit :initarg :unit :reader friendly-bytes-parse-failure-unit :documentation "The section of the input that failed to parse as a byte unit."))
+  (:report
+   (lambda (condition stream)
+     (format stream "~@<Failed to parse input ~S: unknown byte unit ~S.~@:>"
+             (friendly-bytes-parse-failure-input condition)
+             (friendly-bytes-parse-failure-unit condition))))
+  (:documentation "Condition for when `parse-friendly-bytes-string' fails to parse a string as a friendly bytes string."))
+
+(defun parse-friendly-bytes-string (string)
+  "Parse STRING, a string representing an amount in bytes (with arbitrary unit) to the number of bytes it represents.
+
+WARNING: This function should not be used on untrusted input.
+
+See also: `friendly-bytes-string', `friendly-bytes'"
+  (destructuring-bind (number unit) (parse-number-and-string string)
+    (unless (member (string-right-trim (list #\s #\S) unit) (flatten +byte-units+) :test #'string-equal)
+      (error 'friendly-bytes-parse-failure :input string :unit unit))
+    (let* ((unit-trimmed (string-right-trim (list #\s #\S) unit))
+           (index (position-if (fn (member unit-trimmed _ :test #'string-equal)) +byte-units+)))
+      (* number (expt 1024 index)))))
+
 (defun read-as-token (&optional (stream *standard-input*) (quotes +quote-chars+) (separators +whitespace-chars+))
   "Read a \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) string from STREAM. Note that only the start and end of potential tokens (i.e. adjacent to any of SEPARATORS) are checked for QUOTES.
 
@@ -896,9 +937,7 @@ See also: `friendly-bytes-string'"
                     :if (< bytes (expt 1024 (1+ i)))
                       :return i))
          (num (/ bytes (expt 1024 idx))))
-    (list num (concat (nth (+ (if short 0 6) idx)
-                           (list "B" "KB" "MB" "GB" "TB" "PB"
-                                 "Byte" "Kilobyte" "Megabyte" "Gigabyte" "Terabyte" "Petabyte"))
+    (list num (concat (nth (if short 0 1) (nth idx +byte-units+))
                       (when (and (not short) (/= 1 num)) "s")))))
 
 (defun friendly-bytes-string (bytes &key short)

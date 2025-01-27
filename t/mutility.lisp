@@ -238,6 +238,17 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (parse-boolean "blah" t))
   (is-false (parse-boolean "2" nil)))
 
+(test parse-number-and-string
+  "Test the `parse-number-and-string' function"
+  (is (equalp (list 3 "foo") (parse-number-and-string "3 foo"))))
+
+(test parse-friendly-bytes-string
+  "Test the `parse-friendly-bytes-string' function"
+  (is (= 100 (parse-friendly-bytes-string "100B")))
+  (is (= 1024 (parse-friendly-bytes-string "1KB")))
+  (is (= 2048 (parse-friendly-bytes-string "2KB")))
+  (is (= 3145728 (parse-friendly-bytes-string "3MB"))))
+
 (test read-as-tokens
   "Test the `read-as-tokens' function"
   (is (equalp (list "foo" "bar's baz")

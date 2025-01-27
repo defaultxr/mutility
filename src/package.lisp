@@ -43,6 +43,8 @@
    #:string-replace-all*
    #:replace-all
    #:parse-boolean
+   #:parse-number-and-string
+   #:parse-friendly-bytes-string
    #:read-as-tokens
    #:ip-vector-string
    #:ip-string-vector
