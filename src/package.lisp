@@ -104,8 +104,10 @@
    #:maptable
    #:mapcross
 
-   #:save-hash-table
-   #:restore-hash-table
+   #:hash-table-save
+   #:hash-table-restore
+   #:save-hash-table ; deprecated
+   #:restore-hash-table ; deprecated
 
    #:all-classes
    #:subclasses-of

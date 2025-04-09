@@ -632,13 +632,13 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (equal (list 11 12 13 14 12 13 14 15 12 13 14 15 13 14 15 16 13 14 15 16 14 15 16 17)
              (mapcross #'+ (list 1 2 3) (list 4 5) (list 6 7 8 9)))))
 
-(test save-hash-table
-  "Test the `save-hash-table' function"
+(test hash-table-save
+  "Test the `hash-table-save' function"
   ;; FIX
   )
 
-(test restore-hash-table
-  "Test the `restore-hash-table' function"
+(test hash-table-restore
+  "Test the `hash-table-restore' function"
   ;; FIX
   )
 
@@ -676,8 +676,8 @@ the other thing" :char-bag (list #\space #\newline)))
               (function-arglist 'random-coin))
       "function-arglist doesn't return correct results for `random-coin'")
   (is (equalp (list 'm::hash 'm::filename '&key (list 'm::if-exists :error))
-              (function-arglist 'save-hash-table))
-      "function-arglist doesn't return correct results for `save-hash-table'")
+              (function-arglist 'hash-table-save))
+      "function-arglist doesn't return correct results for `hash-table-save'")
   (is (equalp (list '&rest 'm::objects)
               (function-arglist 'concat))
       "function-arglist doesn't return correct results for `concat'"))

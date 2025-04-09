@@ -1497,14 +1497,14 @@ See also: `mapshort', `mapwrap', `mapfold', `maptable'"
 
 ;;; hash tables
 
-(defun save-hash-table (hash filename &key (if-exists :error))
-  "Save a hash table to a file. See `restore-hash-table' to load the saved table.
+(defun hash-table-save (hash filename &key (if-exists :error))
+  "Save a hash table to a file. See `hash-table-restore' to load the saved table.
 
 Example:
 
-;; (save-hash-table *my-hash* \"/home/user/blah.hash\" :if-exists :rename)
+;; (hash-table-save *my-hash* \"/home/user/blah.lisp\" :if-exists :rename)
 
-See also: `restore-hash-table'"
+See also: `hash-table-restore'"
   (with-open-file (stream filename :direction :output :if-exists if-exists :if-does-not-exist :create)
     (princ "(" stream)
     (let ((*print-readably* t))
@@ -1514,20 +1514,29 @@ See also: `restore-hash-table'"
     (fresh-line stream)
     (princ ")" stream)))
 
-(defun restore-hash-table (filename &rest make-hash-table-args)
-  "Restore a hash table from a file saved with the `save-hash-table' function.
+(defun hash-table-restore (filename &rest make-hash-table-args)
+  "Restore a hash table from a file saved with the `hash-table-save' function.
 
 Example:
 
-;; (restore-hash-table \"/home/user/blah.hash\")
+;; (hash-table-restore \"/home/user/blah.lisp\")
 ;; ;=> #<HASH-TABLE ...>
 
-See also: `save-hash-table'"
+See also: `hash-table-save'"
   (let ((hash (apply #'make-hash-table make-hash-table-args)))
-    (with-open-file (stream filename)
+    (with-open-file (stream filename :direction :input)
       (dolist (cell (read stream))
         (setf (gethash (car cell) hash) (cdr cell))))
     hash))
+
+(uiop:with-deprecation (:style-warning)
+  (defun save-hash-table (hash filename &key (if-exists :error))
+    "Deprecated alias for `hash-table-save'."
+    (hash-table-save hash filename :if-exists if-exists))
+
+  (defun restore-hash-table (filename &rest make-hash-table-args)
+    "Deprecated alias for `hash-table-restore'."
+    (apply 'hash-table-restore hash make-hash-table-args)))
 
 ;;; CLOS
 
