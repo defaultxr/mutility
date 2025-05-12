@@ -657,7 +657,7 @@ See also: `alexandria:string-designator'"
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
 
-(defun string-split (string &key (char-bag +whitespace-chars+) count include-empty max-num)
+(defun string-split (string &key (char-bag +whitespace-chars+) count include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
 
 Example:
@@ -672,25 +672,27 @@ See also: `string-split-by-string', `sequence-split', `str:split', `split-sequen
   (check-type string string)
   (check-type char-bag (or character list))
   (check-type count (or null (integer 1)))
-  (when max-num
-    (warn "~S's ~S argument is deprecated; use ~S instead." 'string-split :max-num :count)
-    (setf count max-num))
-  (let ((char-bag (ensure-list char-bag)))
-    (labels ((divider-p (char)
-               (position char char-bag))
-             (split-up (string num char-bag)
-               (when (and string
-                          (or include-empty
-                              (not (emptyp string))))
-                 (if (or (eql num 1)
-                         (not (position-if #'divider-p string)))
-                     (cons string nil)
-                     (cons (subseq string 0 (position-if #'divider-p string))
-                           (split-up (string-left-trim char-bag (subseq string (position-if #'divider-p string))) (when num (1- num)) char-bag))))))
-      (split-up (if include-empty
-                    string
-                    (string-left-trim char-bag string))
-                count char-bag))))
+  (prog ((char-bag (ensure-list char-bag))
+         (start 0)
+         end cur res)
+   next
+     (setf end (position-if (fn (position _ char-bag)) string)
+           cur (subseq string start end))
+     (when (or (not (emptyp cur))
+               include-empty)
+       (push cur res))
+     (when end
+       (setf string (subseq string (1+ end)))
+       (when (and count
+                  (= (1- count) (length res)))
+         (push (if include-empty
+                   string
+                   (string-left-trim char-bag string))
+               res)
+         (go done))
+       (go next))
+   done
+     (return-from string-split (nreverse res))))
 
 (defun string-split-by-string (string split-by &key count include-empty (char-comparison #'char=))
   "Split STRING into a list of substrings by partitioning by the string SPLIT-BY, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them. CHAR-COMPARISON is the function to use to compare characters; typically this is either `char=' (the default) for case-sensitive comparison or `char-equal' for case-insensitive comparison.
