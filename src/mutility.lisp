@@ -627,12 +627,13 @@ See also: `concat'"
   (finish-output)
   (lastcar objects))
 
-(defun numeric-char-p (char &key allow-minus allow-ratio)
+(defun numeric-char-p (char &key (allow-plus t) (allow-minus t) (allow-ratio t))
   "True if CHAR is a character that can be part of a floating point number.
 
 See also: `vowel-char-p', `cl:digit-char-p', `cl:alpha-char-p', `cl:graphic-char-p', `cl:standard-char-p'"
   (or (digit-char-p char)
       (member char (append (list #\.)
+                           (when allow-plus (list #\+))
                            (when allow-minus (list #\-))
                            (when allow-ratio (list #\/)))
               :test #'char=)))
