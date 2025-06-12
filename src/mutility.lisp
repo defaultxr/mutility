@@ -669,7 +669,7 @@ Example:
 ;; (string-split \"  foo  bar baz  qux  \" :count 2)
 ;; ;=> (\"foo\" \"bar baz  qux  \")
 
-See also: `string-split-by-string', `sequence-split', `str:split', `split-sequence:split-sequence'"
+See also: `string-split-by-string', `string-split-by-predicates', `sequence-split', `str:split', `split-sequence:split-sequence'"
   (check-type string string)
   (check-type char-bag (or character list))
   (check-type count (or null (integer 1)))
@@ -703,7 +703,7 @@ Example:
 ;; (string-split-by-string \"this - that - the-other thing\" \" - \")
 ;; ;=> (\"this\" \"that\" \"the-other thing\")
 
-See also: `string-split', `sequence-split', `str:split', `split-sequence:split-sequence'"
+See also: `string-split', `string-split-by-predicates', `sequence-split', `str:split', `split-sequence:split-sequence'"
   (check-type string string)
   (check-type split-by string)
   (check-type count (or null (integer 1)))
@@ -721,6 +721,31 @@ See also: `string-split', `sequence-split', `str:split', `split-sequence:split-s
                            (split-up (subseq string (+ split-by-length (divider-pos string)))
                                      (when num (1- num))))))))
       (split-up string count))))
+
+(defun string-split-by-predicates (string predicates)
+  "Split STRING by matching against each of the PREDICATES in order.
+
+Example:
+
+;; (string-split-by-predicates \"35s+2s\" '(numeric-char-p alpha-char-p numeric-char-p alpha-char-p))
+;; ;=> (\"35\" \"s\" \"+2\" \"s\")
+
+See also: `string-split', `string-split-by-string', `sequence-split', `str:split', `split-sequence:split-sequence'"
+  (check-type string string-designator)
+  (loop :with string := (string string)
+        :with length := (length string)
+        :with p-length := (length predicates)
+        :with start := 0
+        :for p-index :from 0 :below p-length
+        :for pred := (elt predicates p-index)
+        :for end := (position-if-not pred string :start start)
+        :for nstart := (when end
+                         (position-if (elt predicates (1+ p-index)) string :start end))
+        :collect (subseq string start (or end length)) :into res
+        :when (null end)
+          :do (return-from string-split-by-predicates (append res
+                                                              (make-list (- p-length (length res)) :initial-element "")))
+        :do (setf start (or nstart end))))
 
 (defun string-join* (strings &optional separator)
   "Join all non-nil elements of STRINGS together, separated by SEPARATOR.

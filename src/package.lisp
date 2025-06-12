@@ -39,6 +39,7 @@
    #:split-string
    #:string-split
    #:string-split-by-string
+   #:string-split-by-predicates
    #:string-join*
    #:string-replace-all*
    #:replace-all

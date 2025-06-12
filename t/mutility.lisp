@@ -219,6 +219,18 @@ the other thing" :char-bag (list #\space #\newline)))
              (string-split-by-string "foodDbarDdbaz" "dd" :char-comparison #'char-equal))
       "string-split-by-string with 'char-equal as its char-comparison argument does not split case-insensitively"))
 
+(test string-split-by-predicates
+  "Test the `string-split-by-predicates' function"
+  (is (equal (list "35" "s" "+2" "s")
+             (string-split-by-predicates "35s+2s" '(numeric-char-p alpha-char-p numeric-char-p alpha-char-p)))
+      "string-split-by-predicates returns incorrect results when all predicates should find matches")
+  (is (equal (list "23" "s" "+2" "")
+             (string-split-by-predicates "23s+2" (list 'numeric-char-p 'alpha-char-p 'numeric-char-p 'alpha-char-p)))
+      "string-split-by-predicates returns incorrect results when the final predicate should fail to match")
+  (is (equal (list "23" "s" "" "a")
+             (string-split-by-predicates "23s a" (list 'numeric-char-p 'alpha-char-p 'digit-char-p 'alpha-char-p)))
+      "string-split-by-predicates returns incorrect results when a middle predicate should fail to match"))
+
 (test string-join*
   "Test the `string-join*' function"
   (is (string= (string-join* (list "foo" "bar" "baz") "-")
