@@ -203,7 +203,7 @@ See also: `file-type'")
   (:documentation "Get a list of the items in DIRECTORY."))
 
 (defmethod directory-contents ((directory string))
-  (mapcar #'file-path (uiop:directory* (concat (string-right-trim (list #\slash) directory) "/*.*"))))
+  (mapcar #'file-path (uiop:directory* (concat (string-right-trim (list #\/) directory) "/*.*"))))
 
 (defmethod directory-contents ((directory pathname))
   (directory-contents (namestring directory)))
