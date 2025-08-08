@@ -1652,6 +1652,30 @@ See also: `find-class-slot'"
       (dolist (accessor (append readers writers))
         (setf (documentation accessor 'function) (documentation slot t))))))
 
+;;; asdf systems
+
+(defun auto-load-systems (extensions)
+  "Ensure extensions of the current library are loaded if the library being extended is already loaded. EXTENSIONS should be an alist mapping the name of the library (ASDF system) to extend with the name of the extension system.
+
+Example:
+
+;; (auto-load-systems '((\"foo\" \"bar/foo\"))) ; if the system FOO is loaded, also load the system BAR/FOO.
+
+Note that systems are only checked for when this function is run. Thus if the above example is in the system BAR, and BAR is loaded before FOO, then BAR/FOO will not be auto-loaded.
+
+Typically, you would want to put auto-load-systems in your library's ASDF system definition. For example:
+
+;; (defsystem #:my-system
+;;  ;; other stuff here...
+;;  :perform (load-op :after (op c)
+;;                    (uiop:symbol-call \"MUTILITY\" \"AUTO-LOAD-SYSTEMS\" '((\"system-to-extend\" \"system-containing-the-extension\")))))
+
+See also: `asdf:defsystem'"
+  (loop :for (dependency extension) :in extensions
+        :when (and (asdf:component-loaded-p dependency)
+                   (not (asdf:component-loaded-p extension)))
+          :do (asdf:load-system extension)))
+
 ;;; introspection
 
 (defun lisp-uptime ()

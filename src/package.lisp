@@ -115,6 +115,8 @@
    #:find-class-slot
    #:set-accessor-documentation-from-slots
 
+   #:auto-load-systems
+
    #:lisp-uptime
    #:current-seconds ; deprecated
    #:function-arglist
