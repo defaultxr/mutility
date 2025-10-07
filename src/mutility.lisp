@@ -238,7 +238,7 @@ See also: `fn'"
               arg-symbols))
       `(lambda (,@(nreverse gensyms)) (funcall ,@(nreverse arg-symbols))))))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defmacro with-access (slots instance &body body)
     "Deprecated; recommended to use metabang-bind's \"bind\" macro instead.
 
@@ -540,7 +540,7 @@ Example:
 See also: `alexandria:ensure-symbol', `string-downcase'"
   (intern (string-upcase string) package))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun my-intern (string &optional (package *package*))
     "Deprecated alias for `upcase-intern'."
     (upcase-intern string package))
@@ -653,7 +653,7 @@ See also: `numeric-char-p', `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-ch
 See also: `alexandria:string-designator'"
   (typep object 'string-designator))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun split-string (&rest rest)
     "Deprecated alias for `string-split'."
     (apply #'string-split rest)))
@@ -785,7 +785,7 @@ See also: `cl-ppcre:regex-replace-all'"
           :when pos :do (write-string replacement out)
             :while pos)))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun replace-all (string part replacement &key (test #'char=))
     "Deprecated alias for `string-replace-all*'."
     (string-replace-all* string part replacement :test test)))
@@ -1074,15 +1074,6 @@ Examples:
 See also: `cl:round', `floor-by', `ceiling-by'"
   (* (round (/ number by)) by))
 
-(uiop:with-deprecation (:error)
-  (defun round-by-direction (number &optional (by 1))
-    "Deprecated; use either `floor-by', `ceiling-by', or `round-by' instead."
-    (if (zerop (mod number by))
-        number
-        (let* ((positive (plusp by))
-               (diff (cadr (multiple-value-list (funcall (if positive #'floor #'ceiling) number (abs by))))))
-          (funcall (if positive #'+ #'-) number (funcall (if positive #'- #'+) (abs by) diff))))))
-
 ;;; randomness
 
 (defun random-coin (&optional (probability 0.5))
@@ -1139,7 +1130,7 @@ See also: `random-range', `exponential-random-range', `alexandria:gaussian-rando
 
 ;;; lists and sequences
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun length-upto (sequence &optional (max 10))
     "Deprecated function; use `alexandria:length=' instead.
 
@@ -1156,12 +1147,12 @@ See also: `alexandria:length='"
           :do (incf res)
           :finally (return res))))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun list-length-upto (list &optional (max 10))
     "Deprecated function; use `alexandria:length=' instead."
-    (length-upto list max)))
+    (length= max list)))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun list-length>= (list n)
     "Deprecated function; use `serapeum:length>=' or `alexandria:length=' instead.
 
@@ -1184,7 +1175,7 @@ See also: `serapeum:length>=', `alexandria:length='"
 True if LIST is more than N in length.
 
 See also: `serapeum:length>', `alexandria:length='"
-    (list-length>= list (1+ n))))
+    (> (list-length list) n)))
 
 (defun nth-wrap (n list)
   "Get the Nth item in LIST, wrapping the index if out of range. Returns the number of times \"wrapped\" as a second value.
@@ -1319,9 +1310,11 @@ See also: `list-left-trim', `cl:string-left-trim'"
   (let ((bag (ensure-list bag)))
     (member-if-not (lambda (x) (position x bag :test test)) list)))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defmacro affixnew (place thing)
-    "Affix THING to the end of PLACE if it's not already a member.
+    "Deprecated; `serapeum:push-end-new' is recommended instead.
+
+Affix THING to the end of PLACE if it's not already a member.
 
 See also: `alexandria:appendf', `cl:pushnew'."
     (once-only (thing)
@@ -1389,8 +1382,8 @@ See also: `sequence-split', `cl:read'"
         :if (and close-p (zerop balance))
           :collect (subseq sequence (1+ start) idx)))
 
-(uiop:with-deprecation (:style-warning)
-  (defun insert-if (function list item) ; FIX: remove. this is only used cl-patterns' eseq class functionality.
+(uiop:with-deprecation (:warning)
+  (defun insert-if (function list item)
     "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the input list is destructively modified.
 
 Example:
@@ -1557,7 +1550,7 @@ See also: `hash-table-save'"
         (setf (gethash (car cell) hash) (cdr cell))))
     hash))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun save-hash-table (hash filename &key (if-exists :error))
     "Deprecated alias for `hash-table-save'."
     (hash-table-save hash filename :if-exists if-exists))
@@ -1682,7 +1675,7 @@ See also: `asdf:defsystem'"
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun current-seconds ()
     "Deprecated alias for `lisp-uptime'."
     (lisp-uptime)))
@@ -1761,7 +1754,7 @@ See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
                          (joiner (cdr compo))))))
       (joiner path-components t))))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun join-pathnames (&rest filenames)
     "Deprecated alias for `join-path-components'."
     (apply 'join-path-components filenames)))

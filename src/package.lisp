@@ -36,13 +36,13 @@
    #:numeric-char-p
    #:vowel-char-p
    #:string-designator-p
-   #:split-string
+   #:split-string ; deprecated
    #:string-split
    #:string-split-by-string
    #:string-split-by-predicates
    #:string-join*
    #:string-replace-all*
-   #:replace-all
+   #:replace-all ; deprecated
    #:parse-boolean
    #:parse-number-and-string
    #:parse-friendly-bytes-string
@@ -64,7 +64,6 @@
    #:floor-by
    #:ceiling-by
    #:round-by
-   #:round-by-direction ; deprecated
 
    #:random-coin
    #:random-range

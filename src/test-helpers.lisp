@@ -242,7 +242,7 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
                                   (symbol-all-docstrings symbol))))
         (push (list* symbol missing) results)))))
 
-(uiop:with-deprecation (:style-warning)
+(uiop:with-deprecation (:warning)
   (defun undocumented-symbols (package)
     "Deprecated alias for `package-undocumented-symbols'."
     (package-undocumented-symbols package))

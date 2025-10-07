@@ -595,15 +595,6 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (equal (list "bar" "qux [this]")
              (balanced-subsequences "foo [bar] baz [qux [this]] that" :open #\[ :close #\] :test #'char=))))
 
-(test insert-if
-  "Test the `insert-if' function"
-  (is (equal (list -2 -1 0 1 2)
-             (insert-if #'plusp (list -2 -1 1 2) 0))
-      "insert-if doesn't insert to the correct location")
-  (is (equal (list 0)
-             (insert-if #'plusp nil 0))
-      "insert-if doesn't work if the input list is empty"))
-
 (test function-designator
   "Test the `function-designator' type and `function-designator-p' function"
   (is-false (function-designator-p 0))
