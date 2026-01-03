@@ -73,7 +73,7 @@
   (uiop:native-namestring
    (uiop:ensure-pathname (if (char= #\~ (char file 0))
                              (concat (namestring (user-homedir-pathname))
-                                     (subseq file 2))
+                                     (subseq file 1))
                              file)
                          :defaults (uiop:get-pathname-defaults)
                          :dot-dot :up
