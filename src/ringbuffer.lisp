@@ -44,6 +44,16 @@ See also: `ringbuffer-size', `ringbuffer-index', `ringbuffer-initial-element', `
                     :initial-element initial-element
                     :array (make-array size :initial-element initial-element)))
 
+(defun ringbuffer-oldest-index (ringbuffer)
+  (mod (+ (ringbuffer-index ringbuffer)
+          (- (ringbuffer-size ringbuffer)
+             (ringbuffer-length ringbuffer)))
+       (ringbuffer-size ringbuffer)))
+
+(defun ringbuffer-newest-index (ringbuffer)
+  (- (ringbuffer-size ringbuffer)
+     (ringbuffer-index ringbuffer)))
+
 (defun ringbuffer-elt (ringbuffer index)
   "Get the element at INDEX in RINGBUFFER. Negative indexes are from the most recently-pushed elements, while zero or positive are from the oldest. So -1 is the most recently-pushed item, and -2 is the second most. 0 is the oldest item in the ringbuffer, and 1 is the second oldest.
 
@@ -107,12 +117,24 @@ See also: `ringbuffer-oldest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
   (loop :for idx :from -1 :downto (- (or n (ringbuffer-length ringbuffer)))
         :collect (ringbuffer-elt ringbuffer idx)))
 
+(defun ringbuffer-from-newest (ringbuffer index)
+  "Get the item INDEX away from the most recently-added in RINGBUFFER.
+
+See also: `ringbuffer-newest'"
+  (car (ringbuffer-newest ringbuffer (1+ index))))
+
 (defun ringbuffer-oldest (ringbuffer &optional n)
   "Get a list of the oldest N items in RINGBUFFER, from least to most recent.
 
 See also: `ringbuffer-newest', `ringbuffer-elt', `do-ringbuffer', `ringbuffer'"
   (loop :for idx :from 0 :below (or n (ringbuffer-length ringbuffer))
         :collect (ringbuffer-elt ringbuffer idx)))
+
+(defun ringbuffer-from-oldest (ringbuffer index)
+  "Get the item INDEX away from the least recently-added in RINGBUFFER.
+
+See also: `ringbuffer-oldest'"
+  (car (ringbuffer-oldest ringbuffer (1+ index))))
 
 (defmacro do-ringbuffer ((var ringbuffer &optional result-form) &body body)
   "Execute BODY once for each element in RINGBUFFER from oldest to newest, with VAR bound to the element, then return RESULT-FORM.

@@ -142,7 +142,9 @@
    #:ringbuffer-pop
    #:ringbuffer-get
    #:ringbuffer-newest
+   #:ringbuffer-from-newest
    #:ringbuffer-oldest
+   #:ringbuffer-from-oldest
    #:do-ringbuffer
 
    ;; queue.lisp
