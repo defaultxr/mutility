@@ -763,7 +763,7 @@ See also: `concat', `serapeum:string-join'"
                :if item
                  :collect item
                :if next
-                 :collect separator)))
+                 :collect (string separator))))
 
 ;; NOTE: shouldn't use this for long strings cuz it's not optimized
 ;; grabbed from http://cl-cookbook.sourceforge.net/strings.html
