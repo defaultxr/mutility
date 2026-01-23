@@ -73,10 +73,11 @@
 
 (test locate-dominating-file
   "Test the `locate-dominating-file' function"
+  ;; FIX
   )
 
 (test file-finder
   "Test the `file-finder' function"
+  ;; FIX
   )
-
 

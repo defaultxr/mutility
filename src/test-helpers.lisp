@@ -1,8 +1,18 @@
 ;;;; test-helpers - functions that may be helpful for writing tests
+;; FIX: use `uiop:input-string' - If the desired input is a string, return that string; otherwise slurp the input into a string and return that.
+;; FIX: add a test helper to test that the exported symbols are listed in the system :export in the same order they appear in their respective files
+;; FIX: add a function to auto-generate org-mode markup that summarizes each of the exported symbols:
+;; - by default, separate into one header per file (with the header linked to the file). under each heading should be each exported symbol from that file with the first sentence of the docstring
+;; - keyword argument to include the full docstring
+;; - keyword argument to exclude the "see also"
+;; - keyword argument to only include the first line
+;; FIX: add a test helper that checks for duplicate symbols in the :export of the defpackage
 
 (in-package #:mutility)
 
 ;;; org-mode
+
+;; fundamental tests
 
 (defun org-header-line-p (line)
   "True if LINE is an org header line (i.e. starts with at least one asterisk and a space). Returns two values: the header text, and the header level (number of asterisks).
@@ -45,6 +55,8 @@ See also: `org-header-line-p', `stream-extract-org-lists', `file-extract-org-lis
          (string= "- " (subseq line num-spaces (+ 2 num-spaces)))
          (values (subseq line (+ 2 num-spaces))
                  (1+ num-spaces)))))
+
+;; convenience wrappers
 
 (defun stream-extract-org-headers (stream)
   "Get a list of the text of all header lines in STREAM.
@@ -128,7 +140,7 @@ See also: `file-extract-org-links', `balanced-subsequences'"
 (defun file-extract-org-links (file)
   "Get all the Org-Mode-formatted links in FILE.
 
-See also: `stream-extract-org-links'"
+See also: `string-extract-org-links', `stream-extract-org-links', `balanced-subsequences'"
   (with-open-file (stream file :if-does-not-exist :error)
     (stream-extract-org-links stream)))
 

@@ -222,8 +222,7 @@ Examples:
 
 See also: `fn'"
   (flet ((<>-p (i)
-           (and (symbolp i)
-                (string= '<> i))))
+           (and (symbolp i) (string= i "<>"))))
     (let* ((gensyms (when (<>-p func)
                       (list (gensym))))
            (arg-symbols (if (<>-p func)
@@ -589,7 +588,7 @@ See also: `friendly-string', `parse-boolean', `friendly-ratio-string', `friendly
 
 ;;; strings
 
-(define-constant +whitespace-chars+ (list #\space #\tab #\newline)
+(define-constant +whitespace-chars+ (list #\space #\tab #\newline) ; FIX: include more, probably
   :test #'equal
   :documentation "List of characters that represent whitespace like space and tab.")
 
@@ -794,11 +793,10 @@ See also: `cl-ppcre:regex-replace-all'"
   "Parse STRING as a boolean, returning either t or nil, or DEFAULT if it is not a known boolean string.
 
 See also: `cl:parse-integer', `url-p'"
-  (cond
-    ((null string) default)
-    ((member string (list "t" "1" "true" "y" "yes" "e" "enable" "enabled" "on") :test #'string-equal) t)
-    ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
-    (t default)))
+  (cond ((null string) default)
+        ((member string (list "t" "1" "true" "y" "yes" "e" "enable" "enabled" "on") :test #'string-equal) t)
+        ((member string (list "nil" "f" "0" "false" "n" "no" "d" "disable" "disabled" "off") :test #'string-equal) nil)
+        (t default)))
 
 (defun parse-number-and-string (input)
   "Get a list consisting of the input number and any string that comes after it (excluding spaces).
@@ -1003,7 +1001,7 @@ See also: `friendly-bytes'"
 ;;; math
 
 (defun approx= (number1 number2 &optional (max-dist 0.0001))
-  "Test whether NUMBER1 and NUMBER2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
+  "True if NUMBER1 and NUMBER2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
 
 See also: `near-zero-p'"
   (>= max-dist (abs (- number1 number2))))
@@ -1404,15 +1402,21 @@ Example:
 ;;; functions
 
 (defun funcallable-object-p (object)
-  "True if OBJECT is a funcallable object."
+  "True if OBJECT is a funcallable object.
+
+See also: `function-designator', `function-designator-p', `ensure-funcall'"
   (closer-mop:subclassp (class-of (class-of object)) 'closer-mop:funcallable-standard-class))
 
 (deftype function-designator ()
-  "An object that can be used to designate a function, i.e. a function, an `fboundp' symbol, or a funcallable object."
+  "An object that can be used to designate a function, i.e. a function, an `fboundp' symbol, or a funcallable object.
+
+See also: `funcallable-object-p', `function-designator-p', `ensure-funcall'"
   '(or function (satisfies funcallable-object-p) (and symbol (satisfies fboundp))))
 
 (defun function-designator-p (object)
-  "True if OBJECT is a `function-designator', i.e. a string or pathname."
+  "True if OBJECT is a `function-designator', i.e. a string or pathname.
+
+See also: `funcallable-object-p', `function-designator'"
   (typep object 'function-designator))
 
 ;;; "operator adverbs"
@@ -1781,19 +1785,17 @@ See also: `uiop:tmpize-pathname', `uiop:temporary-directory'"
   (uiop:ensure-pathname directory :ensure-directories-exist t)
   (let* ((name (or name
                    (local-time:format-timestring nil (local-time:now) ; FIX: make the local-time dependency optional?
-                                                 :format (list
-                                                          (list :year 4) #\-
-                                                          (list :month 2) #\-
-                                                          (list :day 2) #\-
-                                                          (list :hour 2) #\-
-                                                          (list :min 2) #\-
-                                                          (list :sec 2)))))
+                                                 :format (list (list :year 4) #\-
+                                                               (list :month 2) #\-
+                                                               (list :day 2) #\-
+                                                               (list :hour 2) #\-
+                                                               (list :min 2) #\-
+                                                               (list :sec 2)))))
          (directory (etypecase directory
                       ((or string pathname list) directory)))
          (type (typecase extension
                  (null nil)
-                 (symbol
-                  (string-downcase extension))
+                 (symbol (string-downcase extension))
                  (string extension)))
          (attempt 0))
     (flet ((gen-filename (attempt)

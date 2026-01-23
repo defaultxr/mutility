@@ -63,11 +63,15 @@
          (,name (make-file ,(car lambda-list)))))))
 
 (define-file-method file-path (file)
-  "Get the full unabbreviated path to FILE as a string."
+  "Get the full unabbreviated path to FILE as a string.
+
+See also: `uiop:absolute-pathname-p', `uiop:relative-pathname-p'"
   )
 
 (defgeneric file-path (file)
-  (:documentation "Get the full unabbreviated path to FILE as a string."))
+  (:documentation "Get the full unabbreviated path to FILE as a string.
+
+See also: `uiop:absolute-pathname-p', `uiop:relative-pathname-p'"))
 
 (defmethod file-path ((file string))
   (uiop:native-namestring
