@@ -498,6 +498,11 @@ the other thing" :char-bag (list #\space #\newline)))
          (nth-value 1 (elt-wrap (list 0 1 2) 7)))
       "elt-wrap's second return value is incorrect"))
 
+(test pprint-plist
+  "Test the `pprint-plist' function"
+  ;; FIX
+  )
+
 (test getf+
   "Test the `getf+' function"
   ;; FIX

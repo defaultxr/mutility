@@ -72,6 +72,7 @@
 
    #:nth-wrap
    #:elt-wrap
+   #:pprint-plist
    #:find-if*
    #:find-member
    #:most

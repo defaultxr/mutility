@@ -1148,6 +1148,11 @@ See also: `nth-wrap'"
   (multiple-value-bind (wraps mod) (floor n (length sequence))
     (values (elt sequence mod) wraps)))
 
+(defun pprint-plist (plist)
+  "Pretty-print PLIST."
+  (loop :for (key value) :on plist
+        :do (format t "~&~S ~S~%" key value)))
+
 (defun find-if* (predicate sequence) ; FIX: need to implement `find-if''s other arguments
   "Like `find-if', but return the index of the found item as a second value.
 
