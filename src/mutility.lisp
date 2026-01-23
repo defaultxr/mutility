@@ -1471,6 +1471,15 @@ See also: `mapshort', `mapwrap', `mapfold', `maptable'"
 
 ;;; hash tables
 
+(defun hash-values-top (hash &key (count 10) (predicate #'>))
+  "Get a plist of the COUNT highest-valued keys in HASH, mapped to their values."
+  (let ((sorted (sort (hash-table-keys hash) predicate
+                      :key (lambda (key)
+                             (gethash key hash)))))
+    (loop :for key :in sorted
+          :repeat count
+          :append (list key (gethash key hash)))))
+
 (defun hash-table-save (hash filename &key (if-exists :error))
   "Save a hash table to a file. See `hash-table-restore' to load the saved table.
 

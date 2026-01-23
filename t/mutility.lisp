@@ -648,6 +648,14 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (equal (list 11 12 13 14 12 13 14 15 12 13 14 15 13 14 15 16 13 14 15 16 14 15 16 17)
              (mapcross #'+ (list 1 2 3) (list 4 5) (list 6 7 8 9)))))
 
+(test hash-values-top
+  "Test the `hash-values-top' function"
+  (let ((hash (plist-hash-table (list :foo 1 :bar 2 :baz 3 :qux 4 :quux 5 :spam 6 :eggs 7 :yee 8 :no-way 9 :still-going 10))))
+    (is (equal (list :still-going 10 :no-way 9 :yee 8 :eggs 7 :spam 6)
+               (hash-values-top hash :count 5)))
+    (is (equal (list :foo 1 :bar 2 :baz 3 :qux 4 :quux 5)
+               (hash-values-top hash :count 5 :predicate #'<)))))
+
 (test hash-table-save
   "Test the `hash-table-save' function"
   ;; FIX

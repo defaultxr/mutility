@@ -98,6 +98,7 @@
    #:maptable
    #:mapcross
 
+   #:hash-values-top
    #:hash-table-save
    #:hash-table-restore
    #:save-hash-table ; deprecated
