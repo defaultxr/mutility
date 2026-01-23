@@ -58,6 +58,7 @@
    #:rot13
 
    #:approx=
+   #:sequence-approx=
    #:near-zero-p
    #:wrap
    #:fold

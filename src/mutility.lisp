@@ -1003,8 +1003,16 @@ See also: `friendly-bytes'"
 (defun approx= (number1 number2 &optional (max-dist 0.0001))
   "True if NUMBER1 and NUMBER2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
 
-See also: `near-zero-p'"
+See also: `sequence-approx=', `near-zero-p'"
   (>= max-dist (abs (- number1 number2))))
+
+(defun sequence-approx= (sequence1 sequence2 &optional (max-dist 0.0001))
+  "True if SEQUENCE1 and SEQUENCE2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
+
+See also: `approx=', `near-zero-p'"
+  (every #'identity
+         (mapcar (lambda (n1 n2) (approx= n1 n2 max-dist))
+                 (coerce sequence1 'list) (coerce sequence2 'list))))
 
 (defun near-zero-p (number &optional (max-dist 0.0001))
   "True if NUMBER is within MAX-DIST of zero. Helps guard against division by zero.

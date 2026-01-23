@@ -361,6 +361,11 @@ the other thing" :char-bag (list #\space #\newline)))
   (is-true (near-zero-p -0.0001 0.0001))
   (is-true (near-zero-p 0.1 0.1)))
 
+(test sequence-approx=
+  "Test the `sequence-approx=' function"
+  (is-true (sequence-approx= (vector 0.0001 -0.0001) (vector -0.0001 0.0001) 0.0002))
+  (is-false (sequence-approx= (vector 0 0) (vector 1 0) 0.1)))
+
 (test wrap
   "Test the `wrap' function"
   (is (= 3
