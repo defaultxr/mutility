@@ -57,6 +57,7 @@
    #:pretty-print-tree
    #:rot13
 
+   #:pow2
    #:approx=
    #:sequence-approx=
    #:near-zero-p

@@ -1000,6 +1000,10 @@ See also: `friendly-bytes'"
 
 ;;; math
 
+(defun pow2 (n)
+  "Get the Nth power of 2."
+  (expt 2 n))
+
 (defun approx= (number1 number2 &optional (max-dist 0.0001))
   "True if NUMBER1 and NUMBER2 are \"approximately\" equal, i.e. within MAX-DIST of each other.
 
