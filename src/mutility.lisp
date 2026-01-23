@@ -237,45 +237,6 @@ See also: `fn'"
               arg-symbols))
       `(lambda (,@(nreverse gensyms)) (funcall ,@(nreverse arg-symbols))))))
 
-(uiop:with-deprecation (:error)
-  (defmacro with-access (slots instance &body body)
-    "Deprecated; recommended to use metabang-bind's \"bind\" macro instead.
-
-Like `with-accessors' and `with-slots' combined; any slots provided as symbols are assumed to refer to both the variable name and the accessor. If no such accessor exists, just grab the slot as per `with-slots'.
-
-Example:
-
-If FOO is a function and BAR is not:
-
-;; (with-access (foo bar) blah
-;;   (format t \"~S ~S~%\" foo bar))
-
-...is the same as:
-
-;; (with-accessors ((foo foo)) blah
-;;   (with-slots (bar) blah
-;;     (format t \"~S ~S~%\" foo bar)))
-
-See also: `cl:with-accessors', `cl:with-slots'"
-    (multiple-value-bind (accessors slots)
-        (uiop:while-collecting (a s)
-          (dolist (slot slots)
-            (cond
-              ((listp slot)
-               (a slot))
-              ((fboundp slot)
-               (a (list slot slot)))
-              (t
-               (s slot)))))
-      (let ((slots-form (if slots
-                            `((with-slots (,@slots) ,instance
-                                ,@body))
-                            body)))
-        (if accessors
-            `(with-accessors (,@accessors) ,instance
-               ,@slots-form)
-            (car slots-form))))))
-
 (defclass funcallable-wrapper ()
   ((funcall-function :initarg funcall-function :accessor funcallable-wrapper-funcall-function :type function :documentation "The function to call when this object is `funcall'ed."))
   (:documentation "Simple wrapper class to apply funcallable object functionality to funcallable objects defined with `defclass+'.")
@@ -539,19 +500,6 @@ Example:
 See also: `alexandria:ensure-symbol', `string-downcase'"
   (intern (string-upcase string) package))
 
-(uiop:with-deprecation (:error)
-  (defun my-intern (string &optional (package *package*))
-    "Deprecated alias for `upcase-intern'."
-    (upcase-intern string package))
-
-  (defun reintern (symbol &optional (package *package*))
-    "Deprecated function; recommend using `alexandria:ensure-symbol' instead."
-    (intern (symbol-name symbol) package))
-
-  (defun un-intern (symbol)
-    "Deprecated alias for `string-downcase'."
-    (string-downcase symbol)))
-
 (defun friendly-string (input)
   "Return INPUT as a string with all non-letter, non-number, and non-hyphen characters removed.
 
@@ -652,10 +600,6 @@ See also: `numeric-char-p', `cl:alpha-char-p', `cl:digit-char-p', `cl:graphic-ch
 See also: `alexandria:string-designator'"
   (typep object 'string-designator))
 
-(uiop:with-deprecation (:error)
-  (defun split-string (&rest rest)
-    "Deprecated alias for `string-split'."
-    (apply #'string-split rest)))
 
 (defun string-split (string &key (char-bag +whitespace-chars+) count include-empty)
   "Split STRING into a list of substrings by partitioning by the characters in CHAR-BAG, optionally to a list of maximum size COUNT. If INCLUDE-EMPTY is true, include empty strings in the resulting list (and length count); otherwise exclude them.
@@ -784,7 +728,7 @@ See also: `cl-ppcre:regex-replace-all'"
           :when pos :do (write-string replacement out)
             :while pos)))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun replace-all (string part replacement &key (test #'char=))
     "Deprecated alias for `string-replace-all*'."
     (string-replace-all* string part replacement :test test)))
@@ -1140,7 +1084,7 @@ See also: `random-range', `exponential-random-range', `alexandria:gaussian-rando
 
 ;;; lists and sequences
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun length-upto (sequence &optional (max 10))
     "Deprecated function; use `alexandria:length=' instead.
 
@@ -1158,11 +1102,6 @@ See also: `alexandria:length='"
           :finally (return res))))
 
 (uiop:with-deprecation (:error)
-  (defun list-length-upto (list &optional (max 10))
-    "Deprecated function; use `alexandria:length=' instead."
-    (length= max list)))
-
-(uiop:with-deprecation (:warning)
   (defun list-length>= (list n)
     "Deprecated function; use `serapeum:length>=' or `alexandria:length=' instead.
 
@@ -1320,21 +1259,6 @@ See also: `list-left-trim', `cl:string-left-trim'"
   (let ((bag (ensure-list bag)))
     (member-if-not (lambda (x) (position x bag :test test)) list)))
 
-(uiop:with-deprecation (:error)
-  (defmacro affixnew (place thing)
-    "Deprecated; `serapeum:push-end-new' is recommended instead.
-
-Affix THING to the end of PLACE if it's not already a member.
-
-See also: `alexandria:appendf', `cl:pushnew'."
-    (once-only (thing)
-      `(unless (position ,thing ,place)
-         (appendf ,place (list ,thing)))))
-
-  (defun split-sequence (sequence delimiter) ; conflicts with `split-sequence:split-sequence' which is used by serapeum; use sequence-split instead.
-    "Deprecated alias for `sequence-split'."
-    (sequence-split sequence delimiter)))
-
 (defun sequence-split (sequence delimiter &key (test #'position) (offset (if (typep delimiter 'sequence) (length delimiter) 1)))
   "Split SEQUENCE by searching for instances of DELIMITER using TEST. After finding a match for DELIMITER, the next search is run on the subsequence of SEQUENCE OFFSET from the location of the match.
 
@@ -1392,7 +1316,7 @@ See also: `sequence-split', `cl:read'"
         :if (and close-p (zerop balance))
           :collect (subseq sequence (1+ start) idx)))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun insert-if (function list item)
     "Destructively insert ITEM into LIST at the position where FUNCTION is true. If the function doesn't return true, the item is inserted at the end of the list. Similar to `nreverse', the input list is destructively modified.
 
@@ -1574,7 +1498,7 @@ See also: `hash-table-save'"
         (setf (gethash (car cell) hash) (cdr cell))))
     hash))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun save-hash-table (hash filename &key (if-exists :error))
     "Deprecated alias for `hash-table-save'."
     (hash-table-save hash filename :if-exists if-exists))
@@ -1714,7 +1638,7 @@ See also: `asdf:defsystem'"
   "Get the number of seconds that Lisp has been running for."
   (/ (get-internal-real-time) internal-time-units-per-second))
 
-(uiop:with-deprecation (:warning)
+(uiop:with-deprecation (:error)
   (defun current-seconds ()
     "Deprecated alias for `lisp-uptime'."
     (lisp-uptime)))
@@ -1792,11 +1716,6 @@ See also: `cl:merge-pathnames', `uiop:merge-pathnames*'"
                        (when (cdr compo)
                          (joiner (cdr compo))))))
       (joiner path-components t))))
-
-(uiop:with-deprecation (:error)
-  (defun join-pathnames (&rest filenames)
-    "Deprecated alias for `join-path-components'."
-    (apply 'join-path-components filenames)))
 
 (defun open-url (url)
   "Open a URL via the OS's default application."

@@ -40,7 +40,7 @@
                                              ;; check against thundersnow only if it is already loaded
                                              ;; once thundersnow is on quicklisp we can probably just always check it
                                              #+#.(cl:if (cl:find-package "THUNDERSNOW") '(:and) '(:or)) 'thundersnow
-                                             ;; FIX: check against serapeum as well in the future; right now we conflict with its split-sequence and concat functions
+                                             ;; FIX: check against serapeum as well in the future; right now we conflict with its concat function.
                                              'alexandria 'cl-patterns)))
     (is-false conflicts
               "Symbols exported by mutility conflict with symbols from other systems: ~S" conflicts)))

@@ -8,7 +8,6 @@
    #:a
    #:fn
    #:cut
-   #:with-access ; deprecated
    #:defclass+
    #:no-dictionary-entry
    #:no-dictionary-entry-entry
@@ -22,11 +21,6 @@
 
    #:upcase-intern
 
-   ;; deprecated
-   #:my-intern
-   #:reintern
-   #:un-intern
-
    #:friendly-string
    #:friendly-symbol
 
@@ -36,7 +30,6 @@
    #:numeric-char-p
    #:vowel-char-p
    #:string-designator-p
-   #:split-string ; deprecated
    #:string-split
    #:string-split-by-string
    #:string-split-by-predicates
@@ -74,7 +67,6 @@
 
    ;; deprecated
    #:length-upto
-   #:list-length-upto
    #:list-length>=
    #:list-length>
 
@@ -89,8 +81,6 @@
    ;; #:repeat ; conflicts with iterate
    #:left-trim
    #:list-left-trim
-   #:affixnew ; deprecated
-   #:split-sequence ; deprecated
    #:sequence-split
    #:sequence-replace
    #:balanced-subsequences
@@ -129,7 +119,6 @@
    #:pathname-designator
    #:pathname-designator-p
    #:join-path-components
-   #:join-pathnames ; deprecated
    #:open-url
    #:generate-temporary-file-name
 
