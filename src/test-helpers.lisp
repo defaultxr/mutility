@@ -10,6 +10,12 @@
 
 (in-package #:mutility)
 
+;;; general
+
+(define-constant +documentation-types+ (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type)
+  :test #'equal
+  :documentation "The set of standard Common Lisp documentation types.")
+
 ;;; org-mode
 
 ;; fundamental tests
@@ -167,7 +173,7 @@ See also: `string-extract-org-links', `stream-extract-org-links', `balanced-subs
 (defun symbol-all-docstrings (symbol)
   "Get a list of all docstrings for SYMBOL."
   (let (res)
-    (dolist (type (list 'variable 'function 'type 'structure 'setf 'method-combination) res)
+    (dolist (type +documentation-types+ res)
       (when-let ((doc (documentation symbol type)))
         (push doc res)))))
 
@@ -229,10 +235,6 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
                      'asdf:system-source-control))))
 
 ;;; packages
-
-(define-constant +documentation-types+ (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type)
-  :test #'equal
-  :documentation "The set of standard Common Lisp documentation types.")
 
 (defun package-undocumented-symbols (package)
   "Get a list of all the undocumented external symbols in PACKAGE."
