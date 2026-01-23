@@ -201,16 +201,42 @@ See also: `file-type'")
   (uiop:native-namestring (file-parent-directory (uiop:parse-native-namestring file))))
 
 (defmethod file-parent-directory ((file pathname))
-  (make-pathname :directory (butlast (pathname-directory file))))
+  (uiop:pathname-parent-directory-pathname file))
 
-(defgeneric directory-contents (directory)
-  (:documentation "Get a list of the items in DIRECTORY."))
+(defun file-parent-directories (file)
+  "Get a list of the containing and parent directories of FILE.
 
-(defmethod directory-contents ((directory string))
-  (mapcar #'file-path (uiop:directory* (concat (string-right-trim (list #\/) directory) "/*.*"))))
+See also: `locate-dominating-file'"
+  (labels ((parents (dir)
+             (list* dir (let ((parent (file-parent-directory dir)))
+                          (unless (string= dir parent)
+                            (parents parent))))))
+    (list* (file-directory file)
+           (parents (file-parent-directory file)))))
 
-(defmethod directory-contents ((directory pathname))
-  (directory-contents (namestring directory)))
+(defun file-path-in-directory-p (file directory) ; FIX: &optional (allow-subdirectories t)
+  "True if FILE's name suggests it is inside DIRECTORY." ; FIX: With ALLOW-SUBDIRECTORIES, also true if FILE is in a subdirectory of DIRECTORY.
+  (let* ((file (file-path file))
+         (directory (file-path directory))
+         (flen (length file))
+         (dlen (length directory)))
+    (when (>= flen dlen)
+      (string= file directory :end1 dlen :end2 dlen))))
+
+(defun file-relativize (file &key (relative-to ) (if-not-in t))
+  "Get the path to FILE, relative to RELATIVE-TO. IF-NOT-IN determines how to proceed if FILE is not inside RELATIVE-TO:
+
+- If t, relativize anyway.
+- If nil or :absolute, return the full path to FILE.
+- If :error, then raise an error.
+
+See also: `file-path-in-directory-p'"
+  (if (or (file-path-in-directory-p file relative-to)
+          (eql if-not-in t))
+      (namestring (uiop:enough-pathname file relative-to))
+      (ecase if-not-in
+        (:error (error "File ~S is not inside ~S" file relative-to))
+        ((:absolute nil) (file-path file)))))
 
 ;;; file "types"
 
@@ -259,6 +285,15 @@ This is equivalent to the Emacs function of the same name."
   ;; FIX: make aliases of keyword arguments for their unix "find" equivalent
   (error "~S is not implemented yet." 'file-finder))
 
+(defgeneric directory-contents (directory)
+  (:documentation "Get a list of the items in DIRECTORY."))
+
+(defmethod directory-contents ((directory string))
+  (mapcar #'file-path (uiop:directory* (concat (string-right-trim (list #\/) directory) "/*.*"))))
+
+(defmethod directory-contents ((directory pathname))
+  (directory-contents (namestring directory)))
+
 (export '(ensure-directory-trailing-slash
 
           file-path
@@ -276,8 +311,11 @@ This is equivalent to the Emacs function of the same name."
 
           file-directory
           file-parent-directory
-
-          directory-contents
+          file-parent-directories
+          file-path-in-directory-p
+          file-relativize
 
           locate-dominating-file
-          file-finder))
+          file-finder
+
+          directory-contents))

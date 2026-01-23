@@ -48,27 +48,53 @@
 (test file-exists-p
   "Test the `file-exists-p' function"
   (uiop:with-temporary-file (:pathname filename)
-    (is-true (file-exists-p filename))
-    (is-true (file-exists-p (pathname filename)))))
+    (is (file-exists-p filename))
+    (is (file-exists-p (pathname filename)))))
 
 (test file-file-p
   "Test the `file-file-p' function"
   (uiop:with-temporary-file (:pathname temp-file)
-    (is-true (file-file-p temp-file))))
+    (is (file-file-p temp-file))))
 
 (test file-directory-p
   "Test the `file-directory-p' function"
   #+unix (is-true (file-directory-p "/tmp"))
-  (is-true (file-directory-p (uiop:temporary-directory))))
+  (is (file-directory-p (uiop:temporary-directory))))
 
 (test file-directory
   "Test the `file-directory' function"
   (let ((temp-dir (uiop:temporary-directory)))
-    (is-true (string= (namestring temp-dir)
-                      (namestring (file-directory temp-dir))))))
+    (is (string= (namestring temp-dir)
+                 (namestring (file-directory temp-dir))))))
 
 (test file-parent-directory
   "Test the `file-parent-directory' function"
+  (let ((temp-dir (concat (namestring (uiop:temporary-directory)) "foo/bar")))
+    (is (string= (namestring (uiop:temporary-directory)) (file-parent-directory temp-dir))))
+  (is (string= "/" (file-parent-directory "/")))
+  ;; (is (string= "C:\\" (file-parent-directory "C:\\")))
+  )
+
+(test file-parent-directories
+  "Test the `file-parent-directories' function"
+  ;; FIX
+  )
+
+(test file-path-in-directory-p
+  "Test the `file-path-in-directory-p' function"
+  (is (file-path-in-directory-p "/foo" "/"))
+  (is (file-path-in-directory-p "/foo/bar" "/foo"))
+  (is (file-path-in-directory-p "/foo/bar" "/foo/"))
+  (is (file-path-in-directory-p "/foo/bar/baz" "/"))
+  (is (file-path-in-directory-p "/foo/bar/baz" "/foo"))
+  (is (file-path-in-directory-p "/foo/bar/baz" "/foo/bar"))
+  (is (file-path-in-directory-p "/foo/bar/baz" "/foo/bar/"))
+  (is-false (file-path-in-directory-p "/foof" "/foo/bar/"))
+  (is-false (file-path-in-directory-p "/foo/bab" "/foo/bar/")))
+
+(test file-relativize
+  "Test the `file-relativize' function"
+  ;; FIX
   )
 
 (test locate-dominating-file
@@ -81,3 +107,7 @@
   ;; FIX
   )
 
+(test directory-contents
+  "Test the `directory-contents' function"
+  ;; FIX
+  )
