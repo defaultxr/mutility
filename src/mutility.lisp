@@ -1621,6 +1621,21 @@ See also: `all-classes'"
                                                #'direct-subclasses-of)
                                            class))))))
 
+(defun print-slots (object stream &rest slots)
+  "Print SLOTS of OBJECT. For use in the `print-object' method. Each item in SLOTS can be a symbol naming a slot of OBJECT, or a 2-element list containing a symbol and the value it should be printed with.
+
+Example:
+
+;; (print-object obj t 'foo 'bar '(baz 23))
+;; Prints something along the lines of:
+;; :FOO 1 :BAR 2 :BAZ 23"
+  (format stream "~{~S ~S~#[~:; ~]~}" (loop :for slot-spec :in slots
+                                            :for slot := (ensure-list slot-spec)
+                                            :for slot-name := (car slot)
+                                            :collect (make-keyword slot-name)
+                                            :collect (or (cadr slot)
+                                                         (slot-value object slot-name)))))
+
 (deftype slot-definition-slot ()
   "Slots of slot definitions. This is primarily used for `find-class-slot'.
 

@@ -114,6 +114,7 @@
 
    #:all-classes
    #:subclasses-of
+   #:print-slots
    #:find-class-slot
    #:set-accessor-documentation-from-slots
 

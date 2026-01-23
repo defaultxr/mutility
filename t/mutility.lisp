@@ -666,6 +666,11 @@ the other thing" :char-bag (list #\space #\newline)))
   ;; FIX
   )
 
+(test print-slots
+  "Test the `print-slots' function"
+  ;; FIX
+  )
+
 (test find-class-slot
   "Test the `find-class-slot' function"
   ;; FIX
