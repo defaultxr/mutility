@@ -8,7 +8,7 @@
   :version "0.5"
   :homepage "https://github.com/defaultxr/mutility"
   :bug-tracker "https://github.com/defaultxr/mutility/issues"
-  :mailto "defaultxr at gmail dot com"
+  :mailto "modula-t at pm dot me"
   :source-control (:git "git@github.com:defaultxr/mutility.git")
   :depends-on (#:alexandria
                #:local-time
