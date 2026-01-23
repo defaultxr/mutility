@@ -65,13 +65,13 @@ the other thing
 -not that
 ** qux")))))
 
-(test stream-extract-org-links
-  "Test the `stream-extract-org-links' function"
-  (is (equal (list "link 1" "link 2" "[address][title]" "[another address][another title]" "[link 3]")
-             (stream-extract-org-links (make-string-input-stream "[link 1] [link 2]
+(test string-extract-org-links
+  "Test the `string-extract-org-links' function"
+  (is (equal (list "link 1" "link 2" (list "address" "title") (list "another address" "another title") (list "link 3"))
+             (string-extract-org-links "[link 1] [link 2]
 * [[address][title]]
 ** [[another address][another title]]
-- [[link 3]]")))))
+- [[link 3]]"))))
 
 (test docstring-linked-symbol-names
   "Test the `docstring-linked-symbol-names' function"

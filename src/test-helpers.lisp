@@ -127,18 +127,25 @@ See also: `stream-extract-org-lists', `org-list-line-p'"
   (with-open-file (stream file :if-does-not-exist :error)
     (stream-extract-org-lists stream)))
 
-(defun stream-extract-org-links (stream)
-  "Get a list of substrings in STREAM enclosed between OPEN-CHAR and CLOSE-CHAR. Note that substrings spanning multiple lines are not 
+(defun string-extract-org-links (string)
+  "Get a list of Org-Mode-formatted links in STRING. Each list item is of the form (LINK-TARGET LINK-TEXT).
 
-See also: `file-extract-org-links', `balanced-subsequences'"
-  (loop :for line := (read-line stream nil nil)
-        :if line
-          :append (balanced-subsequences line :open #\[ :close #\] :test #'char=)
+See also: `stream-extract-org-links', `file-extract-org-links', `balanced-subsequences'"
+  (loop :for link :in (balanced-subsequences string :open #\[ :close #\] :test #'char=)
+        :for subseq := (balanced-subsequences link :open #\[ :close #\] :test #'char=)
+        :if subseq
+          :collect subseq
         :else
-          :do (loop-finish)))
+          :collect link))
+
+(defun stream-extract-org-links (stream)
+  "Get a list of Org-Mode-formatted links in STREAM. Each list item is of the form (LINK-TARGET LINK-TEXT).
+
+See also: `string-extract-org-links', `file-extract-org-links', `balanced-subsequences'"
+  (string-extract-org-links (uiop:slurp-stream-string stream)))
 
 (defun file-extract-org-links (file)
-  "Get all the Org-Mode-formatted links in FILE.
+  "Get a list of Org-Mode-formatted links in FILE. Each list item is of the form (LINK-TARGET LINK-TEXT).
 
 See also: `string-extract-org-links', `stream-extract-org-links', `balanced-subsequences'"
   (with-open-file (stream file :if-does-not-exist :error)
@@ -275,6 +282,7 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
           file-extract-org-header
           stream-extract-org-lists
           file-extract-org-lists
+          string-extract-org-links
           stream-extract-org-links
           file-extract-org-links
 
