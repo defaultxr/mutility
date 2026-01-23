@@ -1416,8 +1416,16 @@ See also: `funcallable-object-p', `function-designator-p', `ensure-funcall'"
 (defun function-designator-p (object)
   "True if OBJECT is a `function-designator', i.e. a string or pathname.
 
-See also: `funcallable-object-p', `function-designator'"
+See also: `funcallable-object-p', `function-designator', `ensure-funcall'"
   (typep object 'function-designator))
+
+(defun ensure-funcall (object)
+  "Funcall OBJECT if it's funcallable, otherwise return it unchanged.
+
+See also: `funcallable-object-p', `function-designator', `function-designator-p'"
+  (if (funcallable-object-p object)
+      (funcall object)
+      object))
 
 ;;; "operator adverbs"
 ;; inspired by SuperCollider's concept of the same name; https://doc.sccode.org/Reference/Adverbs.html

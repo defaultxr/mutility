@@ -97,6 +97,7 @@
    #:funcallable-object-p
    #:function-designator
    #:function-designator-p
+   #:ensure-funcall
 
    #:mapshort
    #:mapwrap
