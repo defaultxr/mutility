@@ -45,6 +45,7 @@
    #:ip-string-vector
    #:url-p
    #:friendly-ratio-string
+   #:friendly-duration
    #:friendly-duration-string
    #:friendly-bytes
    #:friendly-bytes-string

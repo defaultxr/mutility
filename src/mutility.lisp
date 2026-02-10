@@ -868,7 +868,7 @@ Example:
 ;; (friendly-ratio-string 5/4) ;=> \"1 1/4\"
 ;; (friendly-ratio-string 9/7) ;=> \"1 2/7\"
 
-See also: `friendly-duration-string'"
+See also: `friendly-duration-string', `friendly-bytes-string'"
   (etypecase ratio
     (ratio
      (if (> (abs ratio) 1)
@@ -882,35 +882,91 @@ See also: `friendly-duration-string'"
     (number
      (write-to-string ratio))))
 
-;; FIX: make this calculate days, weeks, etc as well?
-(defun friendly-duration-string (seconds &key include-ms)
-  "Format a number of seconds as a more human-readable string. For now, hours are the biggest unit considered.
+(define-constant +friendly-duration-intervals+ (list 315705600 31570560 2630880 604800 86400 3600 60 1)
+  :documentation "The number of seconds in a decade, a year, a month, a week, a day, an hour, a minute, and a second, respectively."
+  :test 'equal)
 
-Example:
+(define-constant +friendly-duration-interval-units+ (list :decade :year :month :week :day :hour :minute :second)
+  :documentation "The name of each interval specified in `+friendly-duration-intervals+'."
+  :test 'equal)
 
-;; (friendly-duration-string 300) ;=> \"5:00\"
-;; (friendly-duration-string 3600) ;=> \"1:00:00\"
+(defun friendly-duration-interval-unit-p (unit)
+  "True if UNIT is one of the `+friendly-duration-interval-units+'."
+  (member unit +friendly-duration-interval-units+))
 
-See also: `friendly-ratio-string'"
-  (let* ((min (truncate (/ seconds 60)))
-         (hour (truncate (/ min 60)))
-         (hourp (plusp hour))
-         (min (mod min 60))
-         (sec (mod seconds 60)))
-    (multiple-value-bind (sec frac) (truncate sec)
-      (concat (when hourp
-                (concat hour ":"))
-              (format nil (if hourp "~2,'0D" "~D") min)
-              (format nil ":~2,'0D" sec)
-              (when include-ms
-                (format nil ".~3,'0D" (truncate (* 1000 frac))))))))
+(deftype friendly-duration-interval-unit ()
+  '(satisfies friendly-duration-interval-unit-p))
+
+(defun friendly-duration (seconds &key (max-unit :decade))
+  "Given an interval in seconds, returns a list consisting of that interval divided up into decades, years, months, weeks, days, hours, minutes, and seconds. MAX-UNIT is the biggest unit to divide up to.
+
+Examples:
+
+;; (friendly-duration 30) ;=> (0 0 0 0 0 0 0 30) ; 30 seconds
+;; (friendly-duration 62) ;=> (0 0 0 0 0 0 1 2) ; 1 minute 2 seconds
+;; (friendly-duration 3602) ;=> (0 0 0 0 0 1 0 2) ; 1 hour 0 minutes 2 seconds
+;; (friendly-duration 3602 :max-unit :minute) ;=> (60 2) ; 60 minutes 2 seconds
+
+See also: `friendly-duration-string'"
+  (check-type seconds (real 0))
+  (check-type max-unit friendly-duration-interval-unit)
+  (loop :with current := (truncate seconds)
+        :for time :in (subseq +friendly-duration-intervals+ (position max-unit +friendly-duration-interval-units+))
+        :if (>= current time)
+          :collect (multiple-value-bind (number remainder)
+                       (truncate (/ current time))
+                     (setf current (floor (* remainder time)))
+                     number)
+        :else :collect 0))
+
+(defun friendly-duration-string (seconds &key (format :time) (skip-leading-zeroes t)
+                                           (max-unit (if (eql format :time) :hour :decade))
+                                           (min-unit (if (eql format :time) :minute :second)))
+  "Format SECONDS as a more human-readable string. FORMAT is the style to format as; it can be one of the following:
+
+- :FULL - Units fully spelled out. Example: 3 days, 4 hours, 2 minutes, 16 seconds
+- :SHORT - Units abbreviated to a single character. Example: 2w 1d 5h 24m 30s
+- :TIME - No units, just numbers and separators. Example: 10:02:45
+
+SKIP-LEADING-ZEROES skips until the first non-zero interval. MAX-UNIT is the biggest unit to divide up to, while MIN-UNIT overrides SKIP-LEADING-ZEROES by ensuring the specified unit and all subsequent are always shown.
+
+Examples:
+
+;; (friendly-duration-string 62) ;=> \"1:02\"
+;; (friendly-duration-string 62 :format :full) ;=> \"1 minute, 2 seconds\"
+;; (friendly-duration-string 62 :format :short) ;=> \"1m 2s\"
+;; (friendly-duration-string 3602 :format :short) ;=> \"1h 0m 2s\"
+;; (friendly-duration-string 3602 :format :short :max-unit :minute) ;=> \"60m 2s\"
+;; (friendly-duration-string 62 :format :short :min-unit :hour) ;=> \"0h 1m 2s\"
+
+See also: `friendly-duration', `friendly-ratio-string', `friendly-bytes-string'"
+  (check-type format (member :full :short :time))
+  (check-type skip-leading-zeroes boolean)
+  (check-type min-unit friendly-duration-interval-unit)
+  (string-join* (loop :with intervals := (friendly-duration seconds :max-unit max-unit)
+                      :with n := 0
+                      :for interval :in intervals
+                      :for unit :in (member max-unit +friendly-duration-interval-units+)
+                      :when (or (eql unit min-unit)
+                                (not (and skip-leading-zeroes (zerop interval))))
+                        :collect (prog1
+                                     (ecase format
+                                       (:full (concat interval " " (string-downcase unit) (unless (= 1 interval) "s")))
+                                       (:short (concat interval (char (string-downcase unit) 0)))
+                                       (:time (format nil (if (zerop n) "~D" "~2,'0D") interval)))
+                                   (setf skip-leading-zeroes nil)
+                                   (incf n)))
+                (ecase format
+                  (:full ", ")
+                  (:short " ")
+                  (:time ":"))))
 
 (defun friendly-bytes (bytes &key short)
   "Given BYTES, a number of bytes, convert to the most \"friendly\" unit and return a list containing the number and the unit.
 
 When SHORT is true, the unit is abbreviated.
 
-See also: `friendly-bytes-string'"
+See also: `friendly-bytes-string', `friendly-duration'"
   (let* ((idx (loop :for i :from 0 :upto 5
                     :if (< bytes (expt 1024 (1+ i)))
                       :return i))
@@ -921,7 +977,7 @@ See also: `friendly-bytes-string'"
 (defun friendly-bytes-string (bytes &key short)
   "Generate a string describing BYTES as a number of bytes, kilobytes, megabytes, etc. When SHORT is true, the unit is abbreviated.
 
-See also: `friendly-bytes'"
+See also: `friendly-bytes', `friendly-duration-string', `friendly-ratio-string'"
   (let ((fb (friendly-bytes bytes :short short)))
     (format nil "~$ ~A" (first fb) (second fb))))
 

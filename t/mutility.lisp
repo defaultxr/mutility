@@ -317,11 +317,59 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (string-equal "-1 1/4" (friendly-ratio-string -5/4))
       "friendly-ratio-string doesn't handle negative ratios properly"))
 
+(test friendly-duration
+  "Test the `friendly-duration' function"
+  (is (equal (list 0 0 0 0 0 0 0 1)
+             (friendly-duration 1)))
+  (is (equal (list 0 0 0 0 0 0 0 2)
+             (friendly-duration 2)))
+  (is (equal (list 0 0 0 0 0 0 1 0)
+             (friendly-duration 60)))
+  (is (equal (list 0 0 0 0 0 0 2 0)
+             (friendly-duration 120)))
+  (is (equal (list 0 0 0 0 0 1 0 0)
+             (friendly-duration 3600)))
+  (is (equal (list 0 0 0 0 0 1 0 1)
+             (friendly-duration 3601)))
+  (is (equal (list 0 0 0 0 0 1 1 1)
+             (friendly-duration 3661)))
+  (is (equal (list 1 1 6)
+             (friendly-duration 3666 :max-unit :hour)))
+  (is (equal (list 61 6)
+             (friendly-duration 3666 :max-unit :minute)))
+  (is (equal (list 3666)
+             (friendly-duration 3666 :max-unit :second))))
+
 (test friendly-duration-string
   "Test the `friendly-duration-string' function"
-  (is (string-equal "5:00" (friendly-duration-string 300)))
-  (is (string-equal "1:00:00" (friendly-duration-string 3600)))
-  (is (string-equal "0:08" (friendly-duration-string 8))))
+  (is (string= "5:00"
+               (friendly-duration-string 300)))
+  (is (string= "1:00:00"
+               (friendly-duration-string 3600)))
+  (is (string= "0:08"
+               (friendly-duration-string 8)))
+  (is (string= "1h 1m 6s"
+               (friendly-duration-string 3666 :format :short)))
+  (is (string= "1h 1m 6s"
+               (friendly-duration-string 3666 :format :short)))
+  (is (string= "1h 0m 6s"
+               (friendly-duration-string 3606 :format :short)))
+  (is (string= "1d 1h 0m 0s"
+               (friendly-duration-string 90000 :format :short)))
+  (is (string= "25:00:00"
+               (friendly-duration-string 90000 :format :time)))
+  (is (string= "1:02"
+               (friendly-duration-string 62)))
+  (is (string= "1 minute, 2 seconds"
+               (friendly-duration-string 62 :format :full)))
+  (is (string= "1m 2s"
+               (friendly-duration-string 62 :format :short)))
+  (is (string= "1h 0m 2s"
+               (friendly-duration-string 3602 :format :short)))
+  (is (string= "60m 2s"
+               (friendly-duration-string 3602 :format :short :max-unit :minute)))
+  (is (string= "0h 1m 2s"
+               (friendly-duration-string 62 :format :short :min-unit :hour))))
 
 (test friendly-bytes
   "Test the `friendly-bytes' function"
