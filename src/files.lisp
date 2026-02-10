@@ -1,7 +1,7 @@
 ;;;; files.lisp - Various functions to ease file-related tasks.
 ;;; NOTES:
-;;; - `cl:file-write-date' can be used to get the file modification time.
-;;; - `cl:file-author' can be used to get the file's owner.
+;; - `cl:file-write-date' can be used to get the file modification time.
+;; - `cl:file-author' can be used to get the file's owner.
 
 (in-package #:mutility)
 
@@ -22,51 +22,10 @@
   (uiop:parse-native-namestring (ensure-directory-trailing-slash (uiop:native-namestring path))))
 
 (define-constant +file-extension-separator+ #\.
-  :test #'char=
-  :documentation "The character separating the file's name from its extension.")
-
-;;; class
-
-(defclass file ()
-  ((path :initarg :path :accessor file-path)
-   (size :initarg :size :accessor file-size)
-   (permissions :initarg :permissions :accessor file-permissions)
-   (uid :initarg :uid :accessor file-uid)
-   (gid :initarg :gid :accessor file-gid)
-   (mtime :initarg :mtime :accessor file-mtime)
-   (ctime :initarg :ctime :accessor file-ctime)
-   (atime :initarg :atime :accessor file-atime)
-   (birth :initarg :birth :accessor file-birth)))
-
-(defmethod print-object ((file file) stream)
-  (print-unreadable-object (file stream :type t)
-    (format stream ":PATH ~S" (file-path file))))
-
-(defun make-file (path)
-  (let ((path (uiop:native-namestring path)))
-    (make-instance 'file :path path)))
+  :documentation "The character separating the file's name from its extension."
+  :test #'char=)
 
 ;;; file generics
-
-(defmacro define-file-method (name lambda-list &body body)
-  "Define the generic function named NAME, as well as the methods specializing its first parameter on file, string, and pathname. The string and pathname methods effectively forward to the file method."
-  (multiple-value-bind (body declarations documentation) (parse-body body :documentation t)
-    (declare (ignore declarations)) ; FIX: use declarations?
-    `(progn
-       (defgeneric ,name ,lambda-list
-         ,@(when documentation `((:documentation ,documentation))))
-       (defmethod ,name ((,(car lambda-list) file) ,@(cdr lambda-list))
-         ,@body)
-       (defmethod ,name ((,(car lambda-list) string) ,@(cdr lambda-list))
-         (,name (make-file ,(car lambda-list))))
-       (defmethod ,name ((,(car lambda-list) pathname) ,@(cdr lambda-list))
-         (,name (make-file ,(car lambda-list)))))))
-
-(define-file-method file-path (file)
-  "Get the full unabbreviated path to FILE as a string.
-
-See also: `uiop:absolute-pathname-p', `uiop:relative-pathname-p'"
-  )
 
 (defgeneric file-path (file)
   (:documentation "Get the full unabbreviated path to FILE as a string.
@@ -190,10 +149,6 @@ See also: `file-type'")
        file
        (make-pathname :directory (pathname-directory file)))))
 
-#+(or)
-(defmethod file-directory ((file file))
-  (file-directory (file-path file)))
-
 (defgeneric file-parent-directory (file)
   (:documentation "Get the containing directory of FILE."))
 
@@ -238,27 +193,6 @@ See also: `file-path-in-directory-p'"
         (:error (error "File ~S is not inside ~S" file relative-to))
         ((:absolute nil) (file-path file)))))
 
-;;; file "types"
-
-;; audio
-
-(defclass audio-file (file)
-  ((artist :initarg :artist :initform nil :documentation "")
-   (album-artist :initarg :album-artist :initform nil :documentation "")
-   (composer :initarg :composer :initform nil :documentation "")
-   (album :initarg :album :initform nil :documentation "")
-   (title :initarg :title :initform nil :documentation "")
-   (track :initarg :track :initform nil :documentation "")
-   (date :initarg :date :initform nil :documentation "")
-   (genre :initarg :genre :initform nil :documentation "")
-   (time :initarg :time :initform nil :documentation "")
-   (bitrate :initarg :bitrate :initform nil :documentation "")
-   (sample-rate :initarg :sample-rate :initform nil :documentation "")))
-
-;; image
-
-;; video
-
 ;;; traversal
 
 (defun locate-dominating-file (directory name)
@@ -278,12 +212,6 @@ This is equivalent to the Emacs function of the same name."
       (if (stringp directory)
           (uiop:native-namestring res)
           res))))
-
-(defun file-finder (&key max-depth iname name)
-  "Find files in the filesystem matching the given predicates."
-  ;; FIX: make this user-extensible (maybe it should just forward all unknown keyword args to a function of the same name if one exists (or allow functions to be specified directly))
-  ;; FIX: make aliases of keyword arguments for their unix "find" equivalent
-  (error "~S is not implemented yet." 'file-finder))
 
 (defgeneric directory-contents (directory)
   (:documentation "Get a list of the items in DIRECTORY."))
@@ -316,6 +244,5 @@ This is equivalent to the Emacs function of the same name."
           file-relativize
 
           locate-dominating-file
-          file-finder
 
           directory-contents))
