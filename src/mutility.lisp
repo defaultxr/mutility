@@ -805,8 +805,10 @@ See also: `read-as-tokens'"
                      :collect curr)))
       (coerce res 'string))))
 
-(defun read-as-tokens (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t))
-  "Read \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STREAM, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS."
+(defun read-as-tokens (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t)) ; FIX: implement escaping the quotes. i.e. (parse-as-tokens "foo 'bar \\' baz'") should return ("foo" "bar ' baz")
+  "Read \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STREAM, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS.
+
+See also: `parse-as-tokens'"
   (check-type count (or null number))
   (labels ((eat-separators (stream)
              "Gobble up the separators at the start of STREAM."
@@ -827,6 +829,12 @@ See also: `read-as-tokens'"
                        (not (or (null count)
                                 (eql 0 count))))
               (list (string-trim separators (read-stream-content-into-string stream)))))))
+
+(defun parse-as-tokens (string &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t))
+  "Parse \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STRING, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS.
+
+See also: `read-as-tokens'"
+  (read-as-tokens (make-string-input-stream string) :quotes quotes :separators separators :count count :slurp-rest slurp-rest))
 
 (defun ip-vector-string (ip-vector)
   "Convert an IP specified as a 4-element sequence to an IP specified as a string.

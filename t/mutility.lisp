@@ -265,25 +265,25 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (= 3145728 (parse-friendly-bytes-string "3MB"))))
 
 (test read-as-tokens
-  "Test the `read-as-tokens' function"
+  "Test the `read-as-tokens' and `parse-as-tokens' functions"
   (is (equalp (list "foo" "bar's baz")
-              (read-as-tokens (make-string-input-stream "foo \"bar's baz\""))))
+              (parse-as-tokens "foo \"bar's baz\"")))
   (is (equalp (list "foo" "barf baz")
-              (read-as-tokens (make-string-input-stream "foo 'barf baz'"))))
+              (parse-as-tokens "foo 'barf baz'")))
   (is (equalp (list "foo" "\"bar's" "baz\"" "foo bar")
-              (read-as-tokens (make-string-input-stream "foo \"bar's baz\" 'foo bar'") :quotes (list #\APOSTROPHE))))
+              (parse-as-tokens "foo \"bar's baz\" 'foo bar'" :quotes (list #\APOSTROPHE))))
   (is (equalp (list "foo" "bar's baz")
-              (read-as-tokens (make-string-input-stream "foo \"bar's baz\""))))
+              (parse-as-tokens "foo \"bar's baz\"")))
   (is (equalp (list "foo" "bar baz")
-              (read-as-tokens (make-string-input-stream "foo bar baz") :count 2)))
+              (parse-as-tokens "foo bar baz" :count 2)))
   (is (equalp (list "foo" "ar")
-              (read-as-tokens (make-string-input-stream "foobar") :separators (list #\b))))
+              (parse-as-tokens "foobar" :separators (list #\b))))
   (is (equalp (list "")
-              (read-as-tokens (make-string-input-stream "''") :quotes (list #\APOSTROPHE))))
+              (parse-as-tokens "''" :quotes (list #\APOSTROPHE))))
   (is (equalp (list "foo" "" "bar")
-              (read-as-tokens (make-string-input-stream "foo \"\" bar"))))
+              (parse-as-tokens "foo \"\" bar")))
   (is (equalp (list "foof" "barf")
-              (read-as-tokens (make-string-input-stream "foof barf bazf quxf") :count 2 :slurp-rest nil))))
+              (parse-as-tokens "foof barf bazf quxf" :count 2 :slurp-rest nil))))
 
 (test ip-vector-string
   "Test the `ip-vector-string' function"

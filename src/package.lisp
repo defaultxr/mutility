@@ -40,6 +40,7 @@
    #:parse-number-and-string
    #:parse-friendly-bytes-string
    #:read-as-tokens
+   #:parse-as-tokens
    #:ip-vector-string
    #:ip-string-vector
    #:url-p
