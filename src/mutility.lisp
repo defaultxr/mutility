@@ -1419,7 +1419,7 @@ See also: `funcallable-object-p', `function-designator-p', `ensure-funcall'"
   '(or function (satisfies funcallable-object-p) (and symbol (satisfies fboundp))))
 
 (defun function-designator-p (object)
-  "True if OBJECT is a `function-designator', i.e. a string or pathname.
+  "True if OBJECT is a `function-designator', i.e. a function, an `fboundp' symbol, or a funcallable object.
 
 See also: `funcallable-object-p', `function-designator', `ensure-funcall'"
   (typep object 'function-designator))
@@ -1428,7 +1428,7 @@ See also: `funcallable-object-p', `function-designator', `ensure-funcall'"
   "Funcall OBJECT if it's funcallable, otherwise return it unchanged.
 
 See also: `funcallable-object-p', `function-designator', `function-designator-p'"
-  (if (funcallable-object-p object)
+  (if (function-designator-p object)
       (funcall object)
       object))
 

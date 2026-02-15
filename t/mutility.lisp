@@ -654,12 +654,17 @@ the other thing" :char-bag (list #\space #\newline)))
              (balanced-subsequences "foo [bar] baz [qux [this]] that" :open #\[ :close #\] :test #'char=))))
 
 (test function-designator
-  "Test the `function-designator' type and `function-designator-p' function"
+  "Test the `function-designator' type and the `function-designator-p' function"
   (is-false (function-designator-p 0))
   (is-false (function-designator-p 'foo))
   (is-true (function-designator-p '+))
   (is-false (function-designator-p 'jfkdsjkf))
   (is-true (function-designator-p (lambda () 3))))
+
+(test ensure-funcall
+  "Test the `ensure-funcall' function"
+  (is (eql 3 (ensure-funcall (lambda () 3))))
+  (is (equal "text" (ensure-funcall "text"))))
 
 (test mapshort
   "Test the `mapshort' function"
