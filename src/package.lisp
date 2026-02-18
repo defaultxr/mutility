@@ -74,6 +74,8 @@
 
    #:nth-wrap
    #:elt-wrap
+   #:nth-fold
+   #:elt-fold
    #:pprint-plist
    #:find-if*
    #:find-member

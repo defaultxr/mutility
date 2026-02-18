@@ -1195,7 +1195,7 @@ See also: `serapeum:length>', `alexandria:length='"
 
 Much like `nth', this function can only be used on lists. Use `elt-wrap' to index into any kind of sequence. However, keep in mind that `elt-wrap' may be slower when used on large lists.
 
-See also: `elt-wrap'"
+See also: `elt-wrap', `nth-fold', `elt-fold'"
   (check-type n integer)
   (check-type list list)
   (multiple-value-bind (wraps mod) (floor n (list-length list))
@@ -1206,11 +1206,33 @@ See also: `elt-wrap'"
 
 Much like `elt', this function can be used on any sequence. However, because this function calls `length' to determine the wrapped index, it may be slow when used on large lists. Consider using `nth-wrap' in those cases instead.
 
-See also: `nth-wrap'"
+See also: `nth-wrap', `elt-fold', `nth-fold'"
   (check-type n integer)
   (check-type sequence sequence)
   (multiple-value-bind (wraps mod) (floor n (length sequence))
     (values (elt sequence mod) wraps)))
+
+(defun nth-fold (n list)
+  "Get the Nth element in LIST, folding the index if out of range. As a second value, returns the number of times that the start and end of the list were \"hit\".
+
+Much like `nth', this function can only be used on lists. Use `elt-fold' to index into any kind of sequence. However, keep in mind that `elt-fold' may be slower when used on large lists.
+
+See also: `elt-fold', `elt-wrap', `nth-wrap'"
+  (check-type n integer)
+  (check-type list list)
+  (values (nth (fold n 0 (1- (list-length list))) list)
+          (floor n (1- (list-length list)))))
+
+(defun elt-fold (sequence n)
+  "Get the Nth item in SEQUENCE, folding the index if out of range. Returns the number of times \"folded\" as a second value.
+
+Much like `elt', this function can be used on any sequence. However, because this function calls `length' to determine the wrapped index, it may be slow when used on large lists. Consider using `nth-fold' in those cases instead.
+
+See also: `nth-fold', `elt-wrap', `nth-wrap'"
+  (check-type n integer)
+  (check-type sequence sequence)
+  (values (elt sequence (fold n 0 (1- (length sequence))))
+          (floor n (1- (length sequence)))))
 
 (defun pprint-plist (plist)
   "Pretty-print PLIST."

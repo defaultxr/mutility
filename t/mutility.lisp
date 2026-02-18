@@ -546,6 +546,78 @@ the other thing" :char-bag (list #\space #\newline)))
          (nth-value 1 (elt-wrap (list 0 1 2) 7)))
       "elt-wrap's second return value is incorrect"))
 
+(test nth-fold
+  "Test the `nth-fold' function"
+  (is (= 3
+         (nth-fold 3 (list 0 1 2 3)))
+      "nth-fold is incorrect for non-folding inputs")
+  (is (= 2
+         (nth-fold 4 (list 0 1 2 3)))
+      "nth-fold is incorrect at the first fold")
+  (is (= 1
+         (nth-fold 5 (list 0 1 2 3)))
+      "nth-fold is incorrect after the first fold")
+  (is (= 0
+         (nth-fold 6 (list 0 1 2 3)))
+      "nth-fold is incorrect at the end of the first fold")
+  (is (= 1
+         (nth-fold 7 (list 0 1 2 3)))
+      "nth-fold is incorrect at the second fold")
+  (is (= 0
+         (nth-value 1 (nth-fold 0 (list 0 1 2 3))))
+      "nth-fold's second value fails the sanity check")
+  (is (= 0
+         (nth-value 1 (nth-fold 2 (list 0 1 2 3))))
+      "nth-fold's second value fails the second sanity check")
+  (is (= 1
+         (nth-value 1 (nth-fold 3 (list 0 1 2 3))))
+      "nth-fold's second value is incorrect for the list length")
+  (is (= 1
+         (nth-value 1 (nth-fold 4 (list 0 1 2 3))))
+      "nth-fold's second value is incorrect for the first fold")
+  (is (= 2
+         (nth-value 1 (nth-fold 6 (list 0 1 2 3))))
+      "nth-fold's second value is incorrect for the second fold")
+  (is (= 2
+         (nth-value 1 (nth-fold 7 (list 0 1 2 3))))
+      "nth-fold's second value is incorrect after the second fold"))
+
+(test elt-fold
+  "Test the `elt-fold' function"
+  (is (= 3
+         (elt-fold (vector 0 1 2 3) 3))
+      "elt-fold is incorrect for non-folding inputs")
+  (is (= 2
+         (elt-fold (vector 0 1 2 3) 4))
+      "elt-fold is incorrect at the first fold")
+  (is (= 1
+         (elt-fold (vector 0 1 2 3) 5))
+      "elt-fold is incorrect after the first fold")
+  (is (= 0
+         (elt-fold (vector 0 1 2 3) 6))
+      "elt-fold is incorrect at the end of the first fold")
+  (is (= 1
+         (elt-fold (vector 0 1 2 3) 7))
+      "elt-fold is incorrect at the second fold")
+  (is (= 0
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 0)))
+      "elt-fold's second value fails the sanity check")
+  (is (= 0
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 2)))
+      "elt-fold's second value fails the second sanity check")
+  (is (= 1
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 3)))
+      "elt-fold's second value is incorrect for the list length")
+  (is (= 1
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 4)))
+      "elt-fold's second value is incorrect for the first fold")
+  (is (= 2
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 6)))
+      "elt-fold's second value is incorrect for the second fold")
+  (is (= 2
+         (nth-value 1 (elt-fold (vector 0 1 2 3) 7)))
+      "elt-fold's second value is incorrect after the second fold"))
+
 (test pprint-plist
   "Test the `pprint-plist' function"
   ;; FIX
