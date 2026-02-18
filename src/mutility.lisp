@@ -1583,7 +1583,7 @@ See also: `hash-table-save'"
 
   (defun restore-hash-table (filename &rest make-hash-table-args)
     "Deprecated alias for `hash-table-restore'."
-    (apply 'hash-table-restore hash make-hash-table-args)))
+    (apply 'hash-table-restore filename make-hash-table-args)))
 
 ;;; CLOS
 
