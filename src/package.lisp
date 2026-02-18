@@ -39,6 +39,12 @@
    #:parse-boolean
    #:parse-number-and-string
    #:parse-friendly-bytes-string
+   #:unterminated-quote
+   #:unterminated-quote-stream
+   #:unterminated-quote-quote
+   #:unterminated-quote-accumulated
+   #:read-as-token
+   #:parse-as-token
    #:read-as-tokens
    #:parse-as-tokens
    #:ip-vector-string

@@ -264,6 +264,43 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (= 2048 (parse-friendly-bytes-string "2KB")))
   (is (= 3145728 (parse-friendly-bytes-string "3MB"))))
 
+(test read-as-token
+  "Test the `read-as-token' function"
+  (let ((stream (make-string-input-stream "foo bar")))
+    (is (equalp (list "foo" nil)
+                (multiple-value-list (read-as-token stream))))
+    (is (equalp " bar"
+                (uiop:slurp-stream-string stream))))
+  (let ((stream (make-string-input-stream "    foo  bar")))
+    (is (equalp (list "foo" nil)
+                (multiple-value-list (read-as-token stream))))
+    (is (equalp "  bar"
+                (uiop:slurp-stream-string stream))))
+  (let ((stream (make-string-input-stream "'foo bar' baz ")))
+    (is (equalp (list "foo bar" (code-char 39)) ; 39 = APOSTROPHE
+                (multiple-value-list (read-as-token stream))))
+    (is (equalp " baz "
+                (uiop:slurp-stream-string stream))))
+  (let ((stream (make-string-input-stream "'foo bar'")))
+    (is (equalp (list "foo bar" (code-char 39)) ; 39 = APOSTROPHE
+                (multiple-value-list (read-as-token stream))))
+    (is (equalp ""
+                (uiop:slurp-stream-string stream))))
+  (let ((stream (make-string-input-stream "'foo bar")))
+    (is (equalp (list "'foo" nil)
+                (multiple-value-list (read-as-token stream))))
+    (is (equalp " bar"
+                (uiop:slurp-stream-string stream))))
+  (let ((stream (make-string-input-stream "'foo bar")))
+    (signals unterminated-quote (read-as-token stream :if-unterminated :error)))
+  (let ((stream (make-string-input-stream "\"test1 test2")))
+    (is (equal (list stream (code-char 34) "test1 test2") ; 34 = QUOTATION_MARK
+               (handler-case (read-as-token stream :if-unterminated :error)
+                 (unterminated-quote (e)
+                   (list (unterminated-quote-stream e)
+                         (unterminated-quote-quote e)
+                         (unterminated-quote-accumulated e))))))))
+
 (test read-as-tokens
   "Test the `read-as-tokens' and `parse-as-tokens' functions"
   (is (equalp (list "foo" "bar's baz")
@@ -271,7 +308,7 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (equalp (list "foo" "barf baz")
               (parse-as-tokens "foo 'barf baz'")))
   (is (equalp (list "foo" "\"bar's" "baz\"" "foo bar")
-              (parse-as-tokens "foo \"bar's baz\" 'foo bar'" :quotes (list #\APOSTROPHE))))
+              (parse-as-tokens "foo \"bar's baz\" 'foo bar'" :quotes (list (code-char 39))))) ; 39 = APOSTROPHE
   (is (equalp (list "foo" "bar's baz")
               (parse-as-tokens "foo \"bar's baz\"")))
   (is (equalp (list "foo" "bar baz")
@@ -279,11 +316,19 @@ the other thing" :char-bag (list #\space #\newline)))
   (is (equalp (list "foo" "ar")
               (parse-as-tokens "foobar" :separators (list #\b))))
   (is (equalp (list "")
-              (parse-as-tokens "''" :quotes (list #\APOSTROPHE))))
+              (parse-as-tokens "''" :quotes (list (code-char 39))))) ; 39 = APOSTROPHE
   (is (equalp (list "foo" "" "bar")
               (parse-as-tokens "foo \"\" bar")))
   (is (equalp (list "foof" "barf")
-              (parse-as-tokens "foof barf bazf quxf" :count 2 :slurp-rest nil))))
+              (parse-as-tokens "foof barf bazf quxf" :count 2 :slurp-rest nil)))
+  (is (equalp (list "foo" "'bar" "baz qux")
+              (parse-as-tokens "foo 'bar baz qux" :count 3 :slurp-rest t)))
+  (is (equalp (list "foo" "bar baz qux")
+              (parse-as-tokens "foo 'bar baz qux'" :count 3 :slurp-rest t)))
+  #+(or) ; FIX: uncomment this test once :ESCAPES is implemented. also test it in the read-as-token test
+  (is (equalp (list "foo" "bar ' baz" "qux")
+              (parse-as-tokens "foo 'bar \\' baz' qux" :escapes (code-char 92))) ; 92 = backslash
+      "Escaping quotes does not work correctly"))
 
 (test ip-vector-string
   "Test the `ip-vector-string' function"

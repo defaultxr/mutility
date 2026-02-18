@@ -783,58 +783,140 @@ See also: `friendly-bytes-string', `friendly-bytes'"
            (index (position-if (fn (member unit-trimmed _ :test #'string-equal)) +byte-units+)))
       (* number (expt 1024 index)))))
 
-(defun read-as-token (&optional (stream *standard-input*) (quotes +quote-chars+) (separators +whitespace-chars+))
-  "Read a \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) string from STREAM. Note that only the start and end of potential tokens (i.e. adjacent to any of SEPARATORS) are checked for QUOTES.
+(define-condition unterminated-quote (error)
+  ((stream :initarg :stream :accessor unterminated-quote-stream :type stream :documentation "The stream that is being read from.")
+   (quote :initarg :quote :accessor unterminated-quote-quote :type character :documentation "The character that was read as the quote.")
+   (accumulated :initarg :accumulated :accessor unterminated-quote-accumulated :type string :documentation "The string that has been accumulated up to this point, not including the initial quote character."))
+  (:documentation "Condition raised when `read-as-token' hits the end of the stream before finding a closing quote, when IF-UNTERMINATED is :ERROR."))
 
-See also: `read-as-tokens'"
-  (unless (peek-char t stream nil nil)
-    (return-from read-as-token nil))
-  (let* ((first (peek-char t stream nil nil))
-         (is-quoted (find first quotes :test #'char=)))
-    (when is-quoted
-      (read-char stream))
-    (let ((res (loop :for curr := (read-char stream nil nil)
-                     :unless curr
-                       :do (loop-finish)
-                     :when (and is-quoted (char= curr is-quoted))
-                       :do (loop-finish)
-                     :when (and (not is-quoted)
-                                (find curr separators :test #'char=))
-                       :do (unread-char curr stream)
-                           (loop-finish)
-                     :collect curr)))
-      (coerce res 'string))))
+(setf (documentation 'unterminated-quote-stream 'function) "The stream that is being read from."
+      (documentation 'unterminated-quote-quote 'function) "The character that was read as the quote."
+      (documentation 'unterminated-quote-accumulated 'function) "The string that has been accumulated up to this point, not including the initial quote character.")
 
-(defun read-as-tokens (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t)) ; FIX: implement escaping the quotes. i.e. (parse-as-tokens "foo 'bar \\' baz'") should return ("foo" "bar ' baz")
+;; FIX: implement an ESCAPES argument, allowing a list of characters that can be used to escape a quote.
+;; typically this would just be a list containing the backslash character, but it should default to nil.
+(defun read-as-token (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) (if-unterminated :separate))
+  "Read the next \"token-like\" string from STREAM. A \"token\" is either separated by SEPARATORS or delimited by QUOTES. Any SEPARATORS at the start of the stream are discarded. Returns the character that the token was quoted by as a second value, or nil if none.
+
+Note that only the start and end of potential tokens (i.e. adjacent to any of the SEPARATORS) are checked for QUOTES. In other words, quotes in the middle of a word are not considered.
+
+IF-UNTERMINATED sets how to handle the case where an opening quote is found, but the stream ends before the closing quote:
+- :SEPARATE - The resulting string will be from the quote (inclusive) up to the next separator (exclusive).
+- :SLURP - The resulting string will be from the quote (inclusive) up to the end of the stream.
+- :ERROR - An `unterminated-quote' error is signaled.
+
+If a token is started with a quote that is never terminated, the token will not be considered quoted, and the quote will be returned as part of the resulting string. In other words, a stream whose contents are \"'foo bar\" will result in a token of \"'foo\".
+
+Examples:
+
+;; (read-as-token (make-string-input-stream \"foo bar\"))
+;; ;=> \"foo\"
+;; ;=> nil
+
+;; (read-as-token (make-string-input-stream \"'foo bar' baz\"))
+;; ;=> \"foo bar\"
+;; ;=> #\'
+
+;; (read-as-token (make-string-input-stream \"'foo bar\"))
+;; ;=> \"'foo\"
+;; ;=> nil
+
+See also: `parse-as-token', `read-as-tokens', `parse-as-tokens'"
+  (check-type if-unterminated (member :separate :slurp :error))
+  (labels ((peekc ()
+             (peek-char nil stream nil nil))
+           (readc ()
+             (read-char stream nil nil))
+           (char-match-p (char list)
+             (member char list :test #'char=)))
+    (let (current-quote accumulated)
+      (tagbody
+       :skip-separators
+         (if-let ((next-char (peekc)))
+           (when (char-match-p next-char separators)
+             (readc)
+             (go :skip-separators))
+           (return-from read-as-token))
+       :check-for-quotes
+         (if-let ((next-char (peekc)))
+           (when (char-match-p next-char quotes)
+             (setf current-quote (readc)))
+           (return-from read-as-token))
+       :accumulate
+         (if-let ((next-char (peekc)))
+           (if current-quote
+               (if (char= current-quote next-char)
+                   (progn (readc)
+                          (go :finish))
+                   (progn (push (readc) accumulated)
+                          (go :accumulate)))
+               (if (char-match-p next-char separators)
+                   (go :finish)
+                   (progn (push (readc) accumulated)
+                          (go :accumulate))))
+           (if current-quote
+               (go :unterminated-quote) ; EOF but the quote we started from wasn't terminated
+               (go :finish))) ; EOF but we didn't start from a quote; return everything we saw
+       :unterminated-quote
+         (case if-unterminated
+           (:separate (go :separate))
+           (:slurp (go :dirty-finish))
+           (:error (error 'unterminated-quote :stream stream
+                                              :quote current-quote
+                                              :accumulated (coerce (reverse accumulated) 'string))))
+       :separate
+         (if-let ((first-separator (position-if (fn (char-match-p _ separators)) accumulated :from-end t)))
+           (let ((to-unread (subseq accumulated 0 (1+ first-separator))))
+             (setf accumulated (subseq accumulated (1+ first-separator)))
+             (dolist (char to-unread)
+               (unread-char char stream))
+             (go :dirty-finish))
+           (progn (setf current-quote nil)
+                  (go :dirty-finish)))
+       :finish
+         (return-from read-as-token (values (coerce (nreverse accumulated) 'string)
+                                            current-quote))
+       :dirty-finish
+         (return-from read-as-token (values (coerce (append (ensure-list current-quote)
+                                                            (nreverse accumulated))
+                                                    'string)
+                                            nil))))))
+
+(defun parse-as-token (string &key (quotes +quote-chars+) (separators +whitespace-chars+) (if-unterminated :separate))
+  "Parse the first \"token-like\" string from STRING. Refer to `read-as-token' for more documentation about this function.
+
+See also: `read-as-token', `read-as-tokens', `parse-as-tokens'"
+  (read-as-token (make-string-input-stream string) :quotes quotes :separators separators :if-unterminated if-unterminated))
+
+(defun read-as-tokens (stream &key (quotes +quote-chars+) (separators +whitespace-chars+) count (if-unterminated :separate) (slurp-rest t)) ; FIX: implement escaping the quotes. i.e. (parse-as-tokens "foo 'bar \\' baz'") should return ("foo" "bar ' baz")
   "Read \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STREAM, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS.
 
-See also: `parse-as-tokens'"
+See also: `parse-as-tokens', `read-as-token', `parse-as-token'"
   (check-type count (or null number))
-  (labels ((eat-separators (stream)
-             "Gobble up the separators at the start of STREAM."
-             (loop :while (member (peek-char t stream nil nil) separators :test #'eql)
-                   :do (read-char stream nil nil))
-             stream))
-    (append (loop :with count := (when count (if slurp-rest (1- count) count))
-                  :for num :from 0
-                  :while (and (or (null count)
-                                  (< num count))
-                              (peek-char t (eat-separators stream) nil nil))
-                  :for str := (read-as-token stream quotes separators)
-                  :if str
-                    :collect str
-                  :else
-                    :do (loop-finish))
-            (when (and slurp-rest
-                       (not (or (null count)
-                                (eql 0 count))))
-              (list (string-trim separators (read-stream-content-into-string stream)))))))
+  (let (res (num 0))
+    (tagbody
+     :repeat
+       (if-let ((new (read-as-token stream :quotes quotes :separators separators :if-unterminated if-unterminated)))
+         (progn (push new res)
+                (incf num)
+                (if (and count (= (+ (if slurp-rest 1 0)
+                                     num)
+                                  count))
+                    (go :done)
+                    (go :repeat)))
+         (go :done))
+     :done
+       (return-from read-as-tokens (append (nreverse res)
+                                           (when slurp-rest
+                                             (let ((rest (string-left-trim separators (uiop:slurp-stream-string stream))))
+                                               (unless (emptyp rest)
+                                                 (list rest)))))))))
 
-(defun parse-as-tokens (string &key (quotes +quote-chars+) (separators +whitespace-chars+) count (slurp-rest t))
+(defun parse-as-tokens (string &key (quotes +quote-chars+) (separators +whitespace-chars+) count (if-unterminated :separate) (slurp-rest t))
   "Parse \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STRING, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS.
 
-See also: `read-as-tokens'"
-  (read-as-tokens (make-string-input-stream string) :quotes quotes :separators separators :count count :slurp-rest slurp-rest))
+See also: `read-as-tokens', `read-as-token', `parse-as-token'"
+  (read-as-tokens (make-string-input-stream string) :quotes quotes :separators separators :count count :if-unterminated if-unterminated :slurp-rest slurp-rest))
 
 (defun ip-vector-string (ip-vector)
   "Convert an IP specified as a 4-element sequence to an IP specified as a string.
