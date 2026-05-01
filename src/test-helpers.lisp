@@ -10,12 +10,6 @@
 
 (in-package #:mutility)
 
-;;; general
-
-(define-constant +documentation-types+ (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type)
-  :test #'equal
-  :documentation "The set of standard Common Lisp documentation types.")
-
 ;;; org-mode
 
 ;; fundamental tests
@@ -170,12 +164,10 @@ See also: `string-extract-org-links', `stream-extract-org-links', `balanced-subs
     (cons (subseq string (1+ start) cur)
           (docstring-linked-symbol-names (subseq string cur)))))
 
-(defun symbol-all-docstrings (symbol)
-  "Get a list of all docstrings for SYMBOL."
-  (let (res)
-    (dolist (type +documentation-types+ res)
-      (when-let ((doc (documentation symbol type)))
-        (push doc res)))))
+(uiop:with-deprecation (:style-warning)
+  (defun symbol-all-docstrings (symbol)
+    "Deprecated alias for `symbol-docstrings'."
+    (symbol-docstrings symbol)))
 
 (defun docstring-broken-links (docstring &key (package *package*) scan-external-packages)
   "Get a list of broken links in DOCSTRING. PACKAGE is the package to look for non-package-prefixed symbols in.
@@ -260,7 +252,7 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
     (do-external-symbols (symbol package results)
       (when-let ((missing (mapcan (rcurry #'docstring-broken-links :package package
                                                                    :scan-external-packages scan-external-packages)
-                                  (symbol-all-docstrings symbol))))
+                                  (symbol-docstrings symbol))))
         (push (list* symbol missing) results)))))
 
 (uiop:with-deprecation (:warning)
@@ -269,8 +261,8 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
     (package-undocumented-symbols package))
 
   (defun all-docstrings (symbol)
-    "Deprecated alias for `symbol-all-docstrings'."
-    (symbol-all-docstrings symbol))
+    "Deprecated alias for `symbol-docstrings'."
+    (symbol-docstrings symbol))
 
   (defun docstrings-with-broken-links (package &key scan-external-packages)
     "Deprecated alias for `package-docstrings-with-broken-links'."
@@ -289,7 +281,6 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
           file-extract-org-links
 
           docstring-linked-symbol-names
-          symbol-all-docstrings
           docstring-broken-links
 
           system-missing-attributes
@@ -300,5 +291,6 @@ SCAN-EXTERNAL-PACKAGES accepts one of three values:
 
           ;; deprecated
           undocumented-symbols
+          symbol-all-docstrings
           all-docstrings
           docstrings-with-broken-links))

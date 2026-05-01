@@ -500,6 +500,10 @@ Example:
 See also: `alexandria:ensure-symbol', `string-downcase'"
   (intern (string-upcase string) package))
 
+(defun symbol-external-p (symbol)
+  "True if SYMBOL is external for its package."
+  (eql :external (nth-value 1 (find-symbol (symbol-name symbol) (symbol-package symbol)))))
+
 (defun friendly-string (input)
   "Return INPUT as a string with all non-letter, non-number, and non-hyphen characters removed.
 
@@ -1824,6 +1828,57 @@ See also: `asdf:defsystem'"
   (defun current-seconds ()
     "Deprecated alias for `lisp-uptime'."
     (lisp-uptime)))
+
+(define-constant +documentation-types+ (list 'function 'variable 'method-combination 'compiler-macro 'setf 'structure 'type)
+  :test #'equal
+  :documentation "The documentation types that `documentation' supports.")
+
+(defun symbol-docstrings (symbol)
+  "Get a list of all docstrings for SYMBOL."
+  (let (res)
+    (dolist (type +documentation-types+ res)
+      (when-let ((doc (documentation symbol type)))
+        (push doc res)))))
+
+(defun apropos-list* (string-designator &key package external-only search-docstrings search-subpackages)
+  "Like `cl:apropos-list', but with SEARCH-DOCSTRINGS and SEARCH-SUBPACKAGES. SEARCH-DOCSTRINGS causes symbols whose docstring contains STRING-DESIGNATOR to be included in the results. SEARCH-SUBPACKAGES causes the search to look not just through PACKAGE, but also any packages whose name begins with PACKAGE/.
+
+See also: `apropos*', `cl:apropos-list', `cl:apropos'"
+  (let* ((package (etypecase package
+                    (package package)
+                    (string-designator (find-package package))))
+         (package-name (package-name package))
+         (subpackage-prefix-1 (concat package-name "/"))
+         (subpackage-prefix-2 (concat package-name "-"))
+         (subpackage-prefix-length (length subpackage-prefix-1))
+         result)
+    (do-symbols (symbol package result)
+      (when (or (not external-only)
+                (symbol-external-p symbol))
+        (let* ((sym-name (symbol-name symbol))
+               (sym-package (symbol-package symbol))
+               (sym-package-name (package-name sym-package)))
+          (when (and (or (not package) ; check symbol package
+                         (eql package sym-package)
+                         (and search-subpackages
+                              (string= subpackage-prefix-1 sym-package-name :end2 subpackage-prefix-length)
+                              (string= subpackage-prefix-2 sym-package-name :end2 subpackage-prefix-length)))
+                     (or (search string-designator sym-name :test #'char-equal) ; check symbol name
+                         (when search-docstrings ; check symbol docstrings
+                           (loop :for doctype :in +documentation-types+
+                                 :for docstring := (documentation symbol doctype)
+                                 :when (search string-designator docstring :test #'char-equal)
+                                   :return t))))
+            (push symbol result)))))))
+
+(defun apropos* (string-designator &key package external-only search-docstrings search-subpackages)
+  "Like `cl:apropos', but with SEARCH-DOCSTRINGS and SEARCH-SUBPACKAGES. SEARCH-DOCSTRINGS causes symbols whose docstring contains STRING-DESIGNATOR to be included in the results. SEARCH-SUBPACKAGES causes the search to look not just through PACKAGE, but also any packages whose name begins with PACKAGE/.
+
+See also: `apropos-list*', `cl:apropos', `cl:apropos-list'"
+  (dolist (symbol (apropos-list* string-designator
+                                 :package package :external-only external-only
+                                 :search-docstrings search-docstrings :search-subpackages search-subpackages))
+    (format t "~&~S~%" symbol)))
 
 ;; swiped from https://stackoverflow.com/questions/15465138/find-functions-arity-in-common-lisp
 (defun function-arglist (function) ; FIX: maybe just use trivial-arguments instead? ; FIX: rename to function-lambda-list for consistency with alexandria?

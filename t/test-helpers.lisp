@@ -78,15 +78,10 @@ the other thing
   (is (equalp (list "bar" "baz:qux")
               (docstring-linked-symbol-names "foo `bar' barb `baz:qux' temp"))))
 
-(test symbol-all-docstrings
-  "Test the `symbol-all-docstrings' function"
-  (is (equalp (list "Get a list of all docstrings for SYMBOL.")
-              (symbol-all-docstrings 'symbol-all-docstrings))))
-
 (test docstring-broken-links
   "Test the `docstring-broken-links' function"
   (is (set-equal (list "fjdksfjsdkfj" "jfkdsjk")
-                 (docstring-broken-links "foo `fjdksfjsdkfj' foo2 `symbol-all-docstrings' barb `jfkdsjk' temp `docstring-broken-links' temp2"
+                 (docstring-broken-links "foo `fjdksfjsdkfj' foo2 `symbol-docstrings' barb `jfkdsjk' temp `docstring-broken-links' temp2"
                                          :package 'mutility)
                  :test #'string=))
   (is (equalp (list "cl:foof")

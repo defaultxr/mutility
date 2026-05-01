@@ -20,6 +20,7 @@
    #:keys
 
    #:upcase-intern
+   #:symbol-external-p
 
    #:friendly-string
    #:friendly-symbol
@@ -124,6 +125,12 @@
 
    #:lisp-uptime
    #:current-seconds ; deprecated
+
+   #:+documentation-types+
+   #:symbol-docstrings
+   #:apropos-list*
+   #:apropos*
+
    #:function-arglist
    #:systems-depending-on
    #:lisp-connections

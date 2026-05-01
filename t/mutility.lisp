@@ -114,6 +114,11 @@
   (is (eql (find-package 'mutility/tests)
            (symbol-package (upcase-intern "bar" 'mutility/tests)))))
 
+(test symbol-external-p
+  "Test the `symbol-external-p' function"
+  (is-true (symbol-external-p 'mutility:symbol-external-p))
+  (is-false (symbol-external-p 'mutility::split-by-!)))
+
 (test friendly-string
   "Test the `friendly-string' function"
   (is (string= "foo"
@@ -868,6 +873,25 @@ the other thing" :char-bag (list #\space #\newline)))
   "Test the `lisp-uptime' function"
   (is-true (plusp (lisp-uptime))
            "lisp-uptime returned a value other than a positive number"))
+
+(test symbol-docstrings
+  "Test the `symbol-docstrings' function"
+  (is (equalp (list "Get a list of all docstrings for SYMBOL.")
+              (symbol-docstrings 'symbol-docstrings))))
+
+(test apropos-list*
+  "Test the `apropos-list*' function"
+  (is (equalp (list 'friendly-string 'friendly-symbol)
+              (apropos-list* "non-letter" :package 'mutility :external-only t :search-docstrings t))
+      "apropos-list* doesn't search docstrings")
+  (is (equalp nil
+              (apropos-list* "non-letter" :package 'mutility :external-only t :search-docstrings nil))
+      "apropos-list* searches docstrings when not asked to")
+  (is (equalp (list 'mutility::split-by-!)
+              (apropos-list* "exclamation points" :package 'mutility :external-only nil :search-docstrings t))
+      "apropos-list* doesn't find internal symbols")
+  ;; FIX: test the :search-subpackages argument
+  )
 
 (test function-arglist
   "Test the `function-arglist' function"
