@@ -896,7 +896,9 @@ See also: `read-as-token', `read-as-tokens', `parse-as-tokens'"
   "Read \"token-like\" (either separated by SEPARATORS or delimited by QUOTES) strings from STREAM, collecting them into a list of at most COUNT items. Note that QUOTES are only processed as such when they are adjacent to any of the SEPARATORS.
 
 See also: `parse-as-tokens', `read-as-token', `parse-as-token'"
-  (check-type count (or null number))
+  (check-type count (or null (integer 1)))
+  (when (and (eql 1 count) slurp-rest)
+    (return-from read-as-tokens (list (uiop:slurp-stream-string stream))))
   (let (res (num 0))
     (tagbody
      :repeat

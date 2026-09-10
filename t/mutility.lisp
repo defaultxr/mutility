@@ -330,6 +330,10 @@ the other thing" :char-bag (list #\space #\newline)))
               (parse-as-tokens "foo 'bar baz qux" :count 3 :slurp-rest t)))
   (is (equalp (list "foo" "bar baz qux")
               (parse-as-tokens "foo 'bar baz qux'" :count 3 :slurp-rest t)))
+  (is (equalp (list "(foo \"bar\" \"baz\")")
+              (parse-as-tokens "(foo \"bar\" \"baz\")" :count 1 :slurp-rest t)))
+  (is (equalp (list "(foo")
+              (parse-as-tokens "(foo \"bar\" \"baz\")" :count 1 :slurp-rest nil)))
   #+(or) ; FIX: uncomment this test once :ESCAPES is implemented. also test it in the read-as-token test
   (is (equalp (list "foo" "bar ' baz" "qux")
               (parse-as-tokens "foo 'bar \\' baz' qux" :escapes (code-char 92))) ; 92 = backslash
